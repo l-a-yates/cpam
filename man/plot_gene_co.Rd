@@ -8,7 +8,7 @@ plot_gene_co(
   cpo,
   gene_id = NULL,
   target_id = NULL,
-  cp_type = c("cp_min", "cp1se"),
+  cp_type = c("cp_1se", "cp_min"),
   shape_type = "shape1",
   bs = "auto",
   cp_fix = -1,
@@ -17,10 +17,11 @@ plot_gene_co(
   show_fit = T,
   show_data = T,
   show_fit_ci = T,
-  show_data_se = T,
+  show_data_ci = T,
   ci_prob = 2 * pnorm(1) - 1,
   remove_null = F,
-  gene_level = F,
+  null_threshold = 0.05,
+  gene_level_plot = F,
   family = "nb"
 )
 }
@@ -51,13 +52,15 @@ which set of candidate shapes should be used. See \code{\link[=select_shape]{sel
 
 \item{show_fit_ci}{logical; show credible interval for the fitted trend}
 
-\item{show_data_se}{logical; show bootstrapped quantile for data points}
+\item{show_data_ci}{logical; show bootstrapped quantile for data points}
 
 \item{ci_prob}{numerical; set the probabilty for the credible interval of the fitted trend}
 
 \item{remove_null}{logical; only plot differentially expressed transcripts}
 
-\item{gene_level}{logical; plot gene-level data and fitted trend}
+\item{null_threshold}{numeric; P value threshold for filtering out NULL transcripts}
+
+\item{gene_level_plot}{logical; plot gene-level data and fitted trend}
 
 \item{family}{character; negative binomial ("nb", default) or Gaussian ("gaussian")}
 }

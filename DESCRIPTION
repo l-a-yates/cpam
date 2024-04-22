@@ -26,6 +26,8 @@ Imports:
     RColorBrewer,
     rlang,
     scam,
+    shiny,
+    shinyjs,
     stats,
     stringr,
     tidyr,

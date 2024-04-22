@@ -11,7 +11,7 @@ select_shape(
   bss = c("micv", "mdcx", "cv", "cx"),
   include_tp = T,
   family = c("nb", "gaussian"),
-  score = "gcv",
+  score = "aic",
   cp_type = c("cp_min", "cp_1se")
 )
 }

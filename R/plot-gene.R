@@ -14,10 +14,11 @@
 #' @param show_fit logical; show the fitted trend
 #' @param show_data logical; show (possibly normalized and scaled) data points
 #' @param show_fit_ci logical; show credible interval for the fitted trend
-#' @param show_data_se logical; show bootstrapped quantile for data points
+#' @param show_data_ci logical; show bootstrapped quantile for data points
 #' @param ci_prob numerical; set the probabilty for the credible interval of the fitted trend
 #' @param remove_null logical; only plot differentially expressed transcripts
-#' @param gene_level logical; plot gene-level data and fitted trend
+#' @param null_threshold numeric; P value threshold for filtering out NULL transcripts
+#' @param gene_level_plot logical; plot gene-level data and fitted trend
 #' @param family character; negative binomial ("nb", default) or Gaussian ("gaussian")
 #'
 #' @return a ggplot object
@@ -27,7 +28,7 @@
 plot_gene_co <- function(cpo,
                          gene_id = NULL,
                          target_id = NULL,
-                         cp_type = c("cp_min","cp_1se"),
+                         cp_type = c("cp_1se","cp_min"),
                          shape_type = "shape1",
                          bs = "auto",
                          cp_fix = -1,
@@ -36,22 +37,24 @@ plot_gene_co <- function(cpo,
                          show_fit = T,
                          show_data = T,
                          show_fit_ci = T,
-                         show_data_se = T,
+                         show_data_ci = T,
                          ci_prob = 2*pnorm(1)-1,
                          remove_null = F,
+                         null_threshold =  0.05,
                          #logged = F,
-                         gene_level = F,
+                         gene_level_plot = F,
                          family = "nb"){
 
   if(family != "nb"){
     warning("Plotting is only suppported for negative binomial models. Setting 'family ='nb''")
     family <- "nb"
   }
+  if(gene_level_plot) stop("Watch this space! Gene-level plotting is coming your way very soon")
   cp_type <- match.arg(cp_type)
   shape_type <- match.arg(shape_type, c("shape1","shape2"))
-  bs <- match.arg(bs, c("auto",cpo$bss))
+  bs <- match.arg(bs, c("auto","null",cpo$bss))
   if(!is.numeric(cp_fix)) stop("The fixed changepoint must be numeric")
-  if(!cpo$bootstrap) show_data_se <- F
+  if(!cpo$bootstrap) show_data_ci <- F
 
   if(is.null(gene_id) & is.null(target_id)) stop("gene_id and target_id cannon both be null")
 
@@ -64,7 +67,7 @@ plot_gene_co <- function(cpo,
 
   if(!is.null(cpo$changepoints)){
     data <- data %>%
-      dplyr::left_join(cpo$changepoints %>% dplyr::select(target_id, cp = dplyr::all_of(cp_type)), by = "target_id")
+      dplyr::left_join(cpo$changepoints %>% dplyr::select(.data$target_id, cp = dplyr::all_of(cp_type)), by = "target_id")
     cp_estimated <- any(is.na(data$cp))
   } else {
     data <- data %>% dplyr::mutate(cp = 0)
@@ -80,12 +83,23 @@ plot_gene_co <- function(cpo,
     shape_estimated <- F
   }
 
+  if (remove_null & !gene_level_plot) {
+    if (!is.null(cpo$p_table)) {
+      data <- data %>%
+        dplyr::left_join(cpo$p_table %>% dplyr::select(.data$target_id, .data$q_val_target), by = "target_id") %>%
+        dplyr::filter(.data$q_val_target <= null_threshold)
+    } #else{
+    #data <- data %>% dplyr::filter(.data$cp != 240)
+    #  }
+  }
+
   n_target = nrow(data)
   names_target = data %>% dplyr::pull(.data$target_id)
 
   if(!is.null(target_id)){
     if(!target_id %in% names_target){
       target_id <- NULL
+      stop("Invalid target_id supplied.")
     } else {
       data <- data %>% dplyr::filter(target_id == {{target_id}})
       gene_id <- target_id
@@ -104,7 +118,6 @@ plot_gene_co <- function(cpo,
     data <- data %>% dplyr::mutate(cp = tidyr::replace_na(.data$cp,0))
   }
 
-  if(remove_null) data <- data %>% dplyr::filter(.data$cp!=240)
 
   if(n_target == 1) facet <- F
 
@@ -115,10 +128,13 @@ plot_gene_co <- function(cpo,
   fits <-
     data %>%
     dplyr::rowwise() %>%
-    dplyr::mutate(fit = list(cpgam(data = data, family = family,
+    dplyr::mutate(fit = list(cpgam(data = data,
+                                   family = family,
                                    model_type = cpo$model_type,
                                    regularize = cpo$regularize,
-                                   bs = .data$shape, cp = .data$cp, sp = sp))) %>%
+                                   bs = .data$shape,
+                                   cp = .data$cp,
+                                   sp = sp))) %>%
     dplyr::filter(!is.logical(.data$fit)) %>%
     dplyr::mutate(pred = list(predict_cpgam(fit = .data$fit, ci_prob = ci_prob)))
 
@@ -150,7 +166,7 @@ plot_gene_co <- function(cpo,
   if(show_fit) gg <- gg + ggplot2::geom_line(ggplot2::aes(y = .data$counts, col = .data$target_id))
   if(show_fit_ci) gg <- gg + ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$q_lo, ymax = .data$q_hi, fill = target_id), alpha = 0.1)
   if(show_data) gg <- gg + ggplot2::geom_point(ggplot2::aes(y = .data$counts, col = .data$target_id), data = obs)
-  if(show_data_se) gg <-  gg + ggplot2::geom_linerange(ggplot2::aes(ymin = .data$q_lo, ymax = .data$q_hi, col = target_id),
+  if(show_data_ci) gg <-  gg + ggplot2::geom_linerange(ggplot2::aes(ymin = .data$q_lo, ymax = .data$q_hi, col = target_id),
                                                        data = obs,
                                                        alpha = 0.3)
   if(facet) gg <- gg + ggplot2::facet_wrap(~ target_id, labeller = ggplot2::as_labeller(facet_labels))

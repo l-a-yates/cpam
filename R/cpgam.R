@@ -13,8 +13,8 @@ cpgam <- function(data,
   family <- match.arg(family)
   model_type <- match.arg(model_type)
   bs_scam <- c("micv","mdcx","cv","cx","micx","mdcv")
-  bs <- match.arg(bs,c("tp",bs_scam))
-  use_scam <-  bs != "tp"
+  bs <- match.arg(bs,c("tp","null",bs_scam))
+  use_scam <-  !bs %in% c("tp","null")
 
   if (family == "nb") {
     if (!regularize) {
@@ -42,7 +42,7 @@ cpgam <- function(data,
 
   k = sum(unique(data$time) >= cp)
 
-  if (k == 1){
+  if (k == 1 | bs == "null"){
     f <- paste0(resp," ~ 1")
     sp <- NULL
     gam_optimizer <- if(use_scam) "bfgs" else "outer"
@@ -51,7 +51,7 @@ cpgam <- function(data,
     sp <- NULL
     gam_optimizer <- if(use_scam) "bfgs" else "outer"
   } else {
-    if(use_scam) k <- 2*k
+    if(strsplit(bs,"")[[1]][1] == "m") k <- 2*k
     f <- paste0(resp," ~ s(td, bs = '",bs,"', k =", k,")")
   }
 

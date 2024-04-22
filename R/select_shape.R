@@ -22,7 +22,7 @@ select_shape <- function(cpo,
                          bss = c("micv","mdcx","cv","cx"),
                          include_tp = T,
                          family = c("nb","gaussian"),
-                         score = "gcv",
+                         score = "aic",
                          cp_type = c("cp_min","cp_1se")) {
 
 
@@ -53,6 +53,11 @@ select_shape <- function(cpo,
   fixed_effects <- cpo$fixed_effects
   model_type <- cpo$model_type
 
+  if(family == "nb"){
+    if(score!="aic") warning("The score has been set to `aic` for negative binomial models")
+    score <- "aic_negbin"
+  }
+
   cpo$shapes <-
     data_nest %>%
     dplyr::select(.data$target_id) %>%
@@ -72,7 +77,7 @@ select_shape <- function(cpo,
                           fixed_effects = fixed_effects
                         ))  %>%
                         {.[!is.na(.)]} %>%
-                        purrr::map_dbl(~ .x %>% gcv %>% sum) %>%
+                        purrr::map_dbl(~ do.call(score, args = list(fit = .x)) %>% sum) %>%
                         {c(shape1 = names(which.min(.)),
                            shape2 = names(which.min(.[names(.) != "tp"])),
                            family = family)}
