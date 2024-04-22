@@ -49,6 +49,7 @@ prepare_cpam <- function(exp_design,
   if(is.null(exp_design[["time"]])) stop("'exp_design' must include a 'time' column")
   if(length(unique(exp_design$time))<3) stop("The experimental design must have a least three distinct time points")
 
+  # make this a helper function check_fixed_effects()
   if(!is.null(fixed_effects)){
     e <- try(stats::model.frame(fixed_effects, exp_design), silent = T)
     if(inherits(e, "try-error")){

@@ -1,3 +1,17 @@
+#' Compute P values
+#'
+#' @param cpo a cpam object
+#' @param subset a character vector of target_id names
+#' @param p_adj_method method for P value adjustment
+#' @param fixed_effects a model formula (RHS only) to provide or update
+#' fixed affects. Terms must correspond to columns in `exp_design`
+#' @param gam_method fitting method for `mgcv::gam`
+#' @param gam_optimizer optikization method for `mgcv::gam`
+#'
+#' @return an updated cpam object with P values stored in the new slot "p_table"
+#' @export
+#'
+#' @examples 1 + 1
 compute_p_values <- function(cpo,
                              subset = NULL,
                              p_adj_method = "BH",
@@ -16,14 +30,19 @@ compute_p_values <- function(cpo,
 
   regularize <- cpo$regularize
 
-  if(is.null(fixed_effects)){
-    fixed_effects <- ""
+
+  if(is.null(cpo$fixed_effects)){
+    if(is.null(fixed_effects)) fe_string <- ""
   } else {
-    fixed_effects <- paste(fixed_effects,"+")
+    if(!is.null(fixed_effects)){
+      message("Updating fixed effects")
+      cpo$fixed_effects <- deparse(fixed_effects[[2]])
+    }
+    fe_string <- paste(cpo$fixed_effects,"+")
   }
 
   f_string <- paste0("counts ~",
-                     fixed_effects,
+                     fe_string,
                      " s(time, bs = 'tp', k = ",
                      length(unique(cpo$exp_design$time)),
                      ")")
