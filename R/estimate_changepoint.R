@@ -3,7 +3,7 @@
 #' @param cpo a cpam object
 #' @param cps vector of candidate changepoints. Defaults to the set of observed timepoints
 #' @param degs_only logical; should changepoints only be estimated for differentially expressed genes
-#' @param alpha logical; the threshold value for DEGs (ignored of `degs_only = F`)
+#' @param deg_threshold logical; the threshold value for DEGs (ignored of `degs_only = F`)
 #' @param subset character vector; names of targets or genes (if `cpo$gene_level = T`)
 #' for which changepoints will be estimated
 #' @param sp numerical >= 0; supply a fixed smoothing parameter.
@@ -20,12 +20,12 @@
 estimate_changepoint <- function(cpo,
                         cps = NULL,
                         degs_only = T,
-                        alpha = 0.05,
+                        deg_threshold = 0.05,
                         subset = NULL,
                         sp = NULL,
                         bss = "tp",
                         family = c("nb","gaussian"),
-                        score = "gcv") {
+                        score = "aic") {
 
   family <- match.arg(family)
 
@@ -33,11 +33,11 @@ estimate_changepoint <- function(cpo,
     if(degs_only){
       if(cpo$gene_level){
         subset <- cpo$p_table %>%
-          dplyr::filter(.data$q_val_target <= alpha) %>%
+          dplyr::filter(.data$q_val_target <= deg_threshold) %>%
           dplyr::pull(.data$target_id)
       } else {
         subset <- cpo$p_table %>%
-          dplyr::filter(.data$q_val_gene <= alpha) %>%
+          dplyr::filter(.data$q_val_gene <= deg_threshold) %>%
           dplyr::pull(.data$target_id)
       }
     }
@@ -55,6 +55,12 @@ estimate_changepoint <- function(cpo,
   message(paste0("Estimating changepoints for ", nrow(data_nest), " targets"))
   if(is.null(cps)) cps <- cpo$times
   message(paste0("Candidate changepoints are t = ", paste0(cps, collapse = ", "),"."))
+  if(nrow(data_nest)>3000){
+    message("Warning: model fitting may take several minutes for this many targets.")
+    message("Fitting time can be reduced by setting a lower threshold for DEGs ",
+    "(using `deg_threshold`) and/or reducing the ",
+    "number of candidate time points (set using `cps`)")
+  }
 
   regularize <- cpo$regularize
   model_type <- cpo$model_type
@@ -183,6 +189,8 @@ aic <- function(fit){
 
 aic_negbin <- function(fit){
   y <- fit$y
+  #if("gam" %in% class(fit)) Theta <- fit$family$getTheta(T)
+  #if("scam" %in% class(fit)) Theta <- fit$family$getTheta()
   Theta <- fit$family$getTheta()
   mu <- fit$fitted.values
   wt <- fit$prior.weights

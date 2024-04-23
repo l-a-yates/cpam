@@ -68,7 +68,6 @@ prepare_cpam <- function(exp_design,
     if(!is.null(import_type)) message("'import_type' is being ignored since a count matrix has been supplied")
     if(is.null(colnames(count_matrix)) | sum(!colnames(count_matrix) %in% exp_design$sample)>0){
       stop("Column names of 'count_matrix' must match samples in 'exp_design'")}
-    if(bootstrap) message("Bootstrap is not available when a count matrix is supplied")
     bootstrap <- F
   }
 
@@ -94,7 +93,11 @@ prepare_cpam <- function(exp_design,
 
   if(import){
     message(paste0("Loading ",length(exp_design$path), " samples"))
-    if(gene_level) message("Summarizing to gene level")
+    if(gene_level){
+      message("Summarizing to gene level")
+      aggregate_to_gene <- F
+      bootstrap <- F
+    }
     txi <- tximport::tximport(
       exp_design$path,
       txIn = T,
@@ -114,6 +117,8 @@ prepare_cpam <- function(exp_design,
       overdispersion.prior = catch$overdispersion.prior
       boot <- summarise_bootstraps(txi)
       nboot <- txi$infReps[[1]] %>% ncol
+    } else {
+      overdispersion.prior <- nboot <- NULL
     }
   } else {
     counts_raw <- count_matrix

@@ -63,19 +63,20 @@ ui <- shiny::fluidPage(shiny::withMathJax(),
                          shiny::sidebarPanel(
                            shiny::checkboxGroupInput("fits", "Fitted trend", c(`mean trend` = "mean", `CI` = "CI"),
                                        inline = T, selected = c("mean","CI")),
-                           shiny::checkboxGroupInput("datas", "Data", c(`mean` = "mean", `Bootstrapped interval` = "CI"),
+                           shiny::checkboxGroupInput("datas", "Data", c(`mean` = "mean", `bootstrapped quantile` = "CI"),
                                        inline = T, selected = c("mean")),
                            shiny::selectizeInput("gene_id", "Gene ID", choices = genes_all[1], selected = genes_all[1]),
                            shiny::selectInput("tx_id", "Transcript ID", choices = "all"),
                            shiny::checkboxInput('gene_level', 'Aggregate counts to gene level', value = F),
-                           shiny::checkboxInput('remove_null', 'Plot DEGs only', value = F),
-                           shiny::numericInput("remove_null_threshold", "P value threshold for DEGs",
+                           shiny::checkboxInput('remove_null', 'Plot DETs only', value = F),
+                           shiny::numericInput("remove_null_threshold", "Adjusted P value threshold for DETs",
                                  value = 0.05, min = 0.01, max = 0.99, step = 0.01),
                            #shiny::checkboxInput('logged', 'Log transformed', value = T),
                            #shiny::checkboxInput('diff_var', 'Differential variance', value = F),
                            #shiny::numericInput("diff_var_alpha", "p-value threshold for differential variance",
                            #      value = 0.05, min = 0.01, max = 0.99, step = 0.01),
                            shiny::checkboxInput('facet', 'Transcripts in separate plots', value = T),
+                           shiny::checkboxInput('shape_type', 'Include \'unconstrained\' (\'tp\') as a candidate shape', value = T),
                            shiny::hr(style="border-color: black;"),
                            shiny::strong("Manual settings for fitted trends"),
                            shiny::br(),shiny::br(),
@@ -115,6 +116,14 @@ server <-  function(input, output, session) {
                                                  dplyr::pull(.data$target_id))),
                             selected = "all"))
 
+  shiny::observe(if(cpo$gene_level){
+    shinyjs::disable("tx_id")
+    shinyjs::disable("facet")
+    shinyjs::disable("remove_null")
+    shinyjs::disable("remove_null_threshold")
+    shinyjs::disable("gene_level")
+  })
+  #shiny::observe(if(!cpo$bootstrap) shinyjs::disable("tx_id"))
   #shiny::observe(shinyjs::disable("diff_var"))
   #shiny::observe(shinyjs::disable("diff_var_alpha"))
 
@@ -137,6 +146,7 @@ server <-  function(input, output, session) {
               show_fit_ci = "CI" %in% input$fits,
               show_data = "mean" %in% input$datas,
               show_data_ci = "CI" %in% input$datas,
+              shape_type = if(input$shape_type) "shape1" else "shape2",
               #diff_var = input$diff_var,
               #diff_var_alpha = input$diff_var_alpha,
               #logged = input$logged,

@@ -8,6 +8,9 @@ cpgam <- function(data,
                   gam_optimizer = "efs",
                   fixed_effects = NULL,
                   sp = NULL,
+                  k_mult = 2,
+                  n_try = 1,
+                  not_exp = F,
                   silent = T){
 
   family <- match.arg(family)
@@ -51,7 +54,8 @@ cpgam <- function(data,
     sp <- NULL
     gam_optimizer <- if(use_scam) "bfgs" else "outer"
   } else {
-    if(strsplit(bs,"")[[1]][1] == "m") k <- 2*k
+    #if(strsplit(bs,"")[[1]][1] == "m") k <- 2*k
+    if(bs != "tp") k <- k_mult*k
     f <- paste0(resp," ~ s(td, bs = '",bs,"', k =", k,")")
   }
 
@@ -77,16 +81,47 @@ cpgam <- function(data,
                       optimizer = gam_optimizer,
                       offset = log(data$norm_factor)),
             silent = silent)
-  } else if(bs %in% c("micv","mdcx","cv","cx","micx","mdcv")){
+  } else {
     m = try(scam::scam(formula = f,
                        data = data,
                        family = gam_family,
                        sp = sp,
                        optimizer = gam_optimizer,
-                       offset = log(data$norm_factor)),
+                       not.exp = not_exp,
+                       offset = log(data$norm_factor)) %>% suppressWarnings(),
             silent = silent)
-  }
 
+    if(inherits(m, "try-error")){
+      if(stringr::str_detect(m,"Error in Rrank") & k_mult != 1 & n_try == 1){
+        k_mult = 1
+        n_try = 2
+        refit <- T
+      } else if(n_try <= 2){
+        n_try = 3
+        not_exp = T
+        refit = T
+      } else refit = F
+
+      if(refit){
+        m <- cpgam(
+          data = data,
+          cp = cp,
+          regularize = regularize,
+          model_type = model_type,
+          bs = bs,
+          family = family,
+          gam_method = gam_method,
+          gam_optimizer = gam_optimizer,
+          fixed_effects = fixed_effects,
+          sp = sp,
+          k_mult = k_mult,
+          n_try = n_try,
+          not_exp = not_exp,
+          silent = silent
+        )
+      }
+      }
+    }
   if(inherits(m, "try-error")){
     warning(paste0("The changepoint additive model for gene_id ",data$gene_id[1], " with basis '",bs,"' failed to converged at t0 =",cp))
     return(NA)
@@ -98,4 +133,3 @@ cpgam <- function(data,
   m$model_type <- model_type
   m
 }
-

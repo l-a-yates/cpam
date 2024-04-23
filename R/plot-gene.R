@@ -49,7 +49,13 @@ plot_gene_co <- function(cpo,
     warning("Plotting is only suppported for negative binomial models. Setting 'family ='nb''")
     family <- "nb"
   }
-  if(gene_level_plot) stop("Watch this space! Gene-level plotting is coming your way very soon")
+  if(gene_level_plot){
+
+    stop("Watch this space! Gene-level plotting is coming your way very soon")
+
+
+
+  }
   cp_type <- match.arg(cp_type)
   shape_type <- match.arg(shape_type, c("shape1","shape2"))
   bs <- match.arg(bs, c("auto","null",cpo$bss))

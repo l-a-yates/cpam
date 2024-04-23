@@ -12,7 +12,7 @@ select_shape(
   include_tp = T,
   family = c("nb", "gaussian"),
   score = "aic",
-  cp_type = c("cp_min", "cp_1se")
+  cp_type = c("cp_1se", "cp_min")
 )
 }
 \arguments{
@@ -21,7 +21,8 @@ select_shape(
 \item{subset}{character vector; names of targets or genes (if \code{cpo$gene_level = T})
 for which changepoints will be estimated}
 
-\item{sp}{numerical >= 0; supply a fixed smoothing parameter.}
+\item{sp}{numerical >= 0; supply a fixed smoothing parameter.
+Note, the fixd value is applied to shape constrained bases only (i.e., not \code{bs = 'tp'}).}
 
 \item{bss}{character vector; names of candidate spline bases (i.e., candidate shape types).}
 

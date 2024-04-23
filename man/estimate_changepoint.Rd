@@ -8,12 +8,12 @@ estimate_changepoint(
   cpo,
   cps = NULL,
   degs_only = T,
-  alpha = 0.05,
+  deg_threshold = 0.05,
   subset = NULL,
   sp = NULL,
   bss = "tp",
   family = c("nb", "gaussian"),
-  score = "gcv"
+  score = "aic"
 )
 }
 \arguments{
@@ -23,7 +23,7 @@ estimate_changepoint(
 
 \item{degs_only}{logical; should changepoints only be estimated for differentially expressed genes}
 
-\item{alpha}{logical; the threshold value for DEGs (ignored of \code{degs_only = F})}
+\item{deg_threshold}{logical; the threshold value for DEGs (ignored of \code{degs_only = F})}
 
 \item{subset}{character vector; names of targets or genes (if \code{cpo$gene_level = T})
 for which changepoints will be estimated}

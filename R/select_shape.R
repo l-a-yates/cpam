@@ -4,6 +4,7 @@
 #' @param subset character vector; names of targets or genes (if `cpo$gene_level = T`)
 #' for which changepoints will be estimated
 #' @param sp numerical >= 0; supply a fixed smoothing parameter.
+#' Note, the fixd value is applied to shape constrained bases only (i.e., not `bs = 'tp'`).
 #' @param bss character vector; names of candidate spline bases (i.e., candidate shape types).
 #' @param include_tp logical; should the non-shape-constrained basis "tp" be included as a candidate
 #' @param family character; negative binomial ("nb", default) or Gaussian ("gaussian")
@@ -23,8 +24,7 @@ select_shape <- function(cpo,
                          include_tp = T,
                          family = c("nb","gaussian"),
                          score = "aic",
-                         cp_type = c("cp_min","cp_1se")) {
-
+                         cp_type = c("cp_1se","cp_min")) {
 
   cp_type <- match.arg(cp_type)
   family <- match.arg(family)
@@ -72,7 +72,7 @@ select_shape <- function(cpo,
                           regularize = regularize,
                           model_type = model_type,
                           cp = d$cp[1],
-                          sp = sp,
+                          sp = if(.x == "tp") NULL else sp,
                           bs = .x,
                           fixed_effects = fixed_effects
                         ))  %>%
