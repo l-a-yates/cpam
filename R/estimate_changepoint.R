@@ -204,9 +204,24 @@ aic_negbin <- function(fit){
 
 
 # computes pointwise generalised cross validation (gcv) for a mgcv::gam fit
+gcv.gam <- function(fit){
+    gcvi = (length(fit$residuals)*((sqrt(fit$weights)*fit$residuals)^2))/(length(fit$residuals)-sum(fit$hat))^2
+}
+
 gcv <- function(fit){
-  gcvi = (length(fit$residuals)*((sqrt(fit$weights)*fit$residuals)^2))/(length(fit$residuals)-sum(fit$hat))^2
-  gcvi
+  dev = stats::residuals(fit, "deviance")^2
+  nobs = length(fit$y)
+
+  if(inherits(fit,"gam")){
+    gamma = 1
+    trA = fit$hat %>% sum
+  }
+
+  if(inherits(fit,"scam")){
+    gamma = fit$gamma
+    trA = fit$trA
+  }
+  as.numeric(dev * nobs/(nobs - gamma * trA)^2)
 }
 
 # log probabilty density for negative binomial with continuous positive response values

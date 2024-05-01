@@ -39,7 +39,6 @@ prepare_cpam <- function(exp_design,
                          num_cores = 1,
                          normalize = TRUE,
                          fixed_effects = NULL
-                         #times = NULL # candidate changepoints
 ){
 
   model_type <- match.arg(model_type)

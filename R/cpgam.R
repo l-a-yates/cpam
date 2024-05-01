@@ -11,13 +11,14 @@ cpgam <- function(data,
                   k_mult = 2,
                   n_try = 1,
                   not_exp = F,
-                  silent = T){
+                  silent = F){
 
   family <- match.arg(family)
   model_type <- match.arg(model_type)
   bs_scam <- c("micv","mdcx","cv","cx","micx","mdcv")
-  bs <- match.arg(bs,c("tp","null",bs_scam))
-  use_scam <-  !bs %in% c("tp","null")
+  bs_gam <- c("tp","null","lin","ilin","dlin")
+  bs <- match.arg(bs,c(bs_gam,bs_scam))
+  use_scam <-  !bs %in% bs_gam
 
   if (family == "nb") {
     if (!regularize) {
@@ -28,7 +29,7 @@ cpgam <- function(data,
             "Shape-constrained splines are unavilable for negative-binomial models when the dipsersion must be estimated. The basis has been to set
               to bs = 'tp' instead of the supplied value bs = ",bs))
         bs <- "tp"
-        use_scam <- F
+        use_scam <- T
       }
     } else {
       gam_family <- mgcv::negbin(theta = as.numeric(1/data$disp[1]))
@@ -48,13 +49,16 @@ cpgam <- function(data,
   if (k == 1 | bs == "null"){
     f <- paste0(resp," ~ 1")
     sp <- NULL
-    gam_optimizer <- if(use_scam) "bfgs" else "outer"
-  } else if (k == 2){
+    bs <- "null"
+    use_scam <- F
+    #gam_optimizer <- "outer"
+  } else if (k == 2 | bs %in% c("lin","ilin","dlin")){
     f <- paste0(resp," ~ 1 + td")
+    if(!bs %in% c("lin","ilin","dlin")) bs <- "lin"
     sp <- NULL
-    gam_optimizer <- if(use_scam) "bfgs" else "outer"
+    use_scam <- F
+    #gam_optimizer <- if(use_scam) "bfgs" else "outer"
   } else {
-    #if(strsplit(bs,"")[[1]][1] == "m") k <- 2*k
     if(bs != "tp") k <- k_mult*k
     f <- paste0(resp," ~ s(td, bs = '",bs,"', k =", k,")")
   }
@@ -79,7 +83,7 @@ cpgam <- function(data,
                       sp = sp,
                       method = gam_method,
                       optimizer = gam_optimizer,
-                      offset = log(data$norm_factor)),
+                      offset = log(data$norm_factor)),# %>% suppressWarnings(),
             silent = silent)
   } else {
     m = try(scam::scam(formula = f,
@@ -88,18 +92,20 @@ cpgam <- function(data,
                        sp = sp,
                        optimizer = gam_optimizer,
                        not.exp = not_exp,
-                       offset = log(data$norm_factor)) %>% suppressWarnings(),
+                       offset = log(data$norm_factor)),# %>% suppressWarnings(),
             silent = silent)
 
     if(inherits(m, "try-error")){
       if(stringr::str_detect(m,"Error in Rrank") & k_mult != 1 & n_try == 1){
         k_mult = 1
         n_try = 2
-        refit <- T
+        refit = T
+        #print("refit-A")
       } else if(n_try <= 2){
         n_try = 3
         not_exp = T
         refit = T
+        #print("refit-B")
       } else refit = F
 
       if(refit){
@@ -123,13 +129,17 @@ cpgam <- function(data,
       }
     }
   if(inherits(m, "try-error")){
-    warning(paste0("The changepoint additive model for gene_id ",data$gene_id[1], " with basis '",bs,"' failed to converged at t0 =",cp))
+    #warning(paste0("The changepoint additive model for gene_id ",data$gene_id[1], " with basis '",bs,"' failed to converged at t0 =",cp))
     return(NA)
   }
-  m$f <- f
-  m$cp <- cp
-  m$bs <- bs
-  m$data <- data
-  m$model_type <- model_type
+
+  if(inherits(m,c("gam","scam"))){
+    m$f <- f
+    m$cp <- cp
+    m$bs <- bs
+    m$data <- data
+    m$model_type <- model_type
+  }
+
   m
 }

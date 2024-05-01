@@ -15,11 +15,14 @@
 #' @param show_data logical; show (possibly normalized and scaled) data points
 #' @param show_fit_ci logical; show credible interval for the fitted trend
 #' @param show_data_ci logical; show bootstrapped quantile for data points
-#' @param ci_prob numerical; set the probabilty for the credible interval of the fitted trend
+#' @param ci_prob  if numerical, sets the probability for the simulation-based estimated of credible interval,
+#' if equal to "se", the interval is set to the approximate standard error (see [mgcv::predict.gam()])
 #' @param remove_null logical; only plot differentially expressed transcripts
 #' @param null_threshold numeric; P value threshold for filtering out NULL transcripts
 #' @param gene_level_plot logical; plot gene-level data and fitted trend
+#' @param return_fits_only logical; return the model fits. Does not plot the function
 #' @param family character; negative binomial ("nb", default) or Gaussian ("gaussian")
+#' @param scaled logical; scaled data by overdispersions (for bootstrapped data only)
 #'
 #' @return a ggplot object
 #' @export
@@ -38,12 +41,14 @@ plot_gene_co <- function(cpo,
                          show_data = T,
                          show_fit_ci = T,
                          show_data_ci = T,
-                         ci_prob = 2*pnorm(1)-1,
+                         ci_prob = "se",
                          remove_null = F,
                          null_threshold =  0.05,
                          #logged = F,
                          gene_level_plot = F,
-                         family = "nb"){
+                         return_fits_only = F,
+                         family = "nb",
+                         scaled = F){
 
   if(family != "nb"){
     warning("Plotting is only suppported for negative binomial models. Setting 'family ='nb''")
@@ -58,18 +63,30 @@ plot_gene_co <- function(cpo,
   }
   cp_type <- match.arg(cp_type)
   shape_type <- match.arg(shape_type, c("shape1","shape2"))
-  bs <- match.arg(bs, c("auto","null",cpo$bss))
+  bs <- match.arg(bs, c("auto","null","lin","ilin","dlin",cpo$bss))
   if(!is.numeric(cp_fix)) stop("The fixed changepoint must be numeric")
   if(!cpo$bootstrap) show_data_ci <- F
 
-  if(is.null(gene_id) & is.null(target_id)) stop("gene_id and target_id cannon both be null")
 
-  data =
-    cpo$data_long %>%
-    dplyr::filter(gene_id == {{gene_id}}) %>%
-    tidyr::nest(.by = "target_id")
+  if(is.null(gene_id)){
+    if(is.null(target_id)) stop("gene_id and target_id cannon both be null")
 
-  if(nrow(data) == 0) stop("Invalid gene_id")
+    data =
+      cpo$data_long %>%
+      dplyr::filter(target_id == {{target_id}}) %>%
+      tidyr::nest(.by = "target_id")
+
+    if(nrow(data) == 0) stop("Invalid target_id")
+
+  } else{
+
+    data =
+      cpo$data_long %>%
+      dplyr::filter(gene_id == {{gene_id}}) %>%
+      tidyr::nest(.by = "target_id")
+
+    if(nrow(data) == 0) stop("Invalid gene_id")
+  }
 
   if(!is.null(cpo$changepoints)){
     data <- data %>%
@@ -127,9 +144,15 @@ plot_gene_co <- function(cpo,
 
   if(n_target == 1) facet <- F
 
-  obs <- data %>% dplyr::select(.data$target_id,.data$data) %>% tidyr::unnest(cols = "data") %>%
-    dplyr::mutate(dplyr::across(dplyr::starts_with("q_"), ~ .x/(.data$overdispersions*.data$norm_factor)),
-                  counts = .data$counts/.data$norm_factor)
+  if(scaled){
+    obs <- data %>% dplyr::select(.data$target_id,.data$data) %>% tidyr::unnest(cols = "data") %>%
+      dplyr::mutate(dplyr::across(dplyr::starts_with("q_"), ~ .x/(.data$overdispersions*.data$norm_factor)),
+                    counts = .data$counts/.data$norm_factor)
+  } else{
+    obs <- data %>% dplyr::select(.data$target_id,.data$data) %>% tidyr::unnest(cols = "data") %>%
+      dplyr::mutate(dplyr::across(dplyr::starts_with("q_"), ~ .x/(.data$norm_factor)),
+                    counts = .data$counts_raw/.data$norm_factor)
+  }
 
   fits <-
     data %>%
@@ -142,7 +165,9 @@ plot_gene_co <- function(cpo,
                                    cp = .data$cp,
                                    sp = sp))) %>%
     dplyr::filter(!is.logical(.data$fit)) %>%
-    dplyr::mutate(pred = list(predict_cpgam(fit = .data$fit, ci_prob = ci_prob)))
+    dplyr::mutate(pred = list(predict_cpgam(fit = .data$fit, ci_prob = ci_prob, scaled = scaled)))
+
+  if(return_fits_only) return(fits$fit[[1]])
 
   preds <-
     fits %>%

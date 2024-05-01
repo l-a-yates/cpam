@@ -18,11 +18,13 @@ plot_gene_co(
   show_data = T,
   show_fit_ci = T,
   show_data_ci = T,
-  ci_prob = 2 * pnorm(1) - 1,
+  ci_prob = "se",
   remove_null = F,
   null_threshold = 0.05,
   gene_level_plot = F,
-  family = "nb"
+  return_fits_only = F,
+  family = "nb",
+  scaled = F
 )
 }
 \arguments{
@@ -54,7 +56,8 @@ which set of candidate shapes should be used. See \code{\link[=select_shape]{sel
 
 \item{show_data_ci}{logical; show bootstrapped quantile for data points}
 
-\item{ci_prob}{numerical; set the probabilty for the credible interval of the fitted trend}
+\item{ci_prob}{if numerical, sets the probability for the simulation-based estimated of credible interval,
+if equal to "se", the interval is set to the approximate standard error (see \code{\link[mgcv:predict.gam]{mgcv::predict.gam()}})}
 
 \item{remove_null}{logical; only plot differentially expressed transcripts}
 
@@ -62,7 +65,11 @@ which set of candidate shapes should be used. See \code{\link[=select_shape]{sel
 
 \item{gene_level_plot}{logical; plot gene-level data and fitted trend}
 
+\item{return_fits_only}{logical; return the model fits. Does not plot the function}
+
 \item{family}{character; negative binomial ("nb", default) or Gaussian ("gaussian")}
+
+\item{scaled}{logical; scaled data by overdispersions (for bootstrapped data only)}
 }
 \value{
 a ggplot object

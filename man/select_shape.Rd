@@ -7,11 +7,11 @@
 select_shape(
   cpo,
   subset = NULL,
-  sp = 0.001,
-  bss = c("micv", "mdcx", "cv", "cx"),
+  sp = NULL,
+  bss = c("micv", "mdcx", "cv", "cx", "lin"),
   include_tp = T,
   family = c("nb", "gaussian"),
-  score = "aic",
+  score = "gcv",
   cp_type = c("cp_1se", "cp_min")
 )
 }
