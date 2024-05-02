@@ -11,7 +11,7 @@ cpgam <- function(data,
                   k_mult = 2,
                   n_try = 1,
                   not_exp = F,
-                  silent = F){
+                  silent = T){
 
   family <- match.arg(family)
   model_type <- match.arg(model_type)
@@ -83,7 +83,7 @@ cpgam <- function(data,
                       sp = sp,
                       method = gam_method,
                       optimizer = gam_optimizer,
-                      offset = log(data$norm_factor)),# %>% suppressWarnings(),
+                      offset = log(data$norm_factor)) %>% suppressWarnings(),
             silent = silent)
   } else {
     m = try(scam::scam(formula = f,
@@ -92,7 +92,7 @@ cpgam <- function(data,
                        sp = sp,
                        optimizer = gam_optimizer,
                        not.exp = not_exp,
-                       offset = log(data$norm_factor)),# %>% suppressWarnings(),
+                       offset = log(data$norm_factor)) %>% suppressWarnings(),
             silent = silent)
 
     if(inherits(m, "try-error")){

@@ -100,7 +100,8 @@ compute_p_values <- function(cpo,
           p.val
         }, mc.cores = cpo$num_cores) %>% purrr::list_c()
     ) %>%
-    dplyr::mutate(q_val_target = stats::p.adjust(.data$p_val_target, method = p_adj_method))
+    dplyr::mutate(p_val_target = pmax(.data$p_val_target, 10e-320),
+                  q_val_target = stats::p.adjust(.data$p_val_target, method = p_adj_method))
 
   if(cpo$aggregate_to_gene){
     p_table <-
