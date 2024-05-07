@@ -67,14 +67,18 @@ results <- function(cpo,
   keep_p_filtered <- p_table %>% dplyr::pull(.data$target_id)
 
   if(min_count >0 | add_counts){
+    if(is.null(cpo$pred)) stop("Shapes must be selected before results can be filtered by log-fold change (lfc)")
     counts_by_time <-
-      cpo$data_long %>%
-      dplyr::filter(.data$target_id %in% keep_p_filtered) %>%
-      dplyr::group_by(.data$target_id, .data$time) %>%
-      dplyr::summarise(counts = mean(.data$counts)) %>%
-      dplyr::ungroup() %>%
-      tidyr::pivot_wider(id_cols = .data$target_id, names_from = "time", values_from = "counts") %>%
-      {`rownames<-`(as.matrix(dplyr::select(.,-.data$target_id)),.$target_id)}
+      cpo$pred %>%
+      {`rownames<-`(as.matrix(dplyr::select(.,-"target_id")),.$target_id)}
+
+      # cpo$data_long %>%
+      # dplyr::filter(.data$target_id %in% keep_p_filtered) %>%
+      # dplyr::group_by(.data$target_id, .data$time) %>%
+      # dplyr::summarise(counts = mean(.data$counts)) %>%
+      # dplyr::ungroup() %>%
+      # tidyr::pivot_wider(id_cols = .data$target_id, names_from = "time", values_from = "counts") %>%
+      # {`rownames<-`(as.matrix(dplyr::select(.,-.data$target_id)),.$target_id)}
   }
 
   if(min_count > 0){

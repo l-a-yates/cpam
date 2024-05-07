@@ -53,20 +53,26 @@ select_shape <- function(cpo,
   regularize <- cpo$regularize
   fixed_effects <- cpo$fixed_effects
   model_type <- cpo$model_type
+  cp_max <- max(cpo$times)
 
   if(family == "nb" & score == "aic"){
     score <- "aic_negbin"
   }
 
-  #return(data_nest)
-
   shapes_gt2 <-
     data_nest %>%
-    dplyr::filter(.data$k >= 2) %>%
+    #dplyr::filter(.data$k >= 2) %>%
     dplyr::mutate(x =
                     .data$data %>%
                     pbmcapply::pbmclapply(function(d) {
                         bss %>%
+                        {
+                          if(d$cp[1] == cp_max){
+                            c("null")
+                          } else {
+                            .
+                          }
+                        } %>%
                         purrr::set_names() %>%
                         purrr::map(~ cpgam(
                           data = d,
@@ -86,29 +92,38 @@ select_shape <- function(cpo,
     dplyr::rowwise() %>%
     dplyr::mutate(shape1 = .data$x$shape1,
            shape2 = .data$x$shape2,
-           lfc = .data$x$lfc) %>%
+           lfc = .data$x$lfc,
+           pred = .data$x$pred) %>%
     dplyr::select(-.data$x) %>%
     dplyr::ungroup()
 
-  null_tibble <- dplyr::tibble(time = cpo$times,lfc = 0)
+  #null_tibble <- dplyr::tibble(time = cpo$times,lfc = 0)
 
   cpo$shapes <-
     data_nest %>%
     dplyr::select(-.data$data) %>%
-    dplyr::left_join(dplyr::select(shapes_gt2, -.data$lfc), by = "target_id") %>%
-    dplyr::mutate(shape1 = dplyr::if_else(.data$k==1,"null",.data$shape1),
-                  shape2 = dplyr::if_else(.data$k==1,"null",.data$shape2),
-                  k = NULL)
-
+    dplyr::left_join(dplyr::select(shapes_gt2, -.data$lfc, -.data$pred), by = "target_id") %>%
+    dplyr::mutate(k = NULL)
+    # dplyr::mutate(shape1 = dplyr::if_else(.data$k==1,"null",.data$shape1),
+    #               shape2 = dplyr::if_else(.data$k==1,"null",.data$shape2),
+    #               k = NULL)
 
   cpo$lfc <-
     data_nest %>%
     dplyr::select(-.data$data) %>%
     dplyr::left_join(dplyr::select(shapes_gt2, .data$target_id,.data$lfc), by = "target_id") %>%
-    dplyr::mutate(lfc = dplyr::if_else(.data$k==1, list(null_tibble), .data$lfc)) %>%
+    #dplyr::mutate(lfc = dplyr::if_else(.data$k==1, list(null_tibble), .data$lfc)) %>%
     dplyr::select(-.data$cp,-.data$k) %>%
     tidyr::unnest(.data$lfc) %>%
     tidyr::pivot_wider(id_cols = .data$target_id, names_from = .data$time, values_from = .data$lfc)
+
+  cpo$pred <-
+    data_nest %>%
+    dplyr::select(-.data$data) %>%
+    dplyr::left_join(dplyr::select(shapes_gt2, .data$target_id,.data$pred), by = "target_id") %>%
+    dplyr::select(-.data$cp,-.data$k) %>%
+    tidyr::unnest(.data$pred) %>%
+    tidyr::pivot_wider(id_cols = .data$target_id, names_from = .data$time, values_from = .data$pred)
 
   cpo
 }
@@ -132,7 +147,8 @@ shape_selector <- function(fits, score){
 
   if(!is.na(shape1)){
     lfc = extract_lfc(fits[[shape1]])
-  } else lfc <- NA
+    pred = extract_pred(fits[[shape1]])
+  } else lfc <- pred <- NA
 
   if(shape2 == "lin"){
     if(fits[["lin"]]$coefficients["td"]>0){
@@ -142,7 +158,7 @@ shape_selector <- function(fits, score){
   if(shape1 != "tp") shape1 <- shape2
 
 
-  dplyr::tibble(shape1 = shape1, shape2 = shape2, lfc = list(lfc))
+  dplyr::tibble(shape1 = shape1, shape2 = shape2, lfc = list(lfc), pred = list(pred))
 }
 
 shape_ose <- function(score_table, edf){
@@ -189,4 +205,15 @@ extract_lfc <- function(fit) {
     stats::predict(newdata = newdata) %>%
     {.-.[1]} %>% {.*log(exp(1), base = 2)} %>% as.numeric,
    )
+}
+
+extract_pred <- function(fit) {
+
+  newdata = fit$data %>% dplyr::select(.data$time,.data$td) %>% dplyr::distinct()
+
+  dplyr::tibble(time = newdata$time,
+                pred = fit %>%
+                  stats::predict(newdata = newdata, type = "response") %>%
+                  as.numeric,
+  )
 }
