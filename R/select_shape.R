@@ -150,12 +150,20 @@ shape_selector <- function(fits, score){
 
 shape_ose <- function(score_table, edf){
   m.min <- score_table %>% colSums() %>% which.min() %>% names
-  score_table %>%
+  st <-
+    score_table %>%
     dplyr::mutate(dplyr::across(dplyr::everything(), ~ .x - .data[[m.min]])) %>%
     purrr::map(~ c(score_diff = sum(.x), se_diff = sd(.x)*sqrt(length(.x)))) %>%
     dplyr::bind_rows(.id = "model") %>%
     dplyr::mutate(dim = edf[.data$model]) %>%
-    dplyr::filter(.data$se_diff >= .data$score_diff) %>%
+    dplyr::filter(.data$se_diff >= .data$score_diff)
+
+  if(all(c("mdcx","lin") %in% st$model)){
+    if(edf["mdcx"]<=2.001) st <- st %>% dplyr::filter(.data$model!="mdcx")}
+  if(all(c("micv","lin") %in% st$model)){
+    if(edf["micv"]<=2.001) st <- st %>% dplyr::filter(.data$model!="mdcx")}
+
+  st %>%
     dplyr::filter(.data$dim == min(.data$dim)) %>%
     dplyr::arrange(.data$score_diff) %>%
     dplyr::slice(1) %>%
