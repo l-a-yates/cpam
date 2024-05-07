@@ -56,11 +56,15 @@ results <- function(cpo,
       cpo$p_table %>%
       dplyr::filter(.data[[p]] < p_threshold) %>%
       dplyr::select(dplyr::any_of(c("target_id","gene_id")), p = {{p}})
-
-    keep_p_filtered <- p_table %>% dplyr::pull(.data$target_id)
   } else{
-    stop("to do: stringent case")
+    p <- paste0("q_mvn_",level)
+    p_table <-
+      cpo$p_mvn %>%
+      dplyr::filter(.data[[p]] < p_threshold) %>%
+      dplyr::select(dplyr::any_of(c("target_id","gene_id")), p = {{p}})
   }
+
+  keep_p_filtered <- p_table %>% dplyr::pull(.data$target_id)
 
   if(min_count >0 | add_counts){
     counts_by_time <-
@@ -68,7 +72,7 @@ results <- function(cpo,
       dplyr::filter(.data$target_id %in% keep_p_filtered) %>%
       dplyr::group_by(.data$target_id, .data$time) %>%
       dplyr::summarise(counts = mean(.data$counts)) %>%
-      dplyr::ungroup %>%
+      dplyr::ungroup() %>%
       tidyr::pivot_wider(id_cols = .data$target_id, names_from = "time", values_from = "counts") %>%
       {`rownames<-`(as.matrix(dplyr::select(.,-.data$target_id)),.$target_id)}
   }
@@ -99,22 +103,30 @@ results <- function(cpo,
   if(!is.null(cpo$changepoints)){
     p_table <-
       p_table %>%
-      dplyr::left_join(cpo$changepoints %>% dplyr::select(.data$target_id, cp = {{cp_type}}))
+      dplyr::left_join(cpo$changepoints %>% dplyr::select(.data$target_id, cp = {{cp_type}}),
+                       by = "target_id")
   }
 
   if(!is.null(cpo$shapes)){
     p_table <-
       p_table %>%
-      dplyr::left_join(cpo$shapes %>% dplyr::select(.data$target_id, shape = {{shape_type}}))
+      dplyr::left_join(cpo$shapes %>% dplyr::select(.data$target_id, shape = {{shape_type}}),
+                       by = "target_id")
+
+    if(!is.null(p_table$cp)){
+      p_table <-
+        p_table %>% dplyr::mutate(cp = dplyr::if_else(.data$shape == "null",0,.data$cp))
+    }
+
   }
 
   if(add_lfc){
     if(is.null(cpo$lfc)) stop("Shapes must be selected before results can be filtered by log-fold change (lfc)")
-    cpo$lfc
     p_table <- p_table %>%
       dplyr::left_join(cpo$lfc %>%
                   dplyr::rename_with(~ paste0("lfc.", .x, recycle0 = TRUE),
-                              .cols = -.data$target_id))
+                              .cols = -.data$target_id),
+                  by = "target_id")
   }
 
   if(add_counts){
@@ -124,7 +136,8 @@ results <- function(cpo,
       dplyr::left_join(counts_by_time %>%
                          dplyr::as_tibble(rownames = "target_id") %>%
                          dplyr::rename_with(~ paste0("counts.", .x, recycle0 = TRUE),
-                              .cols = -.data$target_id))
+                              .cols = -.data$target_id),
+                       by = "target_id")
   }
 
 

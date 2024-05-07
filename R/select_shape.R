@@ -6,7 +6,6 @@
 #' @param sp numerical >= 0; supply a fixed smoothing parameter.
 #' Note, the fixd value is applied to shape constrained bases only (i.e., not `bs = 'tp'`).
 #' @param bss character vector; names of candidate spline bases (i.e., candidate shape types).
-#' @param include_tp logical; should the non-shape-constrained basis "tp" be included as a candidate
 #' @param family character; negative binomial ("nb", default) or Gaussian ("gaussian")
 #' @param score character; model selection score, either Generalised Cross Validation ("gcv") or
 #' Akaike Information Criterion ("aic")
@@ -20,8 +19,7 @@
 select_shape <- function(cpo,
                          subset = NULL,
                          sp = NULL,
-                         bss = c("micv","mdcx","cv","cx","lin"),
-                         include_tp = T,
+                         bss = c("micv","mdcx","cv","cx","lin","tp","null"),
                          family = c("nb","gaussian"),
                          score = "gcv",
                          cp_type = c("cp_1se","cp_min")) {
@@ -50,7 +48,6 @@ select_shape <- function(cpo,
     dplyr::ungroup()
 
   message(paste0("Estimating shapes for ", nrow(data_nest), " targets"))
-  if(include_tp) bss <- c(bss,"tp")
   message(paste0("Candidate shapes are bs = ", paste0(bss, collapse = ", "),"."))
 
   regularize <- cpo$regularize
@@ -155,16 +152,21 @@ shape_ose <- function(score_table, edf){
     dplyr::mutate(dplyr::across(dplyr::everything(), ~ .x - .data[[m.min]])) %>%
     purrr::map(~ c(score_diff = sum(.x), se_diff = sd(.x)*sqrt(length(.x)))) %>%
     dplyr::bind_rows(.id = "model") %>%
-    dplyr::mutate(dim = edf[.data$model]) %>%
+    dplyr::mutate(edf = edf[.data$model]) %>%
     dplyr::filter(.data$se_diff >= .data$score_diff)
 
-  if(all(c("mdcx","lin") %in% st$model)){
-    if(edf["mdcx"]<=2.001) st <- st %>% dplyr::filter(.data$model!="mdcx")}
-  if(all(c("micv","lin") %in% st$model)){
-    if(edf["micv"]<=2.001) st <- st %>% dplyr::filter(.data$model!="mdcx")}
+  if("lin" %in% st$model){
+    st <- st %>% dplyr::filter(!(.data$model %in% c("mdcx","micv","cv","cx") &
+                                   .data$edf <= 2.01))
+  }
+
+  if("null" %in% st$model){
+    st <- st %>% dplyr::filter(!(.data$model %in% c("mdcx","micv","cv","cx") &
+                                   .data$edf <= 1.01))
+  }
 
   st %>%
-    dplyr::filter(.data$dim == min(.data$dim)) %>%
+    dplyr::filter(.data$edf == min(.data$edf)) %>%
     dplyr::arrange(.data$score_diff) %>%
     dplyr::slice(1) %>%
     dplyr::pull(.data$model)

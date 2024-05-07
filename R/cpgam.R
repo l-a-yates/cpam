@@ -51,6 +51,7 @@ cpgam <- function(data,
     sp <- NULL
     bs <- "null"
     use_scam <- F
+    cp <- 0
     #gam_optimizer <- "outer"
   } else if (k == 2 | bs %in% c("lin","ilin","dlin")){
     f <- paste0(resp," ~ 1 + td")

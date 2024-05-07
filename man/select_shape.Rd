@@ -8,8 +8,7 @@ select_shape(
   cpo,
   subset = NULL,
   sp = NULL,
-  bss = c("micv", "mdcx", "cv", "cx", "lin"),
-  include_tp = T,
+  bss = c("micv", "mdcx", "cv", "cx", "lin", "tp", "null"),
   family = c("nb", "gaussian"),
   score = "gcv",
   cp_type = c("cp_1se", "cp_min")
@@ -25,8 +24,6 @@ for which changepoints will be estimated}
 Note, the fixd value is applied to shape constrained bases only (i.e., not \code{bs = 'tp'}).}
 
 \item{bss}{character vector; names of candidate spline bases (i.e., candidate shape types).}
-
-\item{include_tp}{logical; should the non-shape-constrained basis "tp" be included as a candidate}
 
 \item{family}{character; negative binomial ("nb", default) or Gaussian ("gaussian")}
 
