@@ -149,5 +149,5 @@ results <- function(cpo,
     p_table <-  p_table %>% dplyr::select(dplyr::any_of(c("gene_id","p"))) %>% dplyr::distinct()
   }
 
-  p_table
+  p_table %>% dplyr::arrange(.data$p)
 }

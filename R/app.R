@@ -32,6 +32,9 @@ visualize <- function(cpo,
       if(length(subset)==0) return(message("There are no differentially genes to plot for the given threshold.
                                          Try a different threshold or set 'degs_only = F'"))
     }
+  } else{
+    if(!all(subset %in% cpo$data_long$gene_id)) stop("one or more of the supplied gene_ids are invalid")
+    cpo$data_long <- dplyr::filter(cpo$data_long,.data$gene_id %in% subset)
   }
 
   app(cpo)
@@ -46,13 +49,14 @@ app <- function(cpo){
 
   bss <- c(auto = "auto",
            null = "null",
+           `log-linear (lin)` = "lin",
            `convex (cx)` = "cx",
            `concave (cv)` = "cv",
            #`increasing convex (micx)` = "micx",
-           `increasing concave (micv)` = "micv",
-           `decreasing convex (mdcx)` = "mdcx",
+           `increasing concave (icv)` = "micv",
+           `decreasing convex (dcx)` = "mdcx",
            #`decreasing concave (mdcv)` = "mdcv",
-           `unconstrained (tp)` = "tp"
+           `unconstrained (uc)` = "tp"
            )
 
 
@@ -64,7 +68,7 @@ ui <- shiny::fluidPage(shiny::withMathJax(),
                            shiny::checkboxGroupInput("fits", "Fitted trend", c(`mean trend` = "mean", `CI` = "CI"),
                                        inline = T, selected = c("mean","CI")),
                            shiny::checkboxGroupInput("datas", "Data", c(`mean` = "mean", `bootstrapped quantile` = "CI"),
-                                       inline = T, selected = c("mean")),
+                                       inline = T, selected = c("mean","CI")),
                            shiny::selectizeInput("gene_id", "Gene ID", choices = genes_all[1], selected = genes_all[1]),
                            shiny::selectInput("tx_id", "Transcript ID", choices = "all"),
                            shiny::checkboxInput('gene_level', 'Aggregate counts to gene level', value = F),
@@ -76,12 +80,13 @@ ui <- shiny::fluidPage(shiny::withMathJax(),
                            #shiny::numericInput("diff_var_alpha", "p-value threshold for differential variance",
                            #      value = 0.05, min = 0.01, max = 0.99, step = 0.01),
                            shiny::checkboxInput('facet', 'Transcripts in separate plots', value = T),
+                           shiny::checkboxInput('common_y_scale', 'Common scale for y-axis', value = T),
                            shiny::checkboxInput('shape_type', 'Include \'unconstrained\' (\'tp\') as a candidate shape', value = T),
                            shiny::hr(style="border-color: black;"),
                            shiny::strong("Manual settings for fitted trends"),
                            shiny::br(),shiny::br(),
                            shiny::selectInput("cp_fix", "Changepoint", choices = times,selected = "AUTO"),
-                           shiny::selectInput("bs", "Shape", choices = bss),
+                           shiny::selectInput("bs", "Shape", choices = bss, selected = "tp"),
                            shiny::checkboxInput('sp_select', 'Set smoothness', value = F),
                            shiny::sliderInput("sp", "Smoothness",
                                 min = 0, max = 0.15, value = 0.02,
@@ -155,13 +160,15 @@ server <-  function(input, output, session) {
               sp = if(input$sp_select){(input$sp)} else {NULL},
               cp_fix = if(input$cp_fix!="auto"){as.numeric(input$cp_fix)} else {-999},
               bs = input$bs,
-              facet = input$facet)
+              facet = input$facet,
+              common_y_scale = input$common_y_scale
+              )
 
-  }, height = 900, width = 700) #, outputArgs = list(height = "100%")
+  }, height = 900, width = 1000) #, outputArgs = list(height = "100%")
 }#end server
 
 # Run the application
-shiny::shinyApp(ui = ui, server = server,  options = list(launch.browser = T, height = 1200, width = 1800))
+shiny::shinyApp(ui = ui, server = server,  options = list(launch.browser = T, height = "100%", width = 1800))
 
 
 }

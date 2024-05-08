@@ -22,6 +22,8 @@
 #' @param gene_level_plot logical; plot gene-level data and fitted trend
 #' @param return_fits_only logical; return the model fits. Does not plot the function
 #' @param family character; negative binomial ("nb", default) or Gaussian ("gaussian")
+#' @param common_y_scale logical; for faceted plots of multiple transcripts, should the scale of the y-axis
+#' be common or free.
 #' @param scaled logical; scaled data by overdispersions (for bootstrapped data only)
 #'
 #' @return a ggplot object
@@ -48,6 +50,7 @@ plot_gene_co <- function(cpo,
                          gene_level_plot = F,
                          return_fits_only = F,
                          family = "nb",
+                         common_y_scale = T,
                          scaled = F){
 
   if(family != "nb"){
@@ -200,7 +203,9 @@ plot_gene_co <- function(cpo,
   if(show_data_ci) gg <-  gg + ggplot2::geom_linerange(ggplot2::aes(ymin = .data$q_lo, ymax = .data$q_hi, col = target_id),
                                                        data = obs,
                                                        alpha = 0.3)
-  if(facet) gg <- gg + ggplot2::facet_wrap(~ target_id, labeller = ggplot2::as_labeller(facet_labels))
+  if(facet) gg <- gg + ggplot2::facet_wrap(~ target_id,
+                                           scales = if_else(common_y_scale, "fixed","free_y"),
+                                           labeller = ggplot2::as_labeller(facet_labels))
   if(facet) gg <- gg + ggplot2::theme(legend.position = "none")
   if(!facet) gg <- gg + ggplot2::labs(subtitle = paste0(bs_labels, collapse = ", "))
 
