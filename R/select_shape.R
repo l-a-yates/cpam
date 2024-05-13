@@ -59,9 +59,8 @@ select_shape <- function(cpo,
     score <- "aic_negbin"
   }
 
-  shapes_gt2 <-
+  shapes <-
     data_nest %>%
-    #dplyr::filter(.data$k >= 2) %>%
     dplyr::mutate(x =
                     .data$data %>%
                     pbmcapply::pbmclapply(function(d) {
@@ -97,21 +96,22 @@ select_shape <- function(cpo,
     dplyr::select(-.data$x) %>%
     dplyr::ungroup()
 
-  #null_tibble <- dplyr::tibble(time = cpo$times,lfc = 0)
-
   cpo$shapes <-
     data_nest %>%
     dplyr::select(-.data$data) %>%
-    dplyr::left_join(dplyr::select(shapes_gt2, -.data$lfc, -.data$pred), by = "target_id") %>%
+    dplyr::left_join(dplyr::select(shapes, -.data$lfc, -.data$pred), by = "target_id") %>%
     dplyr::mutate(k = NULL)
-    # dplyr::mutate(shape1 = dplyr::if_else(.data$k==1,"null",.data$shape1),
-    #               shape2 = dplyr::if_else(.data$k==1,"null",.data$shape2),
-    #               k = NULL)
+
+  cpo$changepoints <-
+    cpo$changepoints %>%
+    dplyr::left_join(cpo$shapes %>% dplyr::select(.data$target_id,.data$shape1)) %>%
+    dplyr::mutate(dplyr::across(dplyr::all_of(cp_type), ~ if_else(.data$shape1 == "null", cp_max, .data[[cp_type]]))) %>%
+    dplyr::select(-.data$shape1)
 
   cpo$lfc <-
     data_nest %>%
     dplyr::select(-.data$data) %>%
-    dplyr::left_join(dplyr::select(shapes_gt2, .data$target_id,.data$lfc), by = "target_id") %>%
+    dplyr::left_join(dplyr::select(shapes, .data$target_id,.data$lfc), by = "target_id") %>%
     #dplyr::mutate(lfc = dplyr::if_else(.data$k==1, list(null_tibble), .data$lfc)) %>%
     dplyr::select(-.data$cp,-.data$k) %>%
     tidyr::unnest(.data$lfc) %>%
@@ -120,7 +120,7 @@ select_shape <- function(cpo,
   cpo$pred <-
     data_nest %>%
     dplyr::select(-.data$data) %>%
-    dplyr::left_join(dplyr::select(shapes_gt2, .data$target_id,.data$pred), by = "target_id") %>%
+    dplyr::left_join(dplyr::select(shapes, .data$target_id,.data$pred), by = "target_id") %>%
     dplyr::select(-.data$cp,-.data$k) %>%
     tidyr::unnest(.data$pred) %>%
     tidyr::pivot_wider(id_cols = .data$target_id, names_from = .data$time, values_from = .data$pred)
@@ -207,13 +207,13 @@ extract_lfc <- function(fit) {
    )
 }
 
-extract_pred <- function(fit) {
+extract_pred <- function(fit, scaled = F) {
 
   newdata = fit$data %>% dplyr::select(.data$time,.data$td) %>% dplyr::distinct()
-
+  od <- dplyr::if_else(scaled,1,as.numeric(fit$data$overdispersions[1]))
   dplyr::tibble(time = newdata$time,
                 pred = fit %>%
                   stats::predict(newdata = newdata, type = "response") %>%
-                  as.numeric,
-  )
+                  as.numeric) %>%
+    mutate(pred = .data$pred*od)
 }

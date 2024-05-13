@@ -119,7 +119,7 @@ results <- function(cpo,
 
     if(!is.null(p_table$cp)){
       p_table <-
-        p_table %>% dplyr::mutate(cp = dplyr::if_else(.data$shape == "null",0,.data$cp))
+        p_table %>% dplyr::mutate(cp = dplyr::if_else(.data$shape == "null",max(cpo$times),.data$cp))
     }
 
   }

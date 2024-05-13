@@ -113,7 +113,8 @@ plot_gene_co <- function(cpo,
     if (!is.null(cpo$p_table)) {
       data <- data %>%
         dplyr::left_join(cpo$p_table %>% dplyr::select(.data$target_id, .data$q_val_target), by = "target_id") %>%
-        dplyr::filter(.data$q_val_target <= null_threshold)
+        dplyr::filter(.data$q_val_target <= null_threshold,
+                      .data$shape != "null")
     } #else{
     #data <- data %>% dplyr::filter(.data$cp != 240)
     #  }
@@ -204,7 +205,7 @@ plot_gene_co <- function(cpo,
                                                        data = obs,
                                                        alpha = 0.3)
   if(facet) gg <- gg + ggplot2::facet_wrap(~ target_id,
-                                           scales = if_else(common_y_scale, "fixed","free_y"),
+                                           scales = dplyr::if_else(common_y_scale, "fixed","free_y"),
                                            labeller = ggplot2::as_labeller(facet_labels))
   if(facet) gg <- gg + ggplot2::theme(legend.position = "none")
   if(!facet) gg <- gg + ggplot2::labs(subtitle = paste0(bs_labels, collapse = ", "))

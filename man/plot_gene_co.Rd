@@ -24,6 +24,7 @@ plot_gene_co(
   gene_level_plot = F,
   return_fits_only = F,
   family = "nb",
+  common_y_scale = T,
   scaled = F
 )
 }
@@ -68,6 +69,9 @@ if equal to "se", the interval is set to the approximate standard error (see \co
 \item{return_fits_only}{logical; return the model fits. Does not plot the function}
 
 \item{family}{character; negative binomial ("nb", default) or Gaussian ("gaussian")}
+
+\item{common_y_scale}{logical; for faceted plots of multiple transcripts, should the scale of the y-axis
+be common or free.}
 
 \item{scaled}{logical; scaled data by overdispersions (for bootstrapped data only)}
 }
