@@ -17,7 +17,8 @@ compute_p_values <- function(cpo,
                              p_adj_method = "BH",
                              fixed_effects = NULL,
                              gam_method = "REML",
-                             gam_optimizer = "efs"){
+                             gam_optimizer = "efs",
+                             silent = TRUE){
 
   if(!is.null(subset)){
     if(!is.character(subset)){
@@ -93,7 +94,7 @@ compute_p_values <- function(cpo,
             summary %>%
             {
               .$s.table[test_var, "p-value"]
-            })
+            }, silent = silent)
           if ("try-error" %in% class(p.val)) {
             return(NA)
           }

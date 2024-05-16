@@ -67,7 +67,7 @@ results <- function(cpo,
   keep_p_filtered <- p_table %>% dplyr::pull(.data$target_id)
 
   if(min_count >0 | add_counts){
-    if(is.null(cpo$pred)) stop("Shapes must be selected before results can be filtered by log-fold change (lfc)")
+    if(is.null(cpo$pred)) stop("Shapes must be selected before results can be filtered by min count or counts added")
     counts_by_time <-
       cpo$pred %>%
       {`rownames<-`(as.matrix(dplyr::select(.,-"target_id")),.$target_id)}
