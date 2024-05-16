@@ -104,7 +104,7 @@ select_shape <- function(cpo,
 
   cpo$changepoints <-
     cpo$changepoints %>%
-    dplyr::left_join(cpo$shapes %>% dplyr::select(.data$target_id,.data$shape1)) %>%
+    dplyr::left_join(cpo$shapes %>% dplyr::select(.data$target_id,.data$shape1), by = "target_id") %>%
     dplyr::mutate(dplyr::across(dplyr::all_of(cp_type), ~ if_else(.data$shape1 == "null", cp_max, .data[[cp_type]]))) %>%
     dplyr::select(-.data$shape1)
 
@@ -112,7 +112,6 @@ select_shape <- function(cpo,
     data_nest %>%
     dplyr::select(-.data$data) %>%
     dplyr::left_join(dplyr::select(shapes, .data$target_id,.data$lfc), by = "target_id") %>%
-    #dplyr::mutate(lfc = dplyr::if_else(.data$k==1, list(null_tibble), .data$lfc)) %>%
     dplyr::select(-.data$cp,-.data$k) %>%
     tidyr::unnest(.data$lfc) %>%
     tidyr::pivot_wider(id_cols = .data$target_id, names_from = .data$time, values_from = .data$lfc)
@@ -210,7 +209,10 @@ extract_lfc <- function(fit) {
 extract_pred <- function(fit, scaled = F) {
 
   newdata = fit$data %>% dplyr::select(.data$time,.data$td) %>% dplyr::distinct()
-  od <- dplyr::if_else(scaled,1,as.numeric(fit$data$overdispersions[1]))
+  od <- 1
+  if(!is.null(fit$data$overdispersions) & !scaled){
+    od <- as.numeric(fit$data$overdispersions[1])
+    }
   dplyr::tibble(time = newdata$time,
                 pred = fit %>%
                   stats::predict(newdata = newdata, type = "response") %>%
