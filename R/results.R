@@ -71,14 +71,6 @@ results <- function(cpo,
     counts_by_time <-
       cpo$pred %>%
       {`rownames<-`(as.matrix(dplyr::select(.,-"target_id")),.$target_id)}
-
-      # cpo$data_long %>%
-      # dplyr::filter(.data$target_id %in% keep_p_filtered) %>%
-      # dplyr::group_by(.data$target_id, .data$time) %>%
-      # dplyr::summarise(counts = mean(.data$counts)) %>%
-      # dplyr::ungroup() %>%
-      # tidyr::pivot_wider(id_cols = .data$target_id, names_from = "time", values_from = "counts") %>%
-      # {`rownames<-`(as.matrix(dplyr::select(.,-.data$target_id)),.$target_id)}
   }
 
   if(min_count > 0){

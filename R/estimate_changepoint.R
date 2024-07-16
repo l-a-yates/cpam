@@ -100,14 +100,19 @@ estimate_changepoint <- function(cpo,
   cpo$p_mvn <-
     cpo$changepoints %>%
     dplyr::select(.data$target_id,p_mvn_target = .data$p_mvn) %>%
-    dplyr::left_join(cpo$p_table %>% dplyr::select(.data$target_id, .data$gene_id, .data$counts_mean),
+    dplyr::left_join(cpo$p_table %>% dplyr::select(tidyr::any_of(c("target_id","gene_id","counts_mean"))),
                      by = "target_id") %>%
-    dplyr::relocate(.data$target_id, .data$gene_id, .data$counts_mean) %>%
-    dplyr::mutate(q_mvn_target = stats::p.adjust(.data$p_mvn_target, method = "BH")) %>%
-    dplyr::group_by(.data$gene_id) %>%
-    dplyr::mutate(p_mvn_gene = aggregation::lancaster(pmax(.data$p_mvn_target,10e-320),.data$counts_mean/sum(.data$counts_mean))) %>%
-    dplyr::ungroup() %>%
-    dplyr::mutate(q_mvn_gene = stats::p.adjust(.data$p_mvn_gene, method = "BH"))
+    dplyr::relocate(tidyr::any_of(c("target_id","gene_id","counts_mean"))) %>%
+    dplyr::mutate(q_mvn_target = stats::p.adjust(.data$p_mvn_target, method = "BH"))
+
+  if(cpo$aggregate_to_gene){
+    cpo$p_mvn <-
+      cpo$p_mvn %>%
+      dplyr::group_by(.data$gene_id) %>%
+      dplyr::mutate(p_mvn_gene = aggregation::lancaster(pmax(.data$p_mvn_target,10e-320),.data$counts_mean/sum(.data$counts_mean))) %>%
+      dplyr::ungroup() %>%
+      dplyr::mutate(q_mvn_gene = stats::p.adjust(.data$p_mvn_gene, method = "BH"))
+  }
 
     cpo
 }

@@ -78,6 +78,7 @@ prepare_cpam <- function(exp_design,
 
     if(!is.null(exp_design[["case"]])) stop("The column name 'case' is reserved and cannot be used in 'exp_design'")
     exp_design <- exp_design %>% dplyr::mutate(case = as.numeric(exp_design[[condition_var]] == case_value))
+    # check the case values by timepoint
   }
 
   if(!num_cores%%1==0) stop("num_cores must be integer values")
@@ -129,7 +130,7 @@ prepare_cpam <- function(exp_design,
     tidyr::as_tibble(rownames = "target_id") %>%
     tidyr::pivot_longer(-.data$target_id, names_to = "sample", values_to = "counts_raw") %>%
     dplyr::mutate(counts = counts_raw) %>%
-    dplyr::left_join(exp_design %>% dplyr::select(-.data$path), by = "sample") %>%
+    dplyr::left_join(exp_design %>% dplyr::select(-tidyr::any_of(c("path"))), by = "sample") %>%
     dplyr::arrange(.data$target_id)
 
   if(aggregate_to_gene){
@@ -164,6 +165,11 @@ prepare_cpam <- function(exp_design,
     norm_factor <- DESeq2::estimateSizeFactorsForMatrix(count_matrix_filtered)
   } else rep(1, nrow(exp_design)) %>% `names<-`(exp_design$sample)
 
+  data_long <-
+    data_long %>%
+    dplyr::filter(.data$target_id %in% target_to_keep) %>%
+    dplyr::mutate(norm_factor = norm_factor[sample]) %>%
+    dplyr::relocate(.data$target_id)
 
   if(regularize){
     if(bootstrap){
@@ -171,16 +177,12 @@ prepare_cpam <- function(exp_design,
     } else {
       dispersions <- estimate_dispersions(count_matrix_filtered,exp_design)
     }
+    data_long <-
+      data_long %>%
+      dplyr::mutate(disp = dispersions[.data$target_id] %>% as.numeric)
   }
 
-  data_long <-
-    data_long %>%
-    dplyr::filter(.data$target_id %in% target_to_keep) %>%
-    dplyr::mutate(norm_factor = norm_factor[sample],
-                  disp = dispersions[.data$target_id] %>% as.numeric) %>%
-    dplyr::relocate(.data$target_id)
-
-  list(exp_design = exp_design %>% dplyr::select(-.data$path),
+  list(exp_design = exp_design %>% dplyr::select(-tidyr::any_of(c("path"))),
        count_matrix_raw = counts_raw,
        count_matrix_filtered = count_matrix_filtered,
        target_to_keep = target_to_keep,

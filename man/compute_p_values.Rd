@@ -10,7 +10,8 @@ compute_p_values(
   p_adj_method = "BH",
   fixed_effects = NULL,
   gam_method = "REML",
-  gam_optimizer = "efs"
+  gam_optimizer = "efs",
+  silent = TRUE
 )
 }
 \arguments{
@@ -25,7 +26,9 @@ fixed affects. Terms must correspond to columns in \code{exp_design}}
 
 \item{gam_method}{fitting method for \code{mgcv::gam}}
 
-\item{gam_optimizer}{optikization method for \code{mgcv::gam}}
+\item{gam_optimizer}{optimization method for \code{mgcv::gam}}
+
+\item{silent}{logical; silences warnings from model fitting}
 }
 \value{
 an updated cpam object with P values stored in the new slot "p_table"
