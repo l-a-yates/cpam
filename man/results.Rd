@@ -41,6 +41,12 @@ results(
 
 \item{summarise_to_gene}{logical; return gene-level results only}
 }
+\value{
+a tibble
+}
 \description{
 Title
+}
+\examples{
+1+1
 }

@@ -19,10 +19,10 @@
 #' @param shape_type character; "shape1" to include unconstrained or otherwise "shape2"
 #' @param summarise_to_gene logical; return gene-level results only
 #'
-#' @return
+#' @return a tibble
 #' @export
 #'
-#' @examples
+#' @examples 1+1
 results <- function(cpo,
                     p_threshold = 0.05,
                     p_type = c("p_gam","p_mvn"),

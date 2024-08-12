@@ -15,7 +15,7 @@
 #' @return a cpam object with the selected shapes added to the slot "shapes"
 #' @export
 #'
-#' @examples
+#' @examples 1+1
 select_shape <- function(cpo,
                          subset = NULL,
                          sp = NULL,

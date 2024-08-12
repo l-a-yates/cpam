@@ -13,7 +13,8 @@ estimate_changepoint(
   sp = NULL,
   bss = "tp",
   family = c("nb", "gaussian"),
-  score = "aic"
+  score = "aic",
+  compute_mvn = T
 )
 }
 \arguments{
@@ -37,6 +38,9 @@ Default is thin plate ("tp") splines.}
 
 \item{score}{character; model selection score, either Generalised Cross Validation ("gcv") or
 Akaike Information Criterion ("aic")}
+
+\item{compute_mvn}{Use simulation to compute p-value under multivariate normal model of the
+model scores}
 }
 \value{
 a cpam object with the estimated changepoint table added to the slot "changepoints"

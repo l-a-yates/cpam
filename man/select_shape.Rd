@@ -39,3 +39,6 @@ a cpam object with the selected shapes added to the slot "shapes"
 \description{
 Use model selection to select a shape from a list of candidates
 }
+\examples{
+1+1
+}

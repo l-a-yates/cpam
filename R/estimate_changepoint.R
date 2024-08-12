@@ -12,6 +12,8 @@
 #' @param family character; negative binomial ("nb", default) or Gaussian ("gaussian")
 #' @param score character; model selection score, either Generalised Cross Validation ("gcv") or
 #' Akaike Information Criterion ("aic")
+#' @param compute_mvn Use simulation to compute p-value under multivariate normal model of the
+#' model scores
 #'
 #' @return a cpam object with the estimated changepoint table added to the slot "changepoints"
 #' @export
@@ -25,7 +27,8 @@ estimate_changepoint <- function(cpo,
                         sp = NULL,
                         bss = "tp",
                         family = c("nb","gaussian"),
-                        score = "aic") {
+                        score = "aic",
+                        compute_mvn = T) {
 
   family <- match.arg(family)
 
@@ -97,21 +100,23 @@ estimate_changepoint <- function(cpo,
                     }, mc.cores = cpo$num_cores)) %>%
    tidyr::unnest(cols = "x")
 
-  cpo$p_mvn <-
-    cpo$changepoints %>%
-    dplyr::select(.data$target_id,p_mvn_target = .data$p_mvn) %>%
-    dplyr::left_join(cpo$p_table %>% dplyr::select(tidyr::any_of(c("target_id","gene_id","counts_mean"))),
-                     by = "target_id") %>%
-    dplyr::relocate(tidyr::any_of(c("target_id","gene_id","counts_mean"))) %>%
-    dplyr::mutate(q_mvn_target = stats::p.adjust(.data$p_mvn_target, method = "BH"))
+  if(compute_mvn){
+      cpo$p_mvn <-
+      cpo$changepoints %>%
+      dplyr::select(.data$target_id,p_mvn_target = .data$p_mvn) %>%
+      dplyr::left_join(cpo$p_table %>% dplyr::select(tidyr::any_of(c("target_id","gene_id","counts_mean"))),
+                       by = "target_id") %>%
+      dplyr::relocate(tidyr::any_of(c("target_id","gene_id","counts_mean"))) %>%
+      dplyr::mutate(q_mvn_target = stats::p.adjust(.data$p_mvn_target, method = "BH"))
 
-  if(cpo$aggregate_to_gene){
-    cpo$p_mvn <-
-      cpo$p_mvn %>%
-      dplyr::group_by(.data$gene_id) %>%
-      dplyr::mutate(p_mvn_gene = aggregation::lancaster(pmax(.data$p_mvn_target,10e-320),.data$counts_mean/sum(.data$counts_mean))) %>%
-      dplyr::ungroup() %>%
-      dplyr::mutate(q_mvn_gene = stats::p.adjust(.data$p_mvn_gene, method = "BH"))
+    if(cpo$aggregate_to_gene){
+      cpo$p_mvn <-
+        cpo$p_mvn %>%
+        dplyr::group_by(.data$gene_id) %>%
+        dplyr::mutate(p_mvn_gene = aggregation::lancaster(pmax(.data$p_mvn_target,10e-320),.data$counts_mean/sum(.data$counts_mean))) %>%
+        dplyr::ungroup() %>%
+        dplyr::mutate(q_mvn_gene = stats::p.adjust(.data$p_mvn_gene, method = "BH"))
+    }
   }
 
     cpo
