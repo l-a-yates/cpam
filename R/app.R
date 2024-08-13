@@ -85,8 +85,8 @@ ui <- shiny::fluidPage(shiny::withMathJax(),
                            shiny::hr(style="border-color: black;"),
                            shiny::strong("Manual settings for fitted trends"),
                            shiny::br(),shiny::br(),
-                           shiny::selectInput("cp_fix", "Changepoint", choices = times,selected = "AUTO"),
-                           shiny::selectInput("bs", "Shape", choices = bss, selected = "tp"),
+                           shiny::selectInput("cp_fix", "Changepoint", choices = times,selected = "auto"),
+                           shiny::selectInput("bs", "Shape", choices = bss, selected = "auto"),
                            shiny::checkboxInput('sp_select', 'Set smoothness', value = F),
                            shiny::sliderInput("sp", "Smoothness",
                                 min = 0, max = 0.15, value = 0.02,
@@ -115,10 +115,10 @@ server <-  function(input, output, session) {
                        choices = genes_all,
                        server = TRUE))
   shiny::observe(shiny::updateSelectInput(session, 'tx_id',
-                            choices = c("all",(cpo$t2g %>%
+                            choices = c("all",(if(cpo$gene_level){input$gene_id } else { cpo$t2g %>%
                                                  dplyr::filter(.data$gene_id == input$gene_id) %>%
                                                  dplyr::arrange(.data$target_id) %>%
-                                                 dplyr::pull(.data$target_id))),
+                                                 dplyr::pull(.data$target_id)})),
                             selected = "all"))
 
   shiny::observe(if(cpo$gene_level){
