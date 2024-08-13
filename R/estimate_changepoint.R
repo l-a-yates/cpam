@@ -36,11 +36,11 @@ estimate_changepoint <- function(cpo,
     if(degs_only){
       if(cpo$gene_level){
         subset <- cpo$p_table %>%
-          dplyr::filter(.data$q_val_target <= deg_threshold) %>%
+          dplyr::filter(.data$q_val_target <= deg_threshold | is.na(.data$q_val_target)) %>%
           dplyr::pull(.data$target_id)
       } else {
         subset <- cpo$p_table %>%
-          dplyr::filter(.data$q_val_gene <= deg_threshold) %>%
+          dplyr::filter(.data$q_val_gene <= deg_threshold | is.na(.data$q_val_target)) %>%
           dplyr::pull(.data$target_id)
       }
     }
@@ -208,7 +208,14 @@ calc_score_table <- function(data,
         NA
       else
         purrr::map(., ~ do.call(score, args = list(fit = .x))) %>%
-        dplyr::bind_cols()
+        dplyr::bind_cols() %>%
+        dplyr::select(where(~ !any(is.na(.x)))) %>%
+        {
+          if (nrow(.) == 0)
+            NA
+          else
+            .
+        }
     }
 
 }
