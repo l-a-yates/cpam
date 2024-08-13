@@ -6,7 +6,7 @@ predict_cpgam <- function(fit,
                           scaled = F){
 
 
-  newdata <- dplyr::tibble(time = seq(0, max(fit$data$time),
+  newdata <- dplyr::tibble(time = seq(min(fit$data$time), max(fit$data$time),
                                       length.out = length.out),
                            td = pmax(fit$cp, .data$time))
 

@@ -43,9 +43,10 @@ select_shape <- function(cpo,
         dplyr::filter(.,.data$target_id %in% subset)
     } %>%
     dplyr::rowwise() %>%
-    dplyr::mutate(cp = .data$data$cp[1],
+        dplyr::mutate(cp = .data$data$cp[1],
            k = sum(unique(.data$data$time)>= .data$cp)) %>%
-    dplyr::ungroup()
+    dplyr::ungroup() %>%
+    dplyr::filter(!is.na(cp))
 
   message(paste0("Estimating shapes for ", nrow(data_nest), " targets"))
   message(paste0("Candidate shapes are bs = ", paste0(bss, collapse = ", "),"."))
@@ -58,6 +59,7 @@ select_shape <- function(cpo,
   if(family == "nb" & score == "aic"){
     score <- "aic_negbin"
   }
+
 
   shapes <-
     data_nest %>%
@@ -84,8 +86,14 @@ select_shape <- function(cpo,
                           fixed_effects = fixed_effects
                         ))  %>%
                         {.[!is.na(.)]} %>%
-                        keep_converged() %>%
-                        shape_selector(score)
+                        {
+                          if(all(is.na(.)))
+                            NA
+                          else
+                            keep_converged(.) %>%
+                            shape_selector(score)
+                        }
+
                     }, mc.cores = cpo$num_cores)) %>%
     dplyr::select(.data$target_id, .data$x) %>%
     dplyr::rowwise() %>%

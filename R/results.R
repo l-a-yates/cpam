@@ -44,7 +44,7 @@ results <- function(cpo,
     level <- "gene"
   } else level <- "target"
 
-  if(summarise_to_gene){
+  if(summarise_to_gene & !cpo$gene_level){
     if(add_lfc | add_counts) message("add_lfc and add_counts are not available for summarise_to_gene = T")
     add_lfc <- F
     add_counts <- F
@@ -137,7 +137,7 @@ results <- function(cpo,
   }
 
 
-  if(summarise_to_gene){
+  if(summarise_to_gene & !cpo$gene_level){
     p_table <-  p_table %>% dplyr::select(dplyr::any_of(c("gene_id","p"))) %>% dplyr::distinct()
   }
 

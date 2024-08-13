@@ -87,18 +87,38 @@ estimate_changepoint <- function(cpo,
                           regularize = regularize
                         ))
 
-                      bs.min = score_tables %>% purrr::map( ~ colSums(.x) %>% min) %>% which.min()
+                      if(all(is.na(score_tables))){
+                        bs.min <- cp_min <- cp_1se <- p_mvn <- bs <- score_table <- NA
+                      } else {
+                        bs.min = score_tables %>% purrr::map( ~ colSums(.x) %>% min) %>% which.min()
+                        cp_min = score_tables[[bs.min]] %>% colSums() %>% which.min() %>% names %>% as.numeric
+                        cp_1se = score_tables[[bs.min]] %>% ose_rule(nse = 1) %>% as.numeric
+                        if(compute_mvn){
+                          p_mvn = simulate_p_mvn(score_tables[[bs.min]])
+                        } else p_mvn <- NA
+                        bs = bss[bs.min]
+                        score_table = list(score_tables[[bs.min]])
+                      }
 
                       dplyr::tibble(
-                        cp_min = score_tables[[bs.min]] %>% colSums() %>% which.min() %>% names %>% as.numeric,
-                        cp_1se = score_tables[[bs.min]] %>% ose_rule(nse = 1) %>% as.numeric,
-                        p_mvn = simulate_p_mvn(score_tables[[bs.min]]),
-                        bs = bss[bs.min],
+                        cp_min = cp_min,
+                        cp_1se = cp_1se,
+                        p_mvn = p_mvn,
+                        bs = bs,
                         family = family,
-                        score_table = list(score_tables[[bs.min]])
+                        score_table = score_table
                       )
                     }, mc.cores = cpo$num_cores)) %>%
    tidyr::unnest(cols = "x")
+
+  cpo[["problematic_targets"]] <-
+    cpo$changepoints %>%
+    dplyr::filter(is.na(.data$cp_min)) %>%
+    pull(target_id)
+
+  cpo$changepoints <-
+    cpo$changepoints %>%
+    dplyr::filter(!is.na(.data$cp_min))
 
   if(compute_mvn){
       cpo$p_mvn <-
@@ -183,8 +203,14 @@ calc_score_table <- function(data,
                        sp = sp,
                        bs = bs)) %>%
     {.[!is.na(.)]} %>%
-    purrr::map(~ do.call(score, args = list(fit = .x))) %>%
-    dplyr::bind_cols()
+    {
+      if (length(.) == 0)
+        NA
+      else
+        purrr::map(., ~ do.call(score, args = list(fit = .x))) %>%
+        dplyr::bind_cols()
+    }
+
 }
 
 aic <- function(fit){
