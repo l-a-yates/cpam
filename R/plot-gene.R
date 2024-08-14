@@ -214,3 +214,55 @@ plot_gene_co <- function(cpo,
 }
 
 
+
+#' Plot clustered targets
+#'
+#' @param cpo a cpam object
+#' @param res a tibble, output from [results()]
+#' @param changepoints numerical or character; one or more changepoints
+#' @param shapes character; one or more shapes
+#' @param alpha numerical; line transparency
+#'
+#' @return a ggplot object
+#' @export
+#'
+#' @examples 1 + 1
+plot_cluster <- function(cpo, res, changepoints, shapes, alpha = 0.1){
+  txs <-
+    res %>%
+    dplyr::filter(.data$cp %in% changepoints,
+                  .data$shape %in% shapes) %>%
+    dplyr::pull(.data$target_id)
+
+  if(length(txs) == 0) {warning("No targets found for the selected shapes and timepoints"); return(NULL)}
+
+  plot_data <-
+    txs %>%
+    purrr::set_names() %>%
+    purrr::map_dfr(~ plot_gene_co(cpo,target_id = .x,return_fits_only = T) %>%
+                     predict_lfc, .id = "target_id")
+
+  plot_data %>%
+    ggplot2::ggplot(ggplot2::aes(x = .data$time, y = .data$lfc, group = .data$target_id)) +
+    ggplot2::geom_line(alpha = alpha) +
+    ggplot2::theme_classic()
+
+}
+
+
+
+predict_lfc <- function(fit, length.out = 200) {
+
+  newdata <- dplyr::tibble(time = seq(0, max(fit$data$time),
+                                      length.out = length.out),
+                           td = pmax(fit$cp, .data$time))
+
+  dplyr::tibble(time = newdata$time,
+                lfc = fit %>%
+                  stats::predict(newdata = newdata) %>%
+                  {.-.[1]} %>% {.*log(exp(1), base = 2)} %>% as.numeric,
+  )
+}
+
+
+
