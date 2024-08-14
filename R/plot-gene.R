@@ -253,7 +253,7 @@ plot_cluster <- function(cpo, res, changepoints, shapes, alpha = 0.1){
 
 predict_lfc <- function(fit, length.out = 200) {
 
-  newdata <- dplyr::tibble(time = seq(0, max(fit$data$time),
+  newdata <- dplyr::tibble(time = seq(min(fit$data$time), max(fit$data$time),
                                       length.out = length.out),
                            td = pmax(fit$cp, .data$time))
 
