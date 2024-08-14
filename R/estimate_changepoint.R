@@ -114,7 +114,7 @@ estimate_changepoint <- function(cpo,
   cpo[["problematic_targets"]] <-
     cpo$changepoints %>%
     dplyr::filter(is.na(.data$cp_min)) %>%
-    pull(target_id)
+    dplyr::pull(.data$target_id)
 
   cpo$changepoints <-
     cpo$changepoints %>%
@@ -209,7 +209,7 @@ calc_score_table <- function(data,
       else
         purrr::map(., ~ do.call(score, args = list(fit = .x))) %>%
         dplyr::bind_cols() %>%
-        dplyr::select(where(~ !any(is.na(.x)))) %>%
+        dplyr::select(dplyr::where(~ !any(is.na(.x)))) %>%
         {
           if (nrow(.) == 0)
             NA

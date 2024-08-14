@@ -46,7 +46,7 @@ select_shape <- function(cpo,
         dplyr::mutate(cp = .data$data$cp[1],
            k = sum(unique(.data$data$time)>= .data$cp)) %>%
     dplyr::ungroup() %>%
-    dplyr::filter(!is.na(cp))
+    dplyr::filter(!is.na(.data$cp))
 
   message(paste0("Estimating shapes for ", nrow(data_nest), " targets"))
   message(paste0("Candidate shapes are bs = ", paste0(bss, collapse = ", "),"."))

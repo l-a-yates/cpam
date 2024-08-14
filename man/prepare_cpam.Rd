@@ -16,7 +16,7 @@ prepare_cpam(
   filter_fun_args = list(min_reads = 5, min_prop = 3/5),
   regularize = TRUE,
   gene_level = FALSE,
-  aggregate_to_gene = TRUE,
+  aggregate_to_gene = !gene_level,
   condition_var = "condition",
   case_value = "treatment",
   num_cores = 1,
