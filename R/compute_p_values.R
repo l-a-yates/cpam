@@ -55,18 +55,10 @@ compute_p_values <- function(cpo,
                      length(unique(cpo$exp_design$time)),
                      ")")
 
-  if(cpo$model_type == "case-control"){
-    f_string <- paste0(f_string,
-                       " + s(td, bs = 'tp', k = ",
-                       length(unique(cpo$exp_design$time)),
-                       ")" )
-    test_var <- "s(td)"
-  } else test_var <- "s(time)"
-
   data_nest <- cpo$data_long %>%
     {
       if(cpo$model_type == "case-control"){
-        dplyr::mutate(.,td = .data$time*.data$case)
+        dplyr::mutate(.,case_factor = factor(.data$case))
       } else{
         .
       }
@@ -79,6 +71,8 @@ compute_p_values <- function(cpo,
         dplyr::filter(.,.data$target_id %in% subset)
     }
 
+
+  if(cpo$model_type == "case-only"){
   p_table =
     data_nest %>%
     dplyr::rowwise() %>%
@@ -100,7 +94,7 @@ compute_p_values <- function(cpo,
           ) %>%
             summary %>%
             {
-              .$s.table[test_var, "p-value"]
+              .$s.table["s(time)", "p-value"]
             }, silent = silent)
           if ("try-error" %in% class(p.val)) {
             return(NA)
@@ -110,6 +104,61 @@ compute_p_values <- function(cpo,
     ) %>%
     dplyr::mutate(p_val_target = pmax(.data$p_val_target, 10e-320),
                   q_val_target = stats::p.adjust(.data$p_val_target, method = p_adj_method))
+  } # end case-only
+
+
+  if(cpo$model_type == "case-control"){
+
+    f_string_cc <- paste0("counts ~",
+                          fe_string,
+                          " s(time, bs = 'tp', by = case_factor, k = ",
+                          length(unique(cpo$exp_design$time)),
+                          ")")
+    p_table =
+      data_nest %>%
+      dplyr::rowwise() %>%
+      dplyr::transmute(.data$target_id, counts_mean = mean(.data$data$counts)) %>%
+      dplyr::ungroup() %>%
+      dplyr::mutate(
+        p_val_target = data_nest$data %>%
+          pbmcapply::pbmclapply(function(d) {
+            p.val = try(mgcv::anova.gam(
+              mgcv::gam(
+                formula = stats::as.formula(f_string_cc),
+                data = d,
+                method = gam_method,
+                optimizer = gam_optimizer,
+                offset = log(d$norm_factor),
+                family = mgcv::nb(theta = if (regularize)
+                  as.numeric(1 / d$disp[1])
+                  else
+                    NULL)
+              ),
+              mgcv::gam(
+                formula = stats::as.formula(f_string),
+                data = d,
+                method = gam_method,
+                optimizer = gam_optimizer,
+                offset = log(d$norm_factor),
+                family = mgcv::nb(theta = if (regularize)
+                  as.numeric(1 / d$disp[1])
+                  else
+                    NULL)
+              ),
+              test = "F"
+            )$`Pr(>Chi)`[2]
+            ,
+            silent = silent)
+            if ("try-error" %in% class(p.val)) {
+              return(NA)
+            }
+            p.val
+          }, mc.cores = cpo$num_cores) %>% purrr::list_c()
+      ) %>%
+      dplyr::mutate(p_val_target = pmax(.data$p_val_target, 10e-320),
+                    q_val_target = stats::p.adjust(.data$p_val_target, method = p_adj_method))
+  } # end case-control
+
 
   if(cpo$aggregate_to_gene){
     p_table <-
