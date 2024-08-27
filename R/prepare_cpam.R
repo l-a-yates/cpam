@@ -163,7 +163,7 @@ prepare_cpam <- function(exp_design,
   count_matrix_filtered <- counts_raw[target_to_keep,]
   if(normalize){
     norm_factor <- DESeq2::estimateSizeFactorsForMatrix(count_matrix_filtered)
-  } else rep(1, nrow(exp_design)) %>% `names<-`(exp_design$sample)
+  } else norm_factor <- rep(1, nrow(exp_design)) %>% `names<-`(exp_design$sample)
 
   data_long <-
     data_long %>%
