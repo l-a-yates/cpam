@@ -58,7 +58,7 @@ compute_p_values <- function(cpo,
   data_nest <- cpo$data_long %>%
     {
       if(cpo$model_type == "case-control"){
-        dplyr::mutate(.,case_factor = factor(.data$case))
+        dplyr::mutate(.,td = .data$time*(.data$condition=="treatment"))
       } else{
         .
       }
@@ -111,7 +111,9 @@ compute_p_values <- function(cpo,
 
     f_string_cc <- paste0("counts ~",
                           fe_string,
-                          " s(time, bs = 'tp', by = case_factor, k = ",
+                          " s(time, bs = 'tp', k = ",
+                          length(unique(cpo$exp_design$time)),
+                          ") + s(td, bs = 'tp', k = ",
                           length(unique(cpo$exp_design$time)),
                           ")")
     p_table =
