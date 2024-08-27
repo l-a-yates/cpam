@@ -55,6 +55,11 @@ estimate_changepoint <- function(cpo,
         dplyr::filter(.,.data$target_id %in% subset)
     }
 
+  if(nrow(data_nest) == 0) {
+    message("No targets selected. Please review subset and/or p-value thresholds.")
+    return(cpo)
+  }
+
   message(paste0("Estimating changepoints for ", nrow(data_nest), " targets"))
   if(is.null(cps)) cps <- cpo$times
   message(paste0("Candidate changepoints are t = ", paste0(cps, collapse = ", "),"."))
