@@ -65,6 +65,7 @@ prepare_cpam <- function(exp_design,
     if(is.null(t2g) & !gene_level) stop("'t2g' must be supplied if 'gene_level' is false")
   } else{
     if(!is.null(import_type)) message("'import_type' is being ignored since a count matrix has been supplied")
+    if(is.null(t2g) & gene_level) message("'t2g' has not been supplied. This is fine if the counts in the supplied count matrix are already aggregated to the gene level")
     if(is.null(colnames(count_matrix)) | sum(!colnames(count_matrix) %in% exp_design$sample)>0){
       stop("Column names of 'count_matrix' must match samples in 'exp_design'")}
     bootstrap <- F
@@ -121,7 +122,17 @@ prepare_cpam <- function(exp_design,
       overdispersion.prior <- nboot <- NULL
     }
   } else {
-    counts_raw <- count_matrix
+    if(gene_level & !is.null(t2g)){
+      counts_raw <-
+        count_matrix %>%
+        tidyr::as_tibble(rownames = "target_id") %>%
+        dplyr::left_join(t2g, by = "target_id") %>%
+        dplyr::group_by(.data[["gene_id"]]) %>%
+        dplyr::summarise(dplyr::across(-.data[["target_id"]], sum)) %>%
+        (\(x){as.matrix(x[,-1]) %>% `rownames<-`(dplyr::pull(x,"gene_id"))})
+    } else {
+      counts_raw <- count_matrix
+    }
     overdispersion.prior <- nboot <- NULL
   }
 
@@ -151,14 +162,14 @@ prepare_cpam <- function(exp_design,
   message("Filtering low count genes")
   target_to_keep <- do.call(filter_fun, args = c(list(data = data_long),filter_fun_args))
 
-  if(aggregate_to_gene){
-    genes_to_keep <-  dplyr::filter(t2g, .data$target_id %in% target_to_keep) %>% dplyr::pull(.data$gene_id) %>% unique
-    target_to_keep <-
-      data_long %>%
-      dplyr::filter(.data$gene_id %in% genes_to_keep) %>%
-      dplyr::filter(sum(round(.data$counts))>0, .by = "target_id") %>%
-      dplyr::pull(.data$target_id) %>% unique
-  }
+  #if(aggregate_to_gene){
+  #  genes_to_keep <-  dplyr::filter(t2g, .data$target_id %in% target_to_keep) %>% dplyr::pull(.data$gene_id) %>% unique
+  #  target_to_keep <-
+  #    data_long %>%
+  #    dplyr::filter(.data$gene_id %in% genes_to_keep) %>%
+  #    dplyr::filter(sum(round(.data$counts))>0, .by = "target_id") %>%
+  #    dplyr::pull(.data$target_id) %>% unique
+  #}
 
   count_matrix_filtered <- counts_raw[target_to_keep,]
   if(normalize){
