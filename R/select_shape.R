@@ -138,6 +138,17 @@ select_shape <- function(cpo,
 shape_selector <- function(fits, score){
   fits <- fits[names(fits)==purrr::map_chr(fits,"bs")]
 
+  if(all(c("micv","cv") %in% names(fits))){
+    d = extract_lfc(fits[["cv"]])
+    if(which.max(dplyr::pull(d,"lfc")) == nrow(d)) fits[["cv"]] <- NULL
+    }
+
+  if(all(c("mdcx","cx") %in% names(fits))){
+    d = extract_lfc(fits[["cx"]])
+    if(which.min(dplyr::pull(d,"lfc")) == nrow(d)) fits[["cx"]] <- NULL
+  }
+
+
   if(length(fits)==0){
     shape1 <- shape2 <- NA
   } else if(length(fits)==1){
