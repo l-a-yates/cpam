@@ -110,6 +110,8 @@ compute_p_values <- function(cpo,
   if(cpo$model_type == "case-control"){
 
     f_string_cc <- paste0("counts ~",
+                          cpo$intercept_cc,
+                          " + ",
                           fe_string,
                           " s(time, bs = 'tp', k = ",
                           length(unique(cpo$exp_design$time)),

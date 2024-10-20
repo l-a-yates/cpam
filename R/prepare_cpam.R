@@ -17,7 +17,7 @@
 #' @param num_cores integer; number of cores to use for parallel computation
 #' @param normalize logical; use model offsets based on sampling depth and gene length
 #' @param fixed_effects a model formula of the form `~ effect1 + effect2`
-#'
+#' @param intercept_cc string; intercept for case-control model: "1" (default) for common intercept  or "condition"
 #' @return an object of class `cpo`
 #' @export
 #'
@@ -38,10 +38,12 @@ prepare_cpam <- function(exp_design,
                          case_value = "treatment",
                          num_cores = 1,
                          normalize = TRUE,
-                         fixed_effects = NULL
+                         fixed_effects = NULL,
+                         intercept_cc = c("1",condition_var)
 ){
 
   model_type <- match.arg(model_type)
+  intercept_cc <- match.arg(intercept_cc)
   import <- ifelse(is.null(count_matrix),T,F)
 
   # check that design matrix is non-singular
@@ -212,6 +214,7 @@ prepare_cpam <- function(exp_design,
        times = unique(exp_design$time),
        num_cores = num_cores,
        fixed_effects = fixed_effects,
+       intercept_cc = intercept_cc,
        bss = c("micv","mdcx","cv","cx","micx","mdcv","tp")
   ) %>%
     `class<-`("cpam")

@@ -21,7 +21,8 @@ prepare_cpam(
   case_value = "treatment",
   num_cores = 1,
   normalize = TRUE,
-  fixed_effects = NULL
+  fixed_effects = NULL,
+  intercept_cc = c("1", condition_var)
 )
 }
 \arguments{
@@ -58,6 +59,8 @@ prepare_cpam(
 \item{normalize}{logical; use model offsets based on sampling depth and gene length}
 
 \item{fixed_effects}{a model formula of the form \code{~ effect1 + effect2}}
+
+\item{intercept_cc}{string; intercept for case-control model: "1" (default) for common intercept  or "condition"}
 }
 \value{
 an object of class \code{cpo}
