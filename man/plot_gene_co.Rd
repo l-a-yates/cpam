@@ -21,6 +21,7 @@ plot_gene_co(
   ci_prob = "se",
   remove_null = F,
   null_threshold = 0.05,
+  null_threshold_adj = T,
   gene_level_plot = F,
   return_fits_only = F,
   family = "nb",
@@ -63,6 +64,8 @@ if equal to "se", the interval is set to the approximate standard error (see \co
 \item{remove_null}{logical; only plot differentially expressed transcripts}
 
 \item{null_threshold}{numeric; P value threshold for filtering out NULL transcripts}
+
+\item{null_threshold_adj}{logical; use adjusted (default) or non-adjusted p-values for filtering targets}
 
 \item{gene_level_plot}{logical; plot gene-level data and fitted trend}
 

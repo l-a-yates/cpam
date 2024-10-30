@@ -19,6 +19,7 @@
 #' if equal to "se", the interval is set to the approximate standard error (see [mgcv::predict.gam()])
 #' @param remove_null logical; only plot differentially expressed transcripts
 #' @param null_threshold numeric; P value threshold for filtering out NULL transcripts
+#' @param null_threshold_adj logical; use adjusted (default) or non-adjusted p-values for filtering targets
 #' @param gene_level_plot logical; plot gene-level data and fitted trend
 #' @param return_fits_only logical; return the model fits. Does not plot the function
 #' @param family character; negative binomial ("nb", default) or Gaussian ("gaussian")
@@ -46,6 +47,7 @@ plot_gene_co <- function(cpo,
                          ci_prob = "se",
                          remove_null = F,
                          null_threshold =  0.05,
+                         null_threshold_adj = T,
                          #logged = F,
                          gene_level_plot = F,
                          return_fits_only = F,
@@ -111,9 +113,12 @@ plot_gene_co <- function(cpo,
 
   if (remove_null & !gene_level_plot) {
     if (!is.null(cpo$p_table)) {
+      pval <- "q_val_target"
+      if(!null_threshold_adj) pval <- "p_val_target"
+
       data <- data %>%
-        dplyr::left_join(cpo$p_table %>% dplyr::select(.data$target_id, .data$q_val_target), by = "target_id") %>%
-        dplyr::filter(.data$q_val_target <= null_threshold,
+        dplyr::left_join(cpo$p_table %>% dplyr::select(.data$target_id, .data[[pval]]), by = "target_id") %>%
+        dplyr::filter(.data[[pval]] <= null_threshold,
                       .data$shape != "null")
     } #else{
     #data <- data %>% dplyr::filter(.data$cp != 240)
