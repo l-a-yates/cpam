@@ -20,6 +20,7 @@
 #' @param remove_null logical; only plot differentially expressed transcripts
 #' @param null_threshold numeric; P value threshold for filtering out NULL transcripts
 #' @param null_threshold_adj logical; use adjusted (default) or non-adjusted p-values for filtering targets
+#' @param k_mult numerical; multiplier for the number of knots in the spline
 #' @param gene_level_plot logical; plot gene-level data and fitted trend
 #' @param return_fits_only logical; return the model fits. Does not plot the function
 #' @param family character; negative binomial ("nb", default) or Gaussian ("gaussian")
@@ -48,6 +49,7 @@ plot_gene_co <- function(cpo,
                          remove_null = F,
                          null_threshold =  0.05,
                          null_threshold_adj = T,
+                         k_mult = 1,
                          #logged = F,
                          gene_level_plot = F,
                          return_fits_only = F,
@@ -172,7 +174,8 @@ plot_gene_co <- function(cpo,
                                    regularize = cpo$regularize,
                                    bs = .data$shape,
                                    cp = .data$cp,
-                                   sp = sp))) %>%
+                                   sp = sp,
+                                   k_mult = k_mult))) %>%
     dplyr::filter(!is.logical(.data$fit)) %>%
     dplyr::mutate(pred = list(predict_cpgam(fit = .data$fit, ci_prob = ci_prob, scaled = scaled)))
 
