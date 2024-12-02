@@ -285,7 +285,7 @@ gcv <- function(fit){
   as.numeric(dev * nobs/(nobs - gamma * trA)^2)
 }
 
-# log probabilty density for negative binomial with continuous positive response values
+# log probability density for negative binomial with continuous positive response values
 dnbl <- function(x,theta,mu){
   lgamma(x + theta) -
     lgamma(theta) -
