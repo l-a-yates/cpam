@@ -8,7 +8,7 @@ cpgam <- function(data,
                   gam_optimizer = "efs",
                   fixed_effects = NULL,
                   sp = NULL,
-                  k_mult = 2,
+                  k_mult = 1.2,
                   n_try = 1,
                   not_exp = F,
                   silent = T){

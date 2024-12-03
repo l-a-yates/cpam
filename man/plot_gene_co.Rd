@@ -22,6 +22,7 @@ plot_gene_co(
   remove_null = F,
   null_threshold = 0.05,
   null_threshold_adj = T,
+  k_mult = 1.2,
   gene_level_plot = F,
   return_fits_only = F,
   family = "nb",
@@ -66,6 +67,8 @@ if equal to "se", the interval is set to the approximate standard error (see \co
 \item{null_threshold}{numeric; P value threshold for filtering out NULL transcripts}
 
 \item{null_threshold_adj}{logical; use adjusted (default) or non-adjusted p-values for filtering targets}
+
+\item{k_mult}{numerical; multiplier for the number of knots in the spline}
 
 \item{gene_level_plot}{logical; plot gene-level data and fitted trend}
 

@@ -49,7 +49,7 @@ plot_gene_co <- function(cpo,
                          remove_null = F,
                          null_threshold =  0.05,
                          null_threshold_adj = T,
-                         k_mult = 1,
+                         k_mult = 1.2,
                          #logged = F,
                          gene_level_plot = F,
                          return_fits_only = F,
@@ -179,7 +179,9 @@ plot_gene_co <- function(cpo,
     dplyr::filter(!is.logical(.data$fit)) %>%
     dplyr::mutate(pred = list(predict_cpgam(fit = .data$fit, ci_prob = ci_prob, scaled = scaled)))
 
-  if(return_fits_only) return(fits$fit[[1]])
+  if(return_fits_only){
+    if(length(fits$fit) == 1) return(fits$fit[[1]]) else return(fits$fit %>% purrr::set_names(fits[["target_id"]]))
+  }
 
   preds <-
     fits %>%
