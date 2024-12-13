@@ -57,12 +57,18 @@ predict_cpgam <- function(fit,
 
     Xp = stats::predict(fit, newdata = newdata, type = "lpmatrix")
     br = mgcv::rmvn(nsim, mu = as.vector(beta),V = V)
-    y_matrix_exp = exp(Xp %*% t(br))*od
+    if(logged){
+      y_matrix <- (Xp %*% t(br)) + log(od)
+      counts <- as.numeric(Xp %*% beta) + log(od)
+    } else {
+      y_matrix <- exp(Xp %*% t(br))*od
+      counts <- as.numeric(exp(Xp %*% beta))*od
+    }
 
     newdata %>%
-      dplyr::mutate(counts = as.numeric(exp(Xp %*% beta))*od,
-                    q_lo =  y_matrix_exp %>% matrixStats::rowQuantiles(probs = 0.5 - ci_prob/2),
-                    q_hi =  y_matrix_exp %>% matrixStats::rowQuantiles(probs = 0.5 + ci_prob/2),
+      dplyr::mutate(counts = counts,
+                    q_lo =  y_matrix %>% matrixStats::rowQuantiles(probs = 0.5 - ci_prob/2),
+                    q_hi =  y_matrix %>% matrixStats::rowQuantiles(probs = 0.5 + ci_prob/2),
                     q_hi = pmin(.data$q_hi, lim_factor*max(fit$y))
       ) %>% return()
 
