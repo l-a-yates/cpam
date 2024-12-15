@@ -120,9 +120,9 @@ select_shape <- function(cpo,
     data_nest %>%
     dplyr::select(-.data$data) %>%
     dplyr::left_join(dplyr::select(shapes, .data$target_id,.data$lfc), by = "target_id") %>%
-    dplyr::select(-.data$cp,-.data$k) %>%
-    tidyr::unnest(.data$lfc) %>%
-    tidyr::pivot_wider(id_cols = .data$target_id, names_from = .data$time, values_from = .data$lfc)
+    dplyr::select(-.data$cp,-.data$k) #%>%
+    #tidyr::unnest(.data$lfc) %>%
+    #tidyr::pivot_wider(id_cols = .data$target_id, names_from = .data$time, values_from = .data$lfc)
 
   cpo$pred <-
     data_nest %>%
@@ -179,7 +179,7 @@ shape_selector <- function(fits, score){
   dplyr::tibble(shape1 = shape1, shape2 = shape2, lfc = list(lfc), pred = list(pred))
 }
 
-shape_ose <- function(score_table, edf){
+shape_ose <- function(score_table, edf, tol = 0.01){
   m.min <- score_table %>% colSums() %>% which.min() %>% names
   st <-
     score_table %>%
@@ -190,13 +190,15 @@ shape_ose <- function(score_table, edf){
     dplyr::filter(.data$se_diff >= .data$score_diff)
 
   if("lin" %in% st$model){
+    edf_lin <- st %>% dplyr::filter(.data$model == "lin") %>% dplyr::pull(.data$edf)
     st <- st %>% dplyr::filter(!(.data$model %in% c("mdcx","micv","cv","cx") &
-                                   .data$edf <= 2.01))
+                                   .data$edf - edf_lin[1] <= tol))
   }
 
   if("null" %in% st$model){
+    edf_null <- st %>% dplyr::filter(.data$model == "null") %>% dplyr::pull(.data$edf)
     st <- st %>% dplyr::filter(!(.data$model %in% c("mdcx","micv","cv","cx") &
-                                   .data$edf <= 1.01))
+                                   .data$edf - edf_null[1] <= tol))
   }
 
   st %>%
