@@ -463,7 +463,7 @@ plot_cpam <- function(cpo,
   if(facet) gg <- gg + ggplot2::facet_wrap(~ target_id,
                                            scales = dplyr::if_else(common_y_scale, "fixed","free_y"),
                                            labeller = ggplot2::as_labeller(facet_labels))
-  if(facet) gg <- gg + ggplot2::theme(legend.position = "none")
+  if(facet | n_target == 1) gg <- gg + ggplot2::theme(legend.position = "none")
   if(!facet) gg <- gg + ggplot2::labs(subtitle = paste0(bs_labels, collapse = ", "))
 
   gg
