@@ -48,6 +48,7 @@ select_shape <- function(cpo,
     dplyr::ungroup() %>%
     dplyr::filter(!is.na(.data$cp))
 
+  if(nrow(data_nest) == 0) stop("No targets to estimate shapes for")
   message(paste0("Estimating shapes for ", nrow(data_nest), " targets"))
   message(paste0("Candidate shapes are bs = ", paste0(bss, collapse = ", "),"."))
 
@@ -113,24 +114,39 @@ select_shape <- function(cpo,
   cpo$changepoints <-
     cpo$changepoints %>%
     dplyr::left_join(cpo$shapes %>% dplyr::select(.data$target_id,.data$shape1), by = "target_id") %>%
-    dplyr::mutate(dplyr::across(dplyr::all_of(cp_type), ~ if_else(.data$shape1 == "null", cp_max, .data[[cp_type]]))) %>%
+    dplyr::mutate(dplyr::across(dplyr::all_of(cp_type), ~ dplyr::if_else(.data$shape1 == "null", cp_max, .data[[cp_type]]))) %>%
     dplyr::select(-.data$shape1)
+
+  pivot_names <- c("time")
+  if(model_type == "case-control") pivot_names <- c("time","case")
 
   cpo$lfc <-
     data_nest %>%
     dplyr::select(-.data$data) %>%
     dplyr::left_join(dplyr::select(shapes, .data$target_id,.data$lfc), by = "target_id") %>%
-    dplyr::select(-.data$cp,-.data$k) #%>%
-    #tidyr::unnest(.data$lfc) %>%
-    #tidyr::pivot_wider(id_cols = .data$target_id, names_from = .data$time, values_from = .data$lfc)
+    dplyr::select(-.data$cp,-.data$k) %>%
+    tidyr::unnest("lfc") %>%
+    {
+      if(model_type == "case-control"){
+        dplyr::mutate(.,case = c("ctrl","case")[.data$case + 1])
+      } else
+        .
+    } %>%
+    tidyr::pivot_wider(id_cols = "target_id", names_from = pivot_names, values_from = "lfc")
 
   cpo$pred <-
     data_nest %>%
     dplyr::select(-.data$data) %>%
     dplyr::left_join(dplyr::select(shapes, .data$target_id,.data$pred), by = "target_id") %>%
     dplyr::select(-.data$cp,-.data$k) %>%
-    tidyr::unnest(.data$pred) %>%
-    tidyr::pivot_wider(id_cols = .data$target_id, names_from = .data$time, values_from = .data$pred)
+    tidyr::unnest("pred") %>%
+    {
+      if(model_type == "case-control"){
+        dplyr::mutate(.,case = c("ctrl","case")[.data$case + 1])
+      } else
+        .
+    } %>%
+    tidyr::pivot_wider(id_cols = "target_id", names_from = pivot_names, values_from = "pred")
 
   cpo
 }
@@ -138,16 +154,16 @@ select_shape <- function(cpo,
 shape_selector <- function(fits, score){
   fits <- fits[names(fits)==purrr::map_chr(fits,"bs")]
 
+  # remove cv if it is an micv shape
   if(all(c("micv","cv") %in% names(fits))){
     d = extract_lfc(fits[["cv"]])
     if(which.max(dplyr::pull(d,"lfc")) == nrow(d)) fits[["cv"]] <- NULL
     }
-
+  # remove cx if it is an mdcx shape
   if(all(c("mdcx","cx") %in% names(fits))){
     d = extract_lfc(fits[["cx"]])
     if(which.min(dplyr::pull(d,"lfc")) == nrow(d)) fits[["cx"]] <- NULL
   }
-
 
   if(length(fits)==0){
     shape1 <- shape2 <- NA
@@ -189,12 +205,13 @@ shape_ose <- function(score_table, edf, tol = 0.01){
     dplyr::mutate(edf = edf[.data$model]) %>%
     dplyr::filter(.data$se_diff >= .data$score_diff)
 
+  # remove shapes that are effectively of linear complexity if lin is present
   if("lin" %in% st$model){
     edf_lin <- st %>% dplyr::filter(.data$model == "lin") %>% dplyr::pull(.data$edf)
     st <- st %>% dplyr::filter(!(.data$model %in% c("mdcx","micv","cv","cx") &
                                    .data$edf - edf_lin[1] <= tol))
   }
-
+  # remove shapes that are effectively of null complexity if null is present
   if("null" %in% st$model){
     edf_null <- st %>% dplyr::filter(.data$model == "null") %>% dplyr::pull(.data$edf)
     st <- st %>% dplyr::filter(!(.data$model %in% c("mdcx","micv","cv","cx") &
@@ -217,26 +234,35 @@ keep_converged <- function(fits){
 }
 
 extract_lfc <- function(fit) {
+  svars <- c("time","td")
+  if(fit$model_type == "case-control") svars <- c("time","td","case")
+  newdata = fit$data %>% dplyr::select(dplyr::all_of(svars)) %>% dplyr::distinct()
 
-  newdata = fit$data %>% dplyr::select(.data$time,.data$td) %>% dplyr::distinct()
-
-  dplyr::tibble(time = newdata$time,
-                 lfc = fit %>%
-    stats::predict(newdata = newdata) %>%
-    {.-.[1]} %>% {.*log(exp(1), base = 2)} %>% as.numeric,
-   )
+  newdata %>%
+    dplyr::select(-.data$td) %>%
+    dplyr::mutate(lfc = fit %>%
+                    stats::predict(newdata = newdata) %>%
+                    {. - .[1]} %>%
+                    {. * log(exp(1), base = 2)} %>%
+                    as.numeric)
 }
 
 extract_pred <- function(fit, scaled = F) {
+  svars <- c("time","td")
+  if(fit$model_type == "case-control") svars <- c("time","td","case")
+  newdata = fit$data %>% dplyr::select(dplyr::all_of(svars)) %>% dplyr::distinct()
 
-  newdata = fit$data %>% dplyr::select(.data$time,.data$td) %>% dplyr::distinct()
   od <- 1
   if(!is.null(fit$data$overdispersions) & !scaled){
     od <- as.numeric(fit$data$overdispersions[1])
-    }
-  dplyr::tibble(time = newdata$time,
-                pred = fit %>%
+  }
+
+  newdata %>%
+    dplyr::select(-.data$td) %>%
+    dplyr::mutate(pred = fit %>%
                   stats::predict(newdata = newdata, type = "response") %>%
                   as.numeric) %>%
-    mutate(pred = .data$pred*od)
+    dplyr::mutate(pred = .data$pred*od)
 }
+
+
