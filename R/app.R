@@ -143,7 +143,7 @@ server <-  function(input, output, session) {
   #observe(if(!cpo$bootstrap) disable(selector = '#datas .checkbox:nth-child(SE) label'))
 
   output$myPlot <- shiny::renderPlot({
-    plot_gene_co(cpo,
+    plot_cpam(cpo,
               gene_id = input$gene_id,
               target_id = if(input$tx_id=="all") {NULL} else input$tx_id,
               gene_level_plot = input$gene_level,
