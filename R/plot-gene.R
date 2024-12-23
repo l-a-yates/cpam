@@ -29,7 +29,6 @@
 #' @param scaled logical; scaled data by overdispersions (for bootstrapped data only)
 #'
 #' @return a ggplot object
-#' @export
 #'
 #' @examples 1+1
 plot_gene_co <- function(cpo,
@@ -275,6 +274,40 @@ predict_lfc <- function(fit, length.out = 200) {
 }
 
 
+#' Plot a fitted changepoint additive model
+#'
+#' @param cpo a cpam object
+#' @param gene_id character; gene_id
+#' @param target_id character; target_id
+#' @param cp_type character; if changepoints have been estimated using [estimate_changepoint()],
+#' which selection rule should be used. See [estimate_changepoint()] for details.
+#' @param shape_type character; if shapes have been estimated using [select_shape()],
+#' which set of candidate shapes should be used. See [select_shape()] for details.
+#' @param bs character; set the basis (i.e. shape)
+#' @param cp_fix numerical; set the changepoint
+#' @param facet logical; for genes with multiple transcripts, should the transcripts be plotted in separate facets
+#' @param sp numerical; set the smooth parameter
+#' @param show_fit logical; show the fitted trend
+#' @param show_data logical; show (possibly normalized and scaled) data points
+#' @param show_fit_ci logical; show credible interval for the fitted trend
+#' @param show_data_ci logical; show bootstrapped quantile for data points
+#' @param ci_prob  if numerical, sets the probability for the simulation-based estimated of credible interval,
+#' if equal to "se", the interval is set to the approximate standard error (see [mgcv::predict.gam()])
+#' @param remove_null logical; only plot differentially expressed transcripts
+#' @param null_threshold numeric; P value threshold for filtering out NULL transcripts
+#' @param null_threshold_adj logical; use adjusted (default) or non-adjusted p-values for filtering targets
+#' @param k_mult numerical; multiplier for the number of knots in the spline
+#' @param gene_level_plot logical; plot gene-level data and fitted trend
+#' @param return_fits_only logical; return the model fits. Does not plot the function
+#' @param family character; negative binomial ("nb", default) or Gaussian ("gaussian")
+#' @param common_y_scale logical; for faceted plots of multiple transcripts, should the scale of the y-axis
+#' be common or free.
+#' @param scaled logical; scaled data by overdispersions (for bootstrapped data only)
+#'
+#' @return a ggplot object
+#' @export
+#'
+#' @examples
 plot_cpam <- function(cpo,
                          gene_id = NULL,
                          target_id = NULL,
