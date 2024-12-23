@@ -138,7 +138,7 @@ estimate_changepoint <- function(cpo,
       cpo$p_mvn <-
         cpo$p_mvn %>%
         dplyr::group_by(.data$gene_id) %>%
-        dplyr::mutate(p_mvn_gene = aggregation::lancaster(pmax(.data$p_mvn_target,10e-320),.data$counts_mean/sum(.data$counts_mean))) %>%
+        dplyr::mutate(p_mvn_gene = lancaster(pmax(.data$p_mvn_target,10e-320),.data$counts_mean/sum(.data$counts_mean))) %>%
         dplyr::ungroup() %>%
         dplyr::mutate(q_mvn_gene = stats::p.adjust(.data$p_mvn_gene, method = "BH"))
     }
