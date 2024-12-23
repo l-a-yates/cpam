@@ -27,7 +27,9 @@ remotes::install_github("l-a-yates/cpam")
 
 ## Usage
 
-Load package and create a tibble for the experimental design.
+Load package and create a tibble for the experimental design. Here we
+are using kallisto-generated counts, so we provide the file path for
+each sample
 
 ``` r
 library(cpam)
@@ -49,7 +51,9 @@ exp_design
 #> # ℹ 40 more rows
 ```
 
-You will need a tibble with transcript-to-gene mapping. E.g.,
+You will also need a tibble with transcript-to-gene mapping,,unless your
+counts are aggregated at the gene level (transcript-level analysis is
+recommened). E.g., for *Arabidopsis thaliana*:
 
 ``` r
 t2g
@@ -67,4 +71,16 @@ t2g
 #>  9 AT1G01030.2 AT1G01030
 #> 10 AT1G01030.1 AT1G01030
 #> # ℹ 54,003 more rows
+```
+
+Now you can run $\texttt{cpam}$
+
+``` r
+  cpo <- prepare_cpam(exp_design = exp_design,
+                      t2g = t2g,
+                      import_type = "kallisto",
+                      num_cores = 5) # about 1 minute
+  cpo <- compute_p_values(cpo) # 30 secs to 5 mins
+  cpo <- estimate_changepoint(cpo) # 2-10 minutes
+  cpo <- select_shape(cpo) # 2-20 mins
 ```
