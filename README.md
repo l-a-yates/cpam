@@ -2,12 +2,6 @@ cpam: Shape-constrained changepoint additive models for time series
 omics data
 ================
 
-- [Analysis of time series omics data with
-  cpam](#analysis-of-time-series-omics-data-with-cpam)
-- [Overview](#overview)
-- [Installation](#installation)
-- [Usage](#usage)
-
 ## Analysis of time series omics data with cpam
 
 **cpam** (**c**hange**p**oint **a**dditive **m**odels) fits smooth
@@ -17,6 +11,14 @@ shape-constrained additive models to omics count data.
 
 Brief description (2-3 sentences) of what cpam does and its key
 features.
+
+## Key features
+
+<figure>
+<img src="assets/example_trends.png" width="300" height="200"
+alt="Example trends" />
+<figcaption aria-hidden="true">Example trends</figcaption>
+</figure>
 
 ## Installation
 
@@ -29,7 +31,7 @@ remotes::install_github("l-a-yates/cpam")
 
 Load package and create a tibble for the experimental design. Here we
 are using kallisto-generated counts, so we provide the file path for
-each sample
+each sample.
 
 ``` r
 library(cpam)
@@ -73,14 +75,14 @@ t2g
 #> # ℹ 54,003 more rows
 ```
 
-Now you can run $\texttt{cpam}$
+Now you can run **cpam**
 
 ``` r
   cpo <- prepare_cpam(exp_design = exp_design,
                       t2g = t2g,
                       import_type = "kallisto",
-                      num_cores = 5) # about 1 minute
-  cpo <- compute_p_values(cpo) # 30 secs to 5 mins
-  cpo <- estimate_changepoint(cpo) # 2-10 minutes
-  cpo <- select_shape(cpo) # 2-20 mins
+                      num_cores = 5) # about 1 min
+  cpo <- compute_p_values(cpo) # 30 secs to 5 min
+  cpo <- estimate_changepoint(cpo) # 1-10 min
+  cpo <- select_shape(cpo) # 1-20 min
 ```

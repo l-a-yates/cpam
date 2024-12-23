@@ -2,7 +2,7 @@
 title: "cpam: Shape-constrained changepoint additive models for time series omics data"
 output: 
   github_document:
-    toc: true
+    toc: false
     toc_depth: 2
     html_preview: false
 knit: (function(inputFile, encoding) {
@@ -27,6 +27,9 @@ knitr::opts_chunk$set(
 ## Overview
 Brief description (2-3 sentences) of what cpam does and its key features.
 
+## Key features
+![Example trends](assets/example_trends.png){width=300 height=200}
+
 ## Installation
 ```{r, eval = FALSE}
 # Installation code here
@@ -34,7 +37,7 @@ remotes::install_github("l-a-yates/cpam")
 ```
 
 ## Usage
-Load package and create a tibble for the experimental design. Here we are using kallisto-generated counts, so we provide the file path for each sample
+Load package and create a tibble for the experimental design. Here we are using kallisto-generated counts, so we provide the file path for each sample.
 ```{r, echo = TRUE, max.print=3}
 library(cpam)
 
@@ -45,14 +48,14 @@ You will also need a tibble with transcript-to-gene mapping,,unless your counts 
 ```{r, max.print=3}
 t2g
 ```
-Now you can run $\texttt{cpam}$
+Now you can run **cpam**
 ```{r, eval = FALSE}
   cpo <- prepare_cpam(exp_design = exp_design,
                       t2g = t2g,
                       import_type = "kallisto",
-                      num_cores = 5) # about 1 minute
-  cpo <- compute_p_values(cpo) # 30 secs to 5 mins
-  cpo <- estimate_changepoint(cpo) # 2-10 minutes
-  cpo <- select_shape(cpo) # 2-20 mins
+                      num_cores = 5) # about 1 min
+  cpo <- compute_p_values(cpo) # 30 secs to 5 min
+  cpo <- estimate_changepoint(cpo) # 1-10 min
+  cpo <- select_shape(cpo) # 1-20 min
 
 ```
