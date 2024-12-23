@@ -1,16 +1,8 @@
-cpam: Shape-constrained changepoint additive models for time series
-omics data
-================
 
-## Analysis of time series omics data with cpam
+## **cpam** (**c**hange**p**oint **a**dditive **m**odels)
 
-**cpam** (**c**hange**p**oint **a**dditive **m**odels) fits smooth
-shape-constrained additive models to omics count data.
-
-## Overview
-
-Brief description (2-3 sentences) of what cpam does and its key
-features.
+**cpam** fits smooth shape-constrained additive models to omics count
+data.
 
 ## Key features
 

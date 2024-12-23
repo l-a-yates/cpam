@@ -1,5 +1,5 @@
 ---
-title: "cpam: Shape-constrained changepoint additive models for time series omics data"
+title: false
 output: 
   github_document:
     toc: false
@@ -20,12 +20,10 @@ knitr::opts_chunk$set(
 ```
 
 
-## Analysis of time series omics data with cpam 
 
-**cpam** (**c**hange**p**oint **a**dditive **m**odels) fits smooth shape-constrained additive models to omics count data.
+## **cpam** (**c**hange**p**oint **a**dditive **m**odels)
 
-## Overview
-Brief description (2-3 sentences) of what cpam does and its key features.
+**cpam** fits smooth shape-constrained additive models to omics count data.
 
 ## Key features
 ![Example trends](assets/example_trends.png){width=300 height=200}
