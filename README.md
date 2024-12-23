@@ -1,9 +1,12 @@
 
-## cpam <span style="font-weight: normal">(**c**hange**p**oint **a**dditive **m**odels)</span><br>An R package for omics time series analysis.
+## cpam <span style="font-weight: normal">(**c**hange**p**oint **a**dditive **m**odels)</span>
+
+### An R package for omics time series analysis.
 
 Read the full paper [here](https://www.biorxiv.org/)
 
 <img src="assets/example_trends.png" width="800" height="600" />
+
 Application of cpam to RNA-seq time series of *Arabidopsis* plants
 treated with excess-light.
 
@@ -126,7 +129,7 @@ t2g
 Load the shiny app for an interactive visualisation of the results:
 
 ``` r
-  visualise(cpo)
+  visualise(cpo) # not shown in vignette
 ```
 
 Or plot one gene at a time:
@@ -135,12 +138,11 @@ Or plot one gene at a time:
   plot_cpam(cpo, gene_id = "AT3G23280")
 ```
 
-<img src="assets/example_gene_plot.png" width="400" height="350" />
-Isoform 1 has a changepoint at 67.5 min and is monotonic increasing
-concave (micv) shaped. Isoform 2 has no changepoint and is an
-unconstrained thinplate (tp) shape.
-
-Generate a results table (tibble):
+<img src="assets/example_gene_plot.png" width="550" height="450" />
+Isoform 1 (AT3G23280.1) has a changepoint at 67.5 min and has a
+monotonic increasing concave (micv) shape.<br> Isoform 2 (AT3G23280.2)
+has no changepoint and has an unconstrained thin-plate (tp) shape.
+<br><br> Generate a results table (tibble):
 
 ``` r
   results(cpo)
