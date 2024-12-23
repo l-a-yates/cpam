@@ -1,13 +1,10 @@
 
-## **cpam** (**c**hange**p**oint **a**dditive **m**odels)
-
-**cpam** fits smooth shape-constrained additive models to omics count
-data.
+## <span style="font-weight: normal">**cpam** (**c**hange**p**oint **a**dditive **m**odels)</span>
 
 ## Key features
 
 <figure>
-<img src="assets/example_trends.png" width="300" height="200"
+<img src="assets/example_trends.png" width="600" height="400"
 alt="Example trends" />
 <figcaption aria-hidden="true">Example trends</figcaption>
 </figure>
