@@ -7,15 +7,15 @@ Read the full paper [here](https://www.biorxiv.org/)
 
 <img src="assets/example_trends.png" width="800" height="600" />
 
-Application of cpam to RNA-seq time series of *Arabidopsis* plants
+Application of **cpam** to RNA-seq time series of *Arabidopsis* plants
 treated with excess-light.
 
 ## Key features
 
 - **Changepoint detection**: Identify sharp transitions in expression.
 - **smooth trends**: Model expression as a smooth function of time.
-- **Shape-constrained trends**: Cluster genes or isoforms into
-  biologically meaningful temporal shape classes.
+- **Shape-constrained trends**: Cluster targets into biologically
+  meaningful temporal shape classes.
 - **Quantification uncertainty**: Account for uncertainty in expression
   estimates.
 - **Transcript-level analysis**
@@ -37,15 +37,15 @@ framework is applicable to other high-dimensional time series
 measurements, making it a valuable addition to the omics analysis
 toolkit.
 
-This is the initial release of **cpam** and we are actively seeking
-community feedback. If you encounter issues or have suggestions for
-improvements, please open an
-[issue](https://github.com/username/cpam/issues). We welcome questions
+This is the initial development version of **cpam** and we are actively
+seeking community feedback. If you encounter issues or have suggestions
+for improvements, please open an
+[issue](https://github.com/l-a-yates/cpam/issues). We welcome questions
 and discussion about using **cpam** for your research through
-[Discussions](https://github.com/username/cpam/discussions). Our goal is
-to work with users to make **cpam** a robust and valuable tool for time
-series omics analysis. We can also be contacted via the email addresses
-listed in our paper [here](https://www.biorxiv.org/).
+[Discussions](https://github.com/l-a-yates/cpam/discussions/). Our goal
+is to work with users to make **cpam** a robust and valuable tool for
+time series omics analysis. We can also be contacted via the email
+addresses listed in our paper [here](https://www.biorxiv.org/).
 
 ## Installation
 
