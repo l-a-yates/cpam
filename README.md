@@ -1,13 +1,36 @@
 
 ## <span style="font-weight: normal">**cpam** (**c**hange**p**oint **a**dditive **m**odels)</span>
 
+<img src="assets/example_trends.png" width="800" height="600" />
+
+**cpam** is an R package for omics time series analysis.
+
 ## Key features
 
-<figure>
-<img src="assets/example_trends.png" width="600" height="400"
-alt="Example trends" />
-<figcaption aria-hidden="true">Example trends</figcaption>
-</figure>
+- **Changepoint detection**: Identify sharp transitions in gene
+  expression.
+- **smooth trends**: Model gene expression as a smooth function of time.
+- **Shape-constrained trends**: Cluster genes into biologically
+  meaningful temporal shape classes.
+- **Quantification uncertainty**: Account for uncertainty in expression
+  estimates.
+- **Transcript-level analysis**: Perform gene- or transcript-level
+  inferences. Aggregate $p$-values at the gene level for improved power.
+- **Case-only or case-control time series**: Analyse time series data
+  with or without controls.
+- **User-friendly**: Sensible defaults and an interactive *shiny*
+  interface.
+
+Our new package **cpam** provides a comprehensive framework for
+analysing time series omics data that combines statistical rigour with
+practical utility. The method leverages modern statistical approaches
+while remaining user-friendly, through sensible defaults and an
+interactive interface. Researchers can directly address key questions in
+time series analysis—when changes occur, what patterns they follow, and
+how responses are related. While we have focused on transcriptomics, the
+framework is applicable to other high-dimensional time series
+measurements, making it a valuable addition to the omics analysis
+toolkit.
 
 ## Installation
 
