@@ -1,7 +1,5 @@
 
-## cpam <span style="font-weight: normal">(**c**hange**p**oint **a**dditive **m**odels)</span>
-
-An R package for omics time series analysis.
+## cpam <span style="font-weight: normal">(**c**hange**p**oint **a**dditive **m**odels)</span><br>An R package for omics time series analysis.
 
 Read the full paper [here](https://www.biorxiv.org/)
 
@@ -44,7 +42,7 @@ and discussion about using **cpam** for your research through
 [Discussions](https://github.com/username/cpam/discussions). Our goal is
 to work with users to make **cpam** a robust and valuable tool for time
 series omics analysis. We can also be contacted via the email addresses
-listed in the paper [here](https://www.biorxiv.org/).
+listed in our paper [here](https://www.biorxiv.org/).
 
 ## Installation
 
@@ -61,11 +59,13 @@ remotes::install_github("l-a-yates/cpam")
 library(cpam)
 ```
 
-### Step 2: Create a tibble (or data frame) for the experimental design. In this example, we are using kallisto-generated counts, so we provide the file path for each sample (otherwise you can provide the counts directly as count matrix)
+### Step 2: Create a tibble for the experimental design.
+
+In this example, we are using kallisto-generated counts, so we provide
+the file path for each sample (otherwise you can provide the counts
+directly as count matrix)
 
 ``` r
-library(cpam)
-
 exp_design
 #> # A tibble: 50 × 4
 #>    sample  time path                                condition
@@ -83,7 +83,11 @@ exp_design
 #> # ℹ 40 more rows
 ```
 
-### Step 3: You will need source a table with the transcript-to-gene mapping, unless your counts are aggregated at the gene level (transcript-level analysis with aggregation of $p$-values to the gene level is recommened). E.g., for *Arabidopsis thaliana*:
+### Step 3: Obtain a table with the transcript-to-gene mapping
+
+N.B. This is not needed if your counts are aggregated at the gene level,
+but transcript-level analysis with aggregation of $p$-values to the gene
+level is recommended. E.g., for *Arabidopsis thaliana*:
 
 ``` r
 t2g
@@ -109,6 +113,7 @@ t2g
   cpo <- prepare_cpam(exp_design = exp_design,
                       count_matrix = NULL,
                       t2g = t2g,
+                      model = "case-only",
                       import_type = "kallisto",
                       num_cores = 5) # about 1 min
   cpo <- compute_p_values(cpo) # 30 secs to 5 min
@@ -130,8 +135,15 @@ Or plot one gene at a time:
   plot_cpam(cpo, gene_id = "AT3G23280")
 ```
 
-Generate a results table:
+<img src="assets/example_gene_plot.png" width="400" height="350" />
+Isoform 1 has a changepoint at 67.5 min and is monotonic increasing
+concave (micv) shaped. Isoform 2 has no changepoint and is an
+unconstrained thinplate (tp) shape.
+
+Generate a results table (tibble):
 
 ``` r
   results(cpo)
 ```
+
+### More examples and detailed tutorials coming soon!
