@@ -1,0 +1,47 @@
+---
+title: "cpam: Shape-constrained changepoint additive models for time series omics data"
+output: 
+  github_document:
+    toc: true
+    toc_depth: 2
+    html_preview: false
+knit: (function(inputFile, encoding) {
+    rmarkdown::render(inputFile, encoding = encoding, output_dir = ".")
+  })
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+
+## Analysis of time series omics data with cpam 
+
+**cpam** (**c**hange**p**oint **a**dditive **m**odels) fits smooth shape-constrained additive models to omics count data.
+
+## Overview
+Brief description (2-3 sentences) of what cpam does and its key features.
+
+## Installation
+```{r, eval = FALSE}
+# Installation code here
+remotes::install_github("l-a-yates/cpam")
+```
+
+## Usage
+Load package and create a tibble for the experimental design.
+```{r, echo = TRUE}
+library(cpam)
+
+exp_design
+```
+You will need a tibble with transcript-to-gene mapping. E.g.,
+```{r}
+t2g
+```
+
