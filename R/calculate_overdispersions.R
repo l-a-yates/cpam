@@ -1,4 +1,8 @@
-# this needs citing etc.
+# This function implements the method presented in https://doi.org/10.1093/nar/gkad1167
+# to calculate overdispersions due to quantification uncertainty using inferential replicates.
+# It is adapted from the code provided in the supplementary material of the paper at
+# https://plbaldoni.rbind.io/TranscriptDE-code/casestudy.html#Differential_gene_expression_analysis
+# to allow it to be applied directly to list objects returned from tximport.
 calculate_overdispersions <- function(txi){
   message("Calculating overdispersions from inferential replicates")
   NTx <- txi$counts %>% nrow
