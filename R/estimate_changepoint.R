@@ -5,15 +5,17 @@
 #' @param degs_only logical; should changepoints only be estimated for differentially expressed genes
 #' @param deg_threshold logical; the threshold value for DEGs (ignored of `degs_only = F`)
 #' @param subset character vector; names of targets or genes (if `cpo$gene_level = T`)
-#' for which changepoints will be estimated
+#'  for which changepoints will be estimated
 #' @param sp numerical >= 0; supply a fixed smoothing parameter.
+#'  This can decrease the fitting time but it is not recommended as changepoints estimation
+#'  is sensitive to smoothness.
 #' @param bss character vector; names of candidate spline bases (i.e., candidate shape types).
-#' Default is thin plate ("tp") splines.
-#' @param family character; negative binomial ("nb", default) or Gaussian ("gaussian")
+#'  Default is thin plate ("tp") splines.
+#' @param family character; negative binomial ("nb", default) or Gaussian ("gaussian", not currently supported)
 #' @param score character; model selection score, either Generalised Cross Validation ("gcv") or
-#' Akaike Information Criterion ("aic")
+#'  Akaike Information Criterion ("aic")
 #' @param compute_mvn Use simulation to compute p-value under multivariate normal model of the
-#' model scores
+#'  model scores
 #'
 #' @return a cpam object with the estimated changepoint table added to the slot "changepoints"
 #' @export

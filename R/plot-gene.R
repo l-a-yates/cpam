@@ -334,15 +334,11 @@ plot_cpam <- function(cpo,
                          scaled = F){
 
   if(family != "nb"){
-    warning("Plotting is only suppported for negative binomial models. Setting 'family ='nb''")
+    warning("Plotting is currently only suppported for negative binomial models. Setting 'family ='nb''")
     family <- "nb"
   }
   if(gene_level_plot){
-
-    stop("Watch this space! Gene-level plotting is coming your way very soon")
-
-
-
+    stop("Watch this space! Gene-level plotting for transcript-level models is currently under development.")
   }
   cp_type <- match.arg(cp_type)
   shape_type <- match.arg(shape_type, c("shape1","shape2"))

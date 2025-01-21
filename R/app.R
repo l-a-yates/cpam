@@ -4,7 +4,7 @@
 #' @param cpo a cpam object
 #' @param subset character vector; names of targets or genes (if `cpo$gene_level = T`)
 #' to load into Shiny app
-#' @param degs_only logical; display DEGs only
+#' @param degs_only logical; display only targets with adjusted (aggregated) p-value < `deg_threshold`
 #' @param deg_threshold numerical; threshold for DEGs
 #'
 #' @return None

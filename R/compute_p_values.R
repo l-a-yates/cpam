@@ -1,15 +1,15 @@
-#' Compute P values
+#' Compute p-values for each target_id
 #'
 #' @param cpo a cpam object
 #' @param subset a character vector of target_id names
-#' @param p_adj_method method for P value adjustment
+#' @param p_adj_method method for p-value adjustment
 #' @param fixed_effects a model formula (RHS only) to provide or update
 #' fixed affects. Terms must correspond to columns in `exp_design`
-#' @param gam_method fitting method for `mgcv::gam`
-#' @param gam_optimizer optimization method for `mgcv::gam`
-#' @param silent logical; silences warnings from model fitting
+#' @param gam_method fitting method for `mgcv::gam` (default is "REML")
+#' @param gam_optimizer optimization method for `mgcv::gam` (default is "efs")
+#' @param silent logical; silences warnings from model fitting (default is TRUE)
 #'
-#' @return an updated cpam object with P values stored in the new slot "p_table"
+#' @return an updated cpam object with raw, adjusted, and possibly aggregated p-values stored in the new slot "p_table"
 #' @export
 #'
 #' @examples 1 + 1

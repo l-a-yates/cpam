@@ -1,18 +1,14 @@
-# min_count: maximum mean counts evaluated the set of observed time points must exceed this minimum value for
-# at least one isoform - default is 0
 # scaled: should the counts for `min_count` be scaled or not (only applicable to bootstrapped data) - default is T
-# min_lfc: maximum absolute log (base 2) fold change must exceed this minimum value; default is 0
-# p_type: the gam-based p-value obtained from the mgcv package (well calibrated - default) or
-# the more stringent method calculated from the joint distribution of the GCV scores (see ...)
+
 #' Title
 #'
 #' @param cpo a cpam object
 #' @param p_threshold numerical; threshold
-#' @param p_type character; choose the type of p-value
+#' @param p_type character; choose the type of p-value. Options are "p_gam" (default) or "p_mvn".
 #' @param min_lfc numerical; maximum absolute log (base 2) fold change must exceed this minimum value; default is 0
 #' @param min_count numerical; maximum of the modelled counts evaluated at the set of observed time points must exceed this minimum value for
 # at least one isoform - default is 0
-#' @param aggregate_to_gene  logical; use aggregate p-values
+#' @param aggregate_to_gene  logical; filter by gene-aggregated p-values
 #' @param add_lfc logical; add log (base 2) fold changes for each time point
 #' @param add_counts logical; add modelled counts for each time point
 #' @param cp_type character; model-selection rule used to select the changepoint
