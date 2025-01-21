@@ -3,15 +3,15 @@
 #' @param exp_design a dataframe or tibble with the experimental design, containing at least a 'time' and a 'sample' column
 #' @param count_matrix a matrix of counts. Column names must be in 'sample' column of `exp_design`,
 #' @param t2g a transcript to gene dataframe or tibble with columns target_id and gene_id
-#' @param import_type software used for quantification, one of "kallisto", "sailfish" ,...
+#' @param import_type software used for quantification, one of "kallisto", "salmon" ,.... Ignored if `count_matrix` is supplied.
 #' @param model_type "case-only" (default) or "case-control"
 #' @param bootstrap logical; load bootstrap samples, also called inferential replicates, if available, and rescale counts.
-#' @param nboot_max Maximum number of bootstrap samples to use
+#' @param nboot_max integer; maximum number of bootstrap samples to use
 #' @param filter_fun filter function to remove lowly expressed genes (default is `filter_fun()`)
 #' @param filter_fun_args arguments for filter function
 #' @param regularize logical; use empirical Bayes regularization of dispersions (default is TRUE)
 #' @param gene_level logical; aggregate counts to gene level before data preparation and modelling (default is FALSE)
-#' @param aggregate_to_gene logical; aggregate P values from transcript- to gene-level
+#' @param aggregate_to_gene logical; aggregate p values from transcript- to gene-level
 #' @param condition_var string; column name in `exp_design` for the condition variable (for `model_type` = "case_control" only)
 #' @param case_value value of `condition_var` that indicates the "case". All other values are deemed to be control
 #' @param num_cores integer; number of cores to use for parallel computation
@@ -115,7 +115,13 @@ prepare_cpam <- function(exp_design,
     colnames(txi$counts) <- exp_design$sample
     counts_raw <- txi$counts
 
+    if(bootstrap & is.null(txi$infReps)){
+      message("No inferential replicates found, setting bootstrap = FALSE")
+      bootstrap <- F
+    }
+
     if(bootstrap){
+      txi$infReps <- txi$infReps[1:nboot_max]
       catch <- calculate_overdispersions(txi)
       overdispersion.prior = catch$overdispersion.prior
       boot <- summarise_bootstraps(txi)
@@ -256,7 +262,7 @@ summarise_bootstraps <- function(txi){
 
 estimate_dispersions <- function(counts, exp_design){
   # update for case-control series (i.e., use condition in the design matrix)
-  message("Estimating dispersions")
+  message("Estimating dispersions using edgeR")
   if(length(unique(exp_design$time)) > 3){
     design <- stats::model.matrix(~poly(time,2), data = exp_design)
   } else design <- stats::model.matrix(~1, data = exp_design)
