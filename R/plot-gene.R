@@ -307,7 +307,7 @@ predict_lfc <- function(fit, length.out = 200) {
 #' @return a ggplot object
 #' @export
 #'
-#' @examples
+#' @examples 1+1
 plot_cpam <- function(cpo,
                          gene_id = NULL,
                          target_id = NULL,

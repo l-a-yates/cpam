@@ -2,7 +2,7 @@
 % Please edit documentation in R/compute_p_values.R
 \name{compute_p_values}
 \alias{compute_p_values}
-\title{Compute P values}
+\title{Compute p-values for each target_id}
 \usage{
 compute_p_values(
   cpo,
@@ -19,23 +19,71 @@ compute_p_values(
 
 \item{subset}{a character vector of target_id names}
 
-\item{p_adj_method}{method for P value adjustment}
+\item{p_adj_method}{method for p-value adjustment}
 
 \item{fixed_effects}{a model formula (RHS only) to provide or update
 fixed affects. Terms must correspond to columns in \code{exp_design}}
 
-\item{gam_method}{fitting method for \code{mgcv::gam}}
+\item{gam_method}{fitting method for \code{mgcv::gam} (default is "REML")}
 
-\item{gam_optimizer}{optimization method for \code{mgcv::gam}}
+\item{gam_optimizer}{optimization method for \code{mgcv::gam} (default is "efs")}
 
-\item{silent}{logical; silences warnings from model fitting}
+\item{silent}{logical; silences warnings from model fitting (default is TRUE)}
 }
 \value{
-an updated cpam object with P values stored in the new slot "p_table"
+an updated cpam object with raw, adjusted, and possibly aggregated p-values stored in the new slot "p_table"
 }
 \description{
-Compute P values
+Compute p-values for each target_id
+}
+\details{
+This function computes p-values for each target_id in the supplied cpam object.
+The p-values are computed from a negative binomial GAM model
+with a thin-plate spline basis function(s) for time
+using the \code{mgcv} package.
+
+The p-values are stored in the new slot \code{p_table} in the cpam object.
+If \code{aggregate_to_gene} is set to \code{TRUE} (default),
+the target p-values are aggregated to the gene level using the \code{lancaster} method.
+The columns \code{p_val_target} and \code{p_val_gene} store the raw p-values for target- and gene-level, respectively.
+The function also computes adjusted p-values using the \code{p_adj_method}.
+The default method is "BH" (Benjamini-Hochberg),
+but any methods supported by the function \code{p.adjust} can be used.
+The adjusted p-values are stored in the columns \code{q_val_target} and \code{q_val_gene}.
 }
 \examples{
-1 + 1
+\dontrun{
+
+library(cpam)
+library(dplyr)
+
+# Example Experimental Design
+exp_design <- tibble(sample = paste0("s",1:50),
+                     time = rep(c(0:4,10),
+                     path = paste0("path/",sample,"/abundance.h5"))
+
+# Example Transcript-to-Gene Mapping
+t2g <- readr::read_csv("path/to/t2g.csv")
+
+# Prepare a cpam object
+cpo <- prepare_cpam(
+ exp_design = exp_design,
+ t2g = t2g,
+ import_type = "kallisto",
+ num_cores = 5)
+
+ # Compute p-values
+ cpo <- compute_p_values(cpo)
+
+ # Access p-values
+ cpo$p_table
+ }
+
+}
+\references{
+Wood, S.N. (2013a) On p-values for smooth components of an extended
+generalized additive model. Biometrika 100:221-228 doi:10.1093/biomet/ass048
+
+Yi L, Pachter L (2018). aggregation: p-Value Aggregation Methods. R package version 1.0.1,
+https://CRAN.R-project.org/package=aggregation.
 }

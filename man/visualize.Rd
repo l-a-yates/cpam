@@ -12,7 +12,7 @@ visualize(cpo, subset = NULL, degs_only = T, deg_threshold = 0.05)
 \item{subset}{character vector; names of targets or genes (if \code{cpo$gene_level = T})
 to load into Shiny app}
 
-\item{degs_only}{logical; display DEGs only}
+\item{degs_only}{logical; display only targets with adjusted (aggregated) p-value < \code{deg_threshold}}
 
 \item{deg_threshold}{numerical; threshold for DEGs}
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/select_shape.R
 \name{select_shape}
 \alias{select_shape}
-\title{Use model selection to select a shape from a list of candidates}
+\title{Use model selection to select a shape for each target}
 \usage{
 select_shape(
   cpo,
@@ -20,8 +20,9 @@ select_shape(
 \item{subset}{character vector; names of targets or genes (if \code{cpo$gene_level = T})
 for which changepoints will be estimated}
 
-\item{sp}{numerical >= 0; supply a fixed smoothing parameter.
-Note, the fixd value is applied to shape constrained bases only (i.e., not \code{bs = 'tp'}).}
+\item{sp}{numerical >= 0; supply a fixed smoothing parameter. If NULL (default), the smoothing
+parameter is estimated. Note, this fixed value is in any case applied only to
+shape constrained bases (i.e., not \code{bs = 'tp'}).}
 
 \item{bss}{character vector; names of candidate spline bases (i.e., candidate shape types).}
 
@@ -37,8 +38,50 @@ which selection rule should be used. See \code{\link[=estimate_changepoint]{esti
 a cpam object with the selected shapes added to the slot "shapes"
 }
 \description{
-Use model selection to select a shape from a list of candidates
+Use model selection to select a shape for each target
+}
+\details{
+The function selects the best shape from a list of candidate shapes for each target.
+It is typically the last step in the analysis, called after p-values have
+been estimated using \code{\link[=compute_p_values]{compute_p_values()}} and changepoints have
+been estimated using \code{\link[=estimate_changepoint]{estimate_changepoint()}}.
+
+Two shape selections are generated. The first selecting among linear,
+convex and concave shape classes and their monotonic variants (or the shape
+set given by bss), and the second selecting among the first options plus an
+'unconstrained' smooth. The inclusion of the \verb{unconstrained' type provides the flexibility to detect targets beyond simpler trends. For computational reasons, as per the changepoint estimation, shapes are selected only for those genes, or their isoforms, identified as significant at the chosen FDR threshold. This is overridden by providing a subset of target names to the }subset` argument.
 }
 \examples{
-1+1
+\dontrun{
+
+library(cpam)
+library(dplyr)
+
+# Example Experimental Design
+exp_design <- tibble(sample = paste0("s",1:50),
+                     time = rep(c(0:4,10),
+                     path = paste0("path/",sample,"/abundance.h5"))
+
+# Example Transcript-to-Gene Mapping
+t2g <- readr::read_csv("path/to/t2g.csv")
+
+# Prepare a cpam object
+cpo <- prepare_cpam(
+ exp_design = exp_design,
+ t2g = t2g,
+ import_type = "kallisto",
+ num_cores = 5)
+
+ # compute p-values
+ cpo <- compute_p_values(cpo)
+
+ # estimate changepoints
+ cpo <- estimate_changepoint(cpo)
+
+ # estimate shapes
+ cpo <- select_shape(cpo)
+
+ # Inspect the shapes
+ cpo$shapes
+ }
 }

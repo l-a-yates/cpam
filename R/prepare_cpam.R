@@ -18,10 +18,63 @@
 #' @param normalize logical; use model offsets based on sampling depth and gene length
 #' @param fixed_effects a model formula of the form `~ effect1 + effect2`
 #' @param intercept_cc string; intercept for case-control model: "1" (default) for common intercept  or "condition"
+#'
+#' @details
+#' This function prepares a cpam object for analysis.
+#'  The function loads count data from files or a matrix,
+#'  filters lowly expressed genes, computes normalisation factors,
+#'  and estimates dispersions. Many of these steps can be customised or turned off.
+#'
+#'  When bootstrap samples (inferential replicates) are available, it loads and
+#'  summarises these using means, standard errors, and estimated overdispersions.
+#'  The latter are a measure of quantification uncertainty and they are used to
+#'  rescale the counts which accouts for this uncertainty during the modelling steps.
+#'
+#'  The data within the cpam object are accessible via the slots.
+#'
 #' @return an object of class `cpo`
 #' @export
 #'
-#' @examples 1+1
+#' @examples
+#' \dontrun{
+#'
+#' library(cpam)
+#' library(dplyr)
+#'
+#' # Example Experimental Design
+#' exp_design <- tibble(sample = paste0("s",1:50),
+#'                      time = rep(c(0:4,10),
+#'                      path = paste0("path/",sample,"/abundance.h5"))
+#'
+#' # Example Transcript-to-Gene Mapping
+#' t2g <- readr::read_csv("path/to/t2g.csv")
+#'
+#' # Prepare a cpam object
+#' cpo <- prepare_cpam(
+#'  exp_design = exp_design,
+#'  t2g = t2g,
+#'  import_type = "kallisto",
+#'  num_cores = 5)
+#'
+#'  # Print the object
+#'  cpo
+#'  }
+#'
+#' @references
+#'  Pedro L Baldoni, Yunshun Chen, Soroor Hediyeh-zadeh, Yang Liao, Xueyi Dong,
+#'  Matthew E Ritchie, Wei Shi, Gordon K Smyth,
+#'  Dividing out quantification uncertainty allows efficient assessment of
+#'  differential transcript expression with edgeR,
+#'  Nucleic Acids Research, Volume 52, Issue 3, 9 February 2024,
+#'  Page e13, https://doi.org/10.1093/nar/gkad1167
+#'
+#'  Yunshun Chen, Lizhong Chen, Aaron T L Lun, Pedro L Baldoni, Gordon K Smyth,
+#'  edgeR v4: powerful differential analysis of sequencing data with
+#'  expanded functionality and improved support for small counts
+#'  and larger datasets, Nucleic Acids Research, Volume 53, Issue 2,
+#'  27 January 2025, https://doi.org/10.1093/nar/gkaf018
+#'
+#'
 prepare_cpam <- function(exp_design,
                          count_matrix = NULL,
                          t2g = NULL,

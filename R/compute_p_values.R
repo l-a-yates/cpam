@@ -9,10 +9,59 @@
 #' @param gam_optimizer optimization method for `mgcv::gam` (default is "efs")
 #' @param silent logical; silences warnings from model fitting (default is TRUE)
 #'
+#' @details
+#' This function computes p-values for each target_id in the supplied cpam object.
+#' The p-values are computed from a negative binomial GAM model
+#' with a thin-plate spline basis function(s) for time
+#' using the `mgcv` package.
+#'
+#' The p-values are stored in the new slot `p_table` in the cpam object.
+#' If `aggregate_to_gene` is set to `TRUE` (default),
+#' the target p-values are aggregated to the gene level using the `lancaster` method.
+#' The columns `p_val_target` and `p_val_gene` store the raw p-values for target- and gene-level, respectively.
+#' The function also computes adjusted p-values using the `p_adj_method`.
+#' The default method is "BH" (Benjamini-Hochberg),
+#' but any methods supported by the function `p.adjust` can be used.
+#' The adjusted p-values are stored in the columns `q_val_target` and `q_val_gene`.
+#'
 #' @return an updated cpam object with raw, adjusted, and possibly aggregated p-values stored in the new slot "p_table"
 #' @export
 #'
-#' @examples 1 + 1
+#' @references
+#' Wood, S.N. (2013a) On p-values for smooth components of an extended
+#' generalized additive model. Biometrika 100:221-228 doi:10.1093/biomet/ass048
+#'
+#' Yi L, Pachter L (2018). aggregation: p-Value Aggregation Methods. R package version 1.0.1,
+#' https://CRAN.R-project.org/package=aggregation.
+#'
+#' @examples \dontrun{
+#'
+#' library(cpam)
+#' library(dplyr)
+#'
+#' # Example Experimental Design
+#' exp_design <- tibble(sample = paste0("s",1:50),
+#'                      time = rep(c(0:4,10),
+#'                      path = paste0("path/",sample,"/abundance.h5"))
+#'
+#' # Example Transcript-to-Gene Mapping
+#' t2g <- readr::read_csv("path/to/t2g.csv")
+#'
+#' # Prepare a cpam object
+#' cpo <- prepare_cpam(
+#'  exp_design = exp_design,
+#'  t2g = t2g,
+#'  import_type = "kallisto",
+#'  num_cores = 5)
+#'
+#'  # Compute p-values
+#'  cpo <- compute_p_values(cpo)
+#'
+#'  # Access p-values
+#'  cpo$p_table
+#'  }
+#'
+
 compute_p_values <- function(cpo,
                              subset = NULL,
                              p_adj_method = "BH",

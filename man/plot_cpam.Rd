@@ -87,3 +87,6 @@ a ggplot object
 \description{
 Plot a fitted changepoint additive model
 }
+\examples{
+1+1
+}

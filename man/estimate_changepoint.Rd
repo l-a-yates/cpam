@@ -29,12 +29,14 @@ estimate_changepoint(
 \item{subset}{character vector; names of targets or genes (if \code{cpo$gene_level = T})
 for which changepoints will be estimated}
 
-\item{sp}{numerical >= 0; supply a fixed smoothing parameter.}
+\item{sp}{numerical >= 0; supply a fixed smoothing parameter.
+This can decrease the fitting time but it is not recommended as changepoints estimation
+is sensitive to smoothness.}
 
 \item{bss}{character vector; names of candidate spline bases (i.e., candidate shape types).
 Default is thin plate ("tp") splines.}
 
-\item{family}{character; negative binomial ("nb", default) or Gaussian ("gaussian")}
+\item{family}{character; negative binomial ("nb", default) or Gaussian ("gaussian", not currently supported)}
 
 \item{score}{character; model selection score, either Generalised Cross Validation ("gcv") or
 Akaike Information Criterion ("aic")}
@@ -48,6 +50,68 @@ a cpam object with the estimated changepoint table added to the slot "changepoin
 \description{
 Use model selection to estimate changepoints
 }
+\details{
+This function estimates changepoints for each target_id. The assumed
+trajectory type for this modelling stage is initially constant followed by
+a changepoint into thin-plate smoothing spline.
+
+By default, candidate time points are limited to the discrete observed values
+in the series, since, despite the use of smoothing constraints,
+there is generally insufficient information to infer the timing of
+changepoints beyond the temporal resolution of the data. In any case, the
+candidate points can be set manually using the \code{cps} argument.
+
+To estimate changepoints, a model is fit for each candidate changepoint and
+generalised cross-validation (GCV, default) or the Akaike Information
+Criterion (AIC) are used to select among them. Model-selection uncertainty
+is dealt with by computing the one-standard-error rule, which identifies the
+least complex model within one standard error of the best scoring model.
+
+Both the minimum and the one-standard-error (default) models are stored in the returned
+slot "changepoints" so that either can be used. In addition to these, this function also computes the
+probability (denoted \code{p_mvn}) that the null model is the best scoring model, using a simulation
+based approach based on the multivariate normal model of the pointwise
+model scores.
+
+Given the computational cost of fitting a separate model for each candidate
+changepoint, cpam only estimates changepoints for targets associated with
+'significant' genes at the chosen threshold \code{deg_threshold}.
+}
 \examples{
-1+1
+\dontrun{
+
+library(cpam)
+library(dplyr)
+
+# Example Experimental Design
+exp_design <- tibble(sample = paste0("s",1:50),
+                     time = rep(c(0:4,10),
+                     path = paste0("path/",sample,"/abundance.h5"))
+
+# Example Transcript-to-Gene Mapping
+t2g <- readr::read_csv("path/to/t2g.csv")
+
+# Prepare a cpam object
+cpo <- prepare_cpam(
+ exp_design = exp_design,
+ t2g = t2g,
+ import_type = "kallisto",
+ num_cores = 5)
+
+ # compute p-values
+ cpo <- compute_p_values(cpo)
+
+ # estimate changepoints
+ cpo <- estimate_changepoint(cpo)
+
+ # Inspect the changepoints
+ cpo$changpoints
+ }
+
+}
+\references{
+Yates, L. A., S. A. Richards, and B. W. Brook. 2021.
+Parsimonious model selection using information theory:
+a modified selection rule.
+Ecology 102(10):e03475. 10.1002/ecy.3475
 }

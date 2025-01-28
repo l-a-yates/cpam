@@ -23,13 +23,13 @@ results(
 
 \item{p_threshold}{numerical; threshold}
 
-\item{p_type}{character; choose the type of p-value}
+\item{p_type}{character; choose the type of p-value. Options are "p_gam" (default) or "p_mvn".}
 
 \item{min_lfc}{numerical; maximum absolute log (base 2) fold change must exceed this minimum value; default is 0}
 
 \item{min_count}{numerical; maximum of the modelled counts evaluated at the set of observed time points must exceed this minimum value for}
 
-\item{aggregate_to_gene}{logical; use aggregate p-values}
+\item{aggregate_to_gene}{logical; filter by gene-aggregated p-values}
 
 \item{add_lfc}{logical; add log (base 2) fold changes for each time point}
 
