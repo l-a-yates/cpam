@@ -2,7 +2,7 @@
 % Please edit documentation in R/results.R
 \name{results}
 \alias{results}
-\title{Title}
+\title{Create a results table from a cpam object}
 \usage{
 results(
   cpo,
@@ -21,13 +21,16 @@ results(
 \arguments{
 \item{cpo}{a cpam object}
 
-\item{p_threshold}{numerical; threshold}
+\item{p_threshold}{numerical; threshold for adjusted p-values; default is 0.05}
 
-\item{p_type}{character; choose the type of p-value. Options are "p_gam" (default) or "p_mvn".}
+\item{p_type}{character; choose the type of p-value. Options are "p_gam" (default)
+or "p_mvn" (see \code{\link[=compute_p_values]{compute_p_values()}} for details).}
 
-\item{min_lfc}{numerical; maximum absolute log (base 2) fold change must exceed this minimum value; default is 0}
+\item{min_lfc}{numerical; maximum absolute log (base 2) fold change must
+exceed this minimum value; default is 0}
 
-\item{min_count}{numerical; maximum of the modelled counts evaluated at the set of observed time points must exceed this minimum value for}
+\item{min_count}{numerical; maximum of the modelled counts evaluated at
+the set of observed time points must exceed this minimum value for}
 
 \item{aggregate_to_gene}{logical; filter by gene-aggregated p-values}
 
@@ -45,8 +48,45 @@ results(
 a tibble
 }
 \description{
-Title
+Create a results table from a cpam object
+}
+\details{
+This function is usually called after
+\code{\link[=compute_p_values]{compute_p_values()}}, \code{\link{estimate_changepoint}}, and \code{select_shape} have
+been run. The function has several useful filters such as adjusted p-value
+thresholds, minimum log-fold changes, and minimum counts.
 }
 \examples{
-1+1
+\dontrun{
+
+library(cpam)
+library(dplyr)
+
+# Example Experimental Design
+exp_design <- tibble(sample = paste0("s",1:50),
+                     time = rep(c(0:4,10),
+                     path = paste0("path/",sample,"/abundance.h5"))
+
+# Example Transcript-to-Gene Mapping
+t2g <- readr::read_csv("path/to/t2g.csv")
+
+# Prepare a cpam object
+cpo <- prepare_cpam(
+ exp_design = exp_design,
+ t2g = t2g,
+ import_type = "kallisto",
+ num_cores = 5)
+
+ # compute p-values
+ cpo <- compute_p_values(cpo)
+
+ # estimate changepoints
+ cpo <- estimate_changepoint(cpo)
+
+ # estimate shapes
+ cpo <- select_shape(cpo)
+
+ result(cpo)
+ }
+
 }

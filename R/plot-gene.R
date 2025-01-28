@@ -304,10 +304,50 @@ predict_lfc <- function(fit, length.out = 200) {
 #' be common or free.
 #' @param scaled logical; scaled data by overdispersions (for bootstrapped data only)
 #'
+#' @details
+#' Plots the fitted trend and data points for a given gene or target. If a gene ID
+#' is supplied, the function will plot all transcripts for that gene.
+#' The function can also be used to return the model fit(s) only, which are
+#' `gamObject` objects from the `mgcv` package.
+#'
+#'
 #' @return a ggplot object
 #' @export
 #'
-#' @examples 1+1
+#' @examples
+#' \dontrun{
+#'
+#' library(cpam)
+#' library(dplyr)
+#'
+#' # Example Experimental Design
+#' exp_design <- tibble(sample = paste0("s",1:50),
+#'                      time = rep(c(0:4,10),
+#'                      path = paste0("path/",sample,"/abundance.h5"))
+#'
+#' # Example Transcript-to-Gene Mapping
+#' t2g <- readr::read_csv("path/to/t2g.csv")
+#'
+#' # Prepare a cpam object
+#' cpo <- prepare_cpam(
+#'  exp_design = exp_design,
+#'  t2g = t2g,
+#'  import_type = "kallisto",
+#'  num_cores = 5)
+#'
+#'  # compute p-values
+#'  cpo <- compute_p_values(cpo)
+#'
+#'  # estimate changepoints
+#'  cpo <- estimate_changepoint(cpo)
+#'
+#'  # estimate shapes
+#'  cpo <- select_shape(cpo)
+#'
+#'  # Plot a fitted trend
+#'  plot_cpam(cpo, gene_id = "AT1G01520")
+#'  }
+#'
 plot_cpam <- function(cpo,
                          gene_id = NULL,
                          target_id = NULL,

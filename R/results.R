@@ -1,13 +1,16 @@
 # scaled: should the counts for `min_count` be scaled or not (only applicable to bootstrapped data) - default is T
 
-#' Title
+#' Create a results table from a cpam object
 #'
 #' @param cpo a cpam object
-#' @param p_threshold numerical; threshold
-#' @param p_type character; choose the type of p-value. Options are "p_gam" (default) or "p_mvn".
-#' @param min_lfc numerical; maximum absolute log (base 2) fold change must exceed this minimum value; default is 0
-#' @param min_count numerical; maximum of the modelled counts evaluated at the set of observed time points must exceed this minimum value for
-# at least one isoform - default is 0
+#' @param p_threshold numerical; threshold for adjusted p-values; default is 0.05
+#' @param p_type character; choose the type of p-value. Options are "p_gam" (default)
+#'  or "p_mvn" (see [`compute_p_values()`] for details).
+#' @param min_lfc numerical; maximum absolute log (base 2) fold change must
+#' exceed this minimum value; default is 0
+#' @param min_count numerical; maximum of the modelled counts evaluated at
+#' the set of observed time points must exceed this minimum value for
+#  at least one isoform - default is 0
 #' @param aggregate_to_gene  logical; filter by gene-aggregated p-values
 #' @param add_lfc logical; add log (base 2) fold changes for each time point
 #' @param add_counts logical; add modelled counts for each time point
@@ -15,10 +18,48 @@
 #' @param shape_type character; "shape1" to include unconstrained or otherwise "shape2"
 #' @param summarise_to_gene logical; return gene-level results only
 #'
+#' @details
+#' This function is usually called after
+#' [`compute_p_values()`], [`estimate_changepoint`], and `select_shape` have
+#' been run. The function has several useful filters such as adjusted p-value
+#' thresholds, minimum log-fold changes, and minimum counts.
+#'
 #' @return a tibble
 #' @export
 #'
-#' @examples 1+1
+#' @examples
+#' \dontrun{
+#'
+#' library(cpam)
+#' library(dplyr)
+#'
+#' # Example Experimental Design
+#' exp_design <- tibble(sample = paste0("s",1:50),
+#'                      time = rep(c(0:4,10),
+#'                      path = paste0("path/",sample,"/abundance.h5"))
+#'
+#' # Example Transcript-to-Gene Mapping
+#' t2g <- readr::read_csv("path/to/t2g.csv")
+#'
+#' # Prepare a cpam object
+#' cpo <- prepare_cpam(
+#'  exp_design = exp_design,
+#'  t2g = t2g,
+#'  import_type = "kallisto",
+#'  num_cores = 5)
+#'
+#'  # compute p-values
+#'  cpo <- compute_p_values(cpo)
+#'
+#'  # estimate changepoints
+#'  cpo <- estimate_changepoint(cpo)
+#'
+#'  # estimate shapes
+#'  cpo <- select_shape(cpo)
+#'
+#'  result(cpo)
+#'  }
+#'
 results <- function(cpo,
                     p_threshold = 0.05,
                     p_type = c("p_gam","p_mvn"),
