@@ -1,4 +1,4 @@
-#' Plot a fitted cpgam
+#' Plot a fitted cpgam (superseded)
 #'
 #' @param cpo a cpam object
 #' @param gene_id character; gene_id
@@ -27,6 +27,8 @@
 #' @param common_y_scale logical; for faceted plots of multiple transcripts, should the scale of the y-axis
 #' be common or free.
 #' @param scaled logical; scaled data by overdispersions (for bootstrapped data only)
+#'
+#' Please use [plot_cpam()] instead. This function will be deprecated in future versions.
 #'
 #' @return a ggplot object
 #'
@@ -227,15 +229,36 @@ plot_gene_co <- function(cpo,
 #' Plot clustered targets
 #'
 #' @param cpo a cpam object
-#' @param res a tibble, output from [results()]
-#' @param changepoints numerical or character; one or more changepoints
-#' @param shapes character; one or more shapes
-#' @param alpha numerical; line transparency
+#' @param res a tibble, output from [results()] containing columns target_id, cp, and shape
+#' @param changepoints numerical or character; one or more changepoints (these should be the same as the ones used in [estimate_changepoint()]
+#' @param shapes character; one or more shapes (these should be the same as the ones used in [select_shape()]
+#' @param alpha numeric between 0 and 1; controls line transparency in plot (default: 0.1)
+
 #'
-#' @return a ggplot object
+#' @details
+#' Plots the fitted trends for a set of targets whose estimated changepoints and
+#' shapes are given by the arguments `changepoints` and `shapes`, respectively.
+#'
+#' @details
+#' Creates a combined plot showing fitted expression trends for all targets that
+#' share specified changepoint times and shape patterns. Each line represents one
+#' target's fitted trajectory, with transparency controlled by alpha.
+#'
+#' @return A ggplot object showing overlaid fitted trends, or NULL if no matching
+#'   targets are found
 #' @export
 #'
-#' @examples 1 + 1
+#' @seealso [`results()`], [`plot_cpam()`]
+#' @examples
+#' \dontrun{
+#'
+#' # Generate results table
+#' res <- results(cpo)
+#'
+#' # plot all targets with changepoint at timepoint 20 and shape "micv" (monotonic increasing concave)
+#' plot_cluster(cpo, res, changepoints = "20", shapes = "micv")
+#' }
+#'
 plot_cluster <- function(cpo, res, changepoints, shapes, alpha = 0.1){
   txs <-
     res %>%
@@ -248,7 +271,7 @@ plot_cluster <- function(cpo, res, changepoints, shapes, alpha = 0.1){
   plot_data <-
     txs %>%
     purrr::set_names() %>%
-    purrr::map_dfr(~ plot_gene_co(cpo,target_id = .x,return_fits_only = T) %>%
+    purrr::map_dfr(~ plot_cpam(cpo,target_id = .x,return_fits_only = T) %>%
                      predict_lfc, .id = "target_id")
 
   plot_data %>%
@@ -274,30 +297,31 @@ predict_lfc <- function(fit, length.out = 200) {
 }
 
 
-#' Plot a fitted changepoint additive model
+
+#' Plot fitted changepoint additive models
 #'
-#' @param cpo a cpam object
-#' @param gene_id character; gene_id
-#' @param target_id character; target_id
-#' @param cp_type character; if changepoints have been estimated using [estimate_changepoint()],
-#' which selection rule should be used. See [estimate_changepoint()] for details.
-#' @param shape_type character; if shapes have been estimated using [select_shape()],
-#' which set of candidate shapes should be used. See [select_shape()] for details.
-#' @param bs character; set the basis (i.e. shape)
-#' @param cp_fix numerical; set the changepoint
-#' @param facet logical; for genes with multiple transcripts, should the transcripts be plotted in separate facets
-#' @param sp numerical; set the smooth parameter
-#' @param show_fit logical; show the fitted trend
-#' @param show_data logical; show (possibly normalized and scaled) data points
-#' @param show_fit_ci logical; show credible interval for the fitted trend
-#' @param show_data_ci logical; show bootstrapped quantile for data points
-#' @param ci_prob  if numerical, sets the probability for the simulation-based estimated of credible interval,
-#' if equal to "se", the interval is set to the approximate standard error (see [mgcv::predict.gam()])
+#' @param cpo A cpam object containing count data, model fits, and optional changepoint/shape estimates
+#' @param gene_id character; gene_id (mutually exclusive with target_id)
+#' @param target_id character; target_id (mutually exclusive with gene_id)
+#' @param cp_type One of "cp_1se" or "cp_min"; rule for selecting changepoint from fitted models.
+#' See [estimate_changepoint()] for details.
+#' @param shape_type One of "shape1" or "shape2"; which set of fitted shape patterns to use.
+#' See [select_shape()] for details.
+#' @param bs Shape pattern to fit ("null", "lin", "ilin", "dlin", or from cpo$bss).
+#' Use "auto" (default) to use estimated shapes as per `shape_type`.
+#' @param cp_fix Numeric; fixed changepoint time. Set to -1 (default) to use estimated changepoints
+#' @param facet Logical; for multiple transcripts, plot in separate facets?
+#' @param sp numerical; set the smooth parameter. NULL (default) for automatic selection
+#' @param show_fit logical; show the fitted trend?
+#' @param show_data logical; show (possibly normalized and scaled) data points?
+#' @param show_fit_ci logical; show credible interval for the fitted trend?
+#' @param show_data_ci logical; show bootstrapped quantile for data points?
+#' @param ci_prob  "se" for standard error bands (see [mgcv::predict.gam()]), or numeric for simulation-based intervals
+#' if numerical, sets the probability for the simulation-based estimated of credible interval.
 #' @param remove_null logical; only plot differentially expressed transcripts
 #' @param null_threshold numeric; P value threshold for filtering out NULL transcripts
 #' @param null_threshold_adj logical; use adjusted (default) or non-adjusted p-values for filtering targets
-#' @param k_mult numerical; multiplier for the number of knots in the spline
-#' @param gene_level_plot logical; plot gene-level data and fitted trend
+#' @param k_mult numerical; multiplier for the number of knots in the spline. Not recommended to change this value.
 #' @param return_fits_only logical; return the model fits. Does not plot the function
 #' @param family character; negative binomial ("nb", default) or Gaussian ("gaussian")
 #' @param common_y_scale logical; for faceted plots of multiple transcripts, should the scale of the y-axis
@@ -367,7 +391,7 @@ plot_cpam <- function(cpo,
                          null_threshold_adj = T,
                          k_mult = 1.2,
                          #logged = F,
-                         gene_level_plot = F,
+                         #gene_level_plot = F,
                          return_fits_only = F,
                          family = "nb",
                          common_y_scale = T,
@@ -377,9 +401,7 @@ plot_cpam <- function(cpo,
     warning("Plotting is currently only suppported for negative binomial models. Setting 'family ='nb''")
     family <- "nb"
   }
-  if(gene_level_plot){
-    stop("Watch this space! Gene-level plotting for transcript-level models is currently under development.")
-  }
+
   cp_type <- match.arg(cp_type)
   shape_type <- match.arg(shape_type, c("shape1","shape2"))
   bs <- match.arg(bs, c("auto","null","lin","ilin","dlin",cpo$bss))
@@ -425,7 +447,7 @@ plot_cpam <- function(cpo,
     shape_estimated <- F
   }
 
-  if (remove_null & !gene_level_plot) {
+  if (remove_null) {
     if (!is.null(cpo$p_table)) {
       pval <- "q_val_target"
       if(!null_threshold_adj) pval <- "p_val_target"

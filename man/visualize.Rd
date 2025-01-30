@@ -7,21 +7,33 @@
 visualize(cpo, subset = NULL, degs_only = T, deg_threshold = 0.05)
 }
 \arguments{
-\item{cpo}{a cpam object}
+\item{cpo}{A cpam object containing count data, model fits, and optional changepoint/shape estimates}
 
-\item{subset}{character vector; names of targets or genes (if \code{cpo$gene_level = T})
-to load into Shiny app}
+\item{subset}{Character vector; names of targets or genes (if \code{cpo$gene_level = TRUE})
+to load into the Shiny app. If NULL, all genes/targets are included based on \code{degs_only}.}
 
-\item{degs_only}{logical; display only targets with adjusted (aggregated) p-value < \code{deg_threshold}}
+\item{degs_only}{Logical; if TRUE, display only differentially expressed genes/targets
+with adjusted p-value below \code{deg_threshold}. Default is TRUE.}
 
-\item{deg_threshold}{numerical; threshold for DEGs}
+\item{deg_threshold}{Numeric; significance threshold for differentially expressed genes/targets.
+Only used when \code{degs_only = TRUE}. Default is 0.05.}
 }
 \value{
-None
+None (launches Shiny app in browser)
 }
 \description{
 Launches a Shiny app to visualise the data and fitted models of a cpam object
 }
 \examples{
-1+1
+\dontrun{
+
+# Launch visualization with all genes
+visualize(cpo, degs_only = FALSE)
+
+# Launch with only significant genes
+visualize(cpo, deg_threshold = 0.05)
+
+# Launch with specific genes
+visualize(cpo, subset = c("transcript_1", "transcript_2"))
+}
 }

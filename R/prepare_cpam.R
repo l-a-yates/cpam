@@ -6,7 +6,6 @@
 #' @param import_type software used for quantification, one of "kallisto", "salmon" ,.... Ignored if `count_matrix` is supplied.
 #' @param model_type "case-only" (default) or "case-control"
 #' @param bootstrap logical; load bootstrap samples, also called inferential replicates, if available, and rescale counts.
-#' @param nboot_max integer; maximum number of bootstrap samples to use
 #' @param filter_fun filter function to remove lowly expressed genes (default is `filter_fun()`)
 #' @param filter_fun_args arguments for filter function
 #' @param regularize logical; use empirical Bayes regularization of dispersions (default is TRUE)
@@ -32,7 +31,7 @@
 #'
 #'  The data within the cpam object are accessible via the slots.
 #'
-#' @return an object of class `cpo`
+#' @return an object of class cpam
 #' @export
 #'
 #' @examples
@@ -81,7 +80,6 @@ prepare_cpam <- function(exp_design,
                          import_type = NULL,
                          model_type = c("case-only","case-control"),
                          bootstrap = TRUE, # use bootstraps if available
-                         nboot_max = NULL, # max number of bootstraps to use (to do)
                          filter_fun = "ts_filter",
                          filter_fun_args = list(min_reads = 5, min_prop = 3/5),
                          regularize = TRUE,
@@ -174,7 +172,6 @@ prepare_cpam <- function(exp_design,
     }
 
     if(bootstrap){
-      txi$infReps <- txi$infReps[1:nboot_max]
       catch <- calculate_overdispersions(txi)
       overdispersion.prior = catch$overdispersion.prior
       boot <- summarise_bootstraps(txi)
@@ -283,20 +280,37 @@ prepare_cpam <- function(exp_design,
 
 #' Removes lowly expressed genes
 #'
-#' @param data count data in long form
+#' @param data A tibble or data.frame containing columns:
+#'   \itemize{
+#'     \item target_id (character): Transcript identifiers
+#'     \item time (numeric): Time point of measurement
+#'     \item counts (numeric): Read counts
+#'   }
 #' @param min_reads minimum reads per transcript per sample
-#' @param min_prop minimum proportion of samples that exceed `min_read` at a given time point
+#' @param min_prop minimum proportion of samples that exceed `min_read` at a
+#' given time point (default: 3/5)
 #'
-#' @return a character vector transcript id to keep
+#' @details
+#' Identifies targets that show strong and consistent expression in at least one timepoint.
+#' For each timepoint, the function calculates the proportion of samples
+#' where a targets exceeds `min_reads`. Targets are retained if they meet
+#' the minimum proportion (`min_prop`) at any timepoint in the experiment.
+#'
+#' @return a character vector of transcript IDs to keep
 #' @export
 #'
-#' @examples 1+1
+#' @examples
+#' data <- dplyr::tibble(
+#'   target_id = rep(paste0("t", 1:3), each = 6),
+#'   time = rep(c(0, 4, 8), 6),
+#'   counts = c(6,6,6, 0,0,0, 6,0,6, 0,6,0, 6,6,6, 0,0,0)
+#' )
+#' ts_filter(data)
+#'
 ts_filter <- function(data, min_reads = 5, min_prop = 3/5) {
   data %>%
-    dplyr::group_by(.data$target_id, .data$time) %>%
-    dplyr::mutate(k = mean(.data$counts >= min_reads) >= min_prop) %>%
-    dplyr::group_by(.data$target_id) %>%
-    dplyr::summarise(keep = max(.data$k) == 1) %>%
+    dplyr::summarise(k = mean(.data$counts >= min_reads) >= min_prop, .by = c("target_id","time")) %>%
+    dplyr::summarise(keep = any(.data$k), .by = "target_id") %>%
     dplyr::filter(.data$keep) %>%
     dplyr::pull(.data$target_id)
 }

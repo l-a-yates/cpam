@@ -7,18 +7,36 @@
 ts_filter(data, min_reads = 5, min_prop = 3/5)
 }
 \arguments{
-\item{data}{count data in long form}
+\item{data}{A tibble or data.frame containing columns:
+\itemize{
+\item target_id (character): Transcript identifiers
+\item time (numeric): Time point of measurement
+\item counts (numeric): Read counts
+}}
 
 \item{min_reads}{minimum reads per transcript per sample}
 
-\item{min_prop}{minimum proportion of samples that exceed \code{min_read} at a given time point}
+\item{min_prop}{minimum proportion of samples that exceed \code{min_read} at a
+given time point (default: 3/5)}
 }
 \value{
-a character vector transcript id to keep
+a character vector of transcript IDs to keep
 }
 \description{
 Removes lowly expressed genes
 }
+\details{
+Identifies targets that show strong and consistent expression in at least one timepoint.
+For each timepoint, the function calculates the proportion of samples
+where a targets exceeds \code{min_reads}. Targets are retained if they meet
+the minimum proportion (\code{min_prop}) at any timepoint in the experiment.
+}
 \examples{
-1+1
+data <- dplyr::tibble(
+  target_id = rep(paste0("t", 1:3), each = 6),
+  time = rep(c(0, 4, 8), 6),
+  counts = c(6,6,6, 0,0,0, 6,0,6, 0,6,0, 6,6,6, 0,0,0)
+)
+ts_filter(data)
+
 }

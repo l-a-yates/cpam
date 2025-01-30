@@ -9,20 +9,40 @@ plot_cluster(cpo, res, changepoints, shapes, alpha = 0.1)
 \arguments{
 \item{cpo}{a cpam object}
 
-\item{res}{a tibble, output from \code{\link[=results]{results()}}}
+\item{res}{a tibble, output from \code{\link[=results]{results()}} containing columns target_id, cp, and shape}
 
-\item{changepoints}{numerical or character; one or more changepoints}
+\item{changepoints}{numerical or character; one or more changepoints (these should be the same as the ones used in \code{\link[=estimate_changepoint]{estimate_changepoint()}}}
 
-\item{shapes}{character; one or more shapes}
+\item{shapes}{character; one or more shapes (these should be the same as the ones used in \code{\link[=select_shape]{select_shape()}}}
 
-\item{alpha}{numerical; line transparency}
+\item{alpha}{numeric between 0 and 1; controls line transparency in plot (default: 0.1)}
 }
 \value{
-a ggplot object
+A ggplot object showing overlaid fitted trends, or NULL if no matching
+targets are found
 }
 \description{
 Plot clustered targets
 }
+\details{
+Plots the fitted trends for a set of targets whose estimated changepoints and
+shapes are given by the arguments \code{changepoints} and \code{shapes}, respectively.
+
+Creates a combined plot showing fitted expression trends for all targets that
+share specified changepoint times and shape patterns. Each line represents one
+target's fitted trajectory, with transparency controlled by alpha.
+}
 \examples{
-1 + 1
+\dontrun{
+
+# Generate results table
+res <- results(cpo)
+
+# plot all targets with changepoint at timepoint 20 and shape "micv" (monotonic increasing concave)
+plot_cluster(cpo, res, changepoints = "20", shapes = "micv")
+}
+
+}
+\seealso{
+\code{\link[=results]{results()}}, \code{\link[=plot_cpam]{plot_cpam()}}
 }

@@ -11,7 +11,6 @@ prepare_cpam(
   import_type = NULL,
   model_type = c("case-only", "case-control"),
   bootstrap = TRUE,
-  nboot_max = NULL,
   filter_fun = "ts_filter",
   filter_fun_args = list(min_reads = 5, min_prop = 3/5),
   regularize = TRUE,
@@ -37,8 +36,6 @@ prepare_cpam(
 \item{model_type}{"case-only" (default) or "case-control"}
 
 \item{bootstrap}{logical; load bootstrap samples, also called inferential replicates, if available, and rescale counts.}
-
-\item{nboot_max}{integer; maximum number of bootstrap samples to use}
 
 \item{filter_fun}{filter function to remove lowly expressed genes (default is \code{filter_fun()})}
 

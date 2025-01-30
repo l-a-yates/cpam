@@ -69,7 +69,7 @@ predict_cpgam <- function(fit,
       dplyr::mutate(counts = counts,
                     q_lo =  y_matrix %>% matrixStats::rowQuantiles(probs = 0.5 - ci_prob/2),
                     q_hi =  y_matrix %>% matrixStats::rowQuantiles(probs = 0.5 + ci_prob/2),
-                    q_hi = pmin(.data$q_hi, lim_factor*max(fit$y))
+                    q_hi = pmin(.data$q_hi, lim_factor*max(fit$y)*od)
       ) %>% return()
 
   }

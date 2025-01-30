@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot-gene.R
 \name{plot_cpam}
 \alias{plot_cpam}
-\title{Plot a fitted changepoint additive model}
+\title{Plot fitted changepoint additive models}
 \usage{
 plot_cpam(
   cpo,
@@ -23,7 +23,6 @@ plot_cpam(
   null_threshold = 0.05,
   null_threshold_adj = T,
   k_mult = 1.2,
-  gene_level_plot = F,
   return_fits_only = F,
   family = "nb",
   common_y_scale = T,
@@ -31,36 +30,37 @@ plot_cpam(
 )
 }
 \arguments{
-\item{cpo}{a cpam object}
+\item{cpo}{A cpam object containing count data, model fits, and optional changepoint/shape estimates}
 
-\item{gene_id}{character; gene_id}
+\item{gene_id}{character; gene_id (mutually exclusive with target_id)}
 
-\item{target_id}{character; target_id}
+\item{target_id}{character; target_id (mutually exclusive with gene_id)}
 
-\item{cp_type}{character; if changepoints have been estimated using \code{\link[=estimate_changepoint]{estimate_changepoint()}},
-which selection rule should be used. See \code{\link[=estimate_changepoint]{estimate_changepoint()}} for details.}
+\item{cp_type}{One of "cp_1se" or "cp_min"; rule for selecting changepoint from fitted models.
+See \code{\link[=estimate_changepoint]{estimate_changepoint()}} for details.}
 
-\item{shape_type}{character; if shapes have been estimated using \code{\link[=select_shape]{select_shape()}},
-which set of candidate shapes should be used. See \code{\link[=select_shape]{select_shape()}} for details.}
+\item{shape_type}{One of "shape1" or "shape2"; which set of fitted shape patterns to use.
+See \code{\link[=select_shape]{select_shape()}} for details.}
 
-\item{bs}{character; set the basis (i.e. shape)}
+\item{bs}{Shape pattern to fit ("null", "lin", "ilin", "dlin", or from cpo$bss).
+Use "auto" (default) to use estimated shapes as per \code{shape_type}.}
 
-\item{cp_fix}{numerical; set the changepoint}
+\item{cp_fix}{Numeric; fixed changepoint time. Set to -1 (default) to use estimated changepoints}
 
-\item{facet}{logical; for genes with multiple transcripts, should the transcripts be plotted in separate facets}
+\item{facet}{Logical; for multiple transcripts, plot in separate facets?}
 
-\item{sp}{numerical; set the smooth parameter}
+\item{sp}{numerical; set the smooth parameter. NULL (default) for automatic selection}
 
-\item{show_fit}{logical; show the fitted trend}
+\item{show_fit}{logical; show the fitted trend?}
 
-\item{show_data}{logical; show (possibly normalized and scaled) data points}
+\item{show_data}{logical; show (possibly normalized and scaled) data points?}
 
-\item{show_fit_ci}{logical; show credible interval for the fitted trend}
+\item{show_fit_ci}{logical; show credible interval for the fitted trend?}
 
-\item{show_data_ci}{logical; show bootstrapped quantile for data points}
+\item{show_data_ci}{logical; show bootstrapped quantile for data points?}
 
-\item{ci_prob}{if numerical, sets the probability for the simulation-based estimated of credible interval,
-if equal to "se", the interval is set to the approximate standard error (see \code{\link[mgcv:predict.gam]{mgcv::predict.gam()}})}
+\item{ci_prob}{"se" for standard error bands (see \code{\link[mgcv:predict.gam]{mgcv::predict.gam()}}), or numeric for simulation-based intervals
+if numerical, sets the probability for the simulation-based estimated of credible interval.}
 
 \item{remove_null}{logical; only plot differentially expressed transcripts}
 
@@ -68,9 +68,7 @@ if equal to "se", the interval is set to the approximate standard error (see \co
 
 \item{null_threshold_adj}{logical; use adjusted (default) or non-adjusted p-values for filtering targets}
 
-\item{k_mult}{numerical; multiplier for the number of knots in the spline}
-
-\item{gene_level_plot}{logical; plot gene-level data and fitted trend}
+\item{k_mult}{numerical; multiplier for the number of knots in the spline. Not recommended to change this value.}
 
 \item{return_fits_only}{logical; return the model fits. Does not plot the function}
 
@@ -85,8 +83,46 @@ be common or free.}
 a ggplot object
 }
 \description{
-Plot a fitted changepoint additive model
+Plot fitted changepoint additive models
+}
+\details{
+Plots the fitted trend and data points for a given gene or target. If a gene ID
+is supplied, the function will plot all transcripts for that gene.
+The function can also be used to return the model fit(s) only, which are
+\code{gamObject} objects from the \code{mgcv} package.
 }
 \examples{
-1+1
+\dontrun{
+
+library(cpam)
+library(dplyr)
+
+# Example Experimental Design
+exp_design <- tibble(sample = paste0("s",1:50),
+                     time = rep(c(0:4,10),
+                     path = paste0("path/",sample,"/abundance.h5"))
+
+# Example Transcript-to-Gene Mapping
+t2g <- readr::read_csv("path/to/t2g.csv")
+
+# Prepare a cpam object
+cpo <- prepare_cpam(
+ exp_design = exp_design,
+ t2g = t2g,
+ import_type = "kallisto",
+ num_cores = 5)
+
+ # compute p-values
+ cpo <- compute_p_values(cpo)
+
+ # estimate changepoints
+ cpo <- estimate_changepoint(cpo)
+
+ # estimate shapes
+ cpo <- select_shape(cpo)
+
+ # Plot a fitted trend
+ plot_cpam(cpo, gene_id = "AT1G01520")
+ }
+
 }

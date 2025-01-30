@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot-gene.R
 \name{plot_gene_co}
 \alias{plot_gene_co}
-\title{Plot a fitted cpgam}
+\title{Plot a fitted cpgam (superseded)}
 \usage{
 plot_gene_co(
   cpo,
@@ -79,13 +79,15 @@ if equal to "se", the interval is set to the approximate standard error (see \co
 \item{common_y_scale}{logical; for faceted plots of multiple transcripts, should the scale of the y-axis
 be common or free.}
 
-\item{scaled}{logical; scaled data by overdispersions (for bootstrapped data only)}
+\item{scaled}{logical; scaled data by overdispersions (for bootstrapped data only)
+
+Please use \code{\link[=plot_cpam]{plot_cpam()}} instead. This function will be deprecated in future versions.}
 }
 \value{
 a ggplot object
 }
 \description{
-Plot a fitted cpgam
+Plot a fitted cpgam (superseded)
 }
 \examples{
 1+1
