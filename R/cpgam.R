@@ -140,6 +140,7 @@ cpgam <- function(data,
     m$bs <- bs
     m$data <- data
     m$model_type <- model_type
+    m$se_ratio <- max(predict(m,se = T)$se.fit)/max(data$counts)
   }
 
   m

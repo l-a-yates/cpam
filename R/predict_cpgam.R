@@ -1,7 +1,7 @@
 predict_cpgam <- function(fit,
                           ci_prob = "se",
                           length.out = 500,
-                          lim_factor = 5,
+                          lim_factor = 2,
                           nsim = 2e3,
                           scaled = F,
                           logged = F){
@@ -40,6 +40,7 @@ predict_cpgam <- function(fit,
                     q_lo =  pred$fit*od - pred$se.fit*sqrt(od),
                     q_hi =  pred$fit*od + pred$se.fit*sqrt(od),
                     q_lo = pmax(.data$q_lo, 0)
+                    ##q_hi = pmin(.data$q_hi, lim_factor*max(fit$data$counts)*od
       ) %>% return()
     }
 
@@ -68,9 +69,9 @@ predict_cpgam <- function(fit,
     newdata %>%
       dplyr::mutate(counts = counts,
                     q_lo =  y_matrix %>% matrixStats::rowQuantiles(probs = 0.5 - ci_prob/2),
-                    q_hi =  y_matrix %>% matrixStats::rowQuantiles(probs = 0.5 + ci_prob/2),
-                    q_hi = pmin(.data$q_hi, lim_factor*max(fit$y)*od)
-      ) %>% return()
+                    q_hi =  y_matrix %>% matrixStats::rowQuantiles(probs = 0.5 + ci_prob/2)) %>%
+      #dplyr::mutate(q_hi = pmin(.data$q_hi, lim_factor*max(fit$data$counts)*od)) %>%
+      return()
 
   }
 
