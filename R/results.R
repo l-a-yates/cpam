@@ -17,6 +17,9 @@
 #' @param cp_type character; model-selection rule used to select the changepoint
 #' @param shape_type character; "shape1" to include unconstrained or otherwise "shape2"
 #' @param summarise_to_gene logical; return gene-level results only
+#' @param remove_null_targets logical; remove targets with null shapes (default is T).
+#' If F, targets with null shapes will be included if the aggregated p-value for
+#' the corresponding gene passes the specified filtering thresholds.
 #'
 #' @details
 #' This function is usually called after
@@ -70,7 +73,8 @@ results <- function(cpo,
                     add_counts = T,
                     cp_type = c("cp_1se","cp_min"),
                     shape_type = c("shape1","shape2"),
-                    summarise_to_gene = F){
+                    summarise_to_gene = F,
+                    remove_null_targets = T){
 
   p_type <- match.arg(p_type)
   cp_type <- match.arg(cp_type)
@@ -176,6 +180,11 @@ results <- function(cpo,
 
   if(summarise_to_gene & !cpo$gene_level){
     p_table <-  p_table %>% dplyr::select(dplyr::any_of(c("gene_id","p"))) %>% dplyr::distinct()
+  }
+
+  if(remove_null_targets & !is.null(p_table$shape)){
+    p_table <- p_table %>%
+      filter(shape != "null")
   }
 
   p_table %>% dplyr::arrange(.data$p)

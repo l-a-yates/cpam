@@ -8,6 +8,13 @@
 #'        with adjusted p-value below `deg_threshold`. Default is TRUE.
 #' @param deg_threshold Numeric; significance threshold for differentially expressed genes/targets.
 #'        Only used when `degs_only = TRUE`. Default is 0.05.
+#' @param p_type character; choose the type of p-value. Options are "p_gam" (default)
+#'  or "p_mvn" (see [`compute_p_values()`] for details).
+#' @param shape_type character; "shape1" to include unconstrained or otherwise "shape2".
+#' Default is "shape1". In some instances, all of the transcripts for a gene may be "null" shaped,
+#' but the p-value for the gene may still be significant. This is due to the different
+#' methods of determining significance for the changepoints and the gene-level p-values.
+#' Here, conservatively, we remove these null-shaped genes from the DEG list.
 #'
 #' @return None (launches Shiny app in browser)
 #' @export
@@ -27,7 +34,12 @@
 visualize <- function(cpo,
                       subset = NULL,
                       degs_only = T,
-                      deg_threshold = 0.05){
+                      deg_threshold = 0.05,
+                      p_type = c("p_gam","p_mvn"),
+                      shape_type = c("shape1","shape2")){
+
+  p_type <- match.arg(p_type)
+  shape_type <- match.arg(shape_type)
 
   if(is.null(subset)){
     if(degs_only & !is.null(cpo$p_table)){
@@ -37,7 +49,15 @@ visualize <- function(cpo,
           dplyr::pull(.data$target_id)
         cpo$data_long <- dplyr::filter(cpo$data_long,.data$target_id %in% subset)
       } else {
-        subset <- cpo$p_table %>%
+        subset <-
+          cpo$p_table %>%
+          {
+            if(!is.null(cpo$shapes)){
+              dplyr::left_join(.,cpo$shapes %>% dplyr::select(.data$target_id, shape = {{shape_type}}),
+                               by = "target_id") %>%
+                filter(!all(shape=="null"),.by = "gene_id")
+            } else .
+          } %>%
           dplyr::filter(.data$q_val_gene <= deg_threshold) %>%
           dplyr::pull(.data$gene_id)
         cpo$data_long <- dplyr::filter(cpo$data_long,.data$gene_id %in% subset)
@@ -206,9 +226,9 @@ app <- function(cpo) {
     `log-linear (lin)` = "lin",
     `convex (cx)` = "cx",
     `concave (cv)` = "cv",
-    `increasing concave (icv)` = "micv",
-    `decreasing convex (dcx)` = "mdcx",
-    `unconstrained (uc)` = "tp"
+    `increasing concave (micv)` = "micv",
+    `decreasing convex (mdcx)` = "mdcx",
+    `unconstrained (tp)` = "tp"
   )
 
   # Helper function for tooltips
@@ -364,11 +384,11 @@ app <- function(cpo) {
               bslib::card_body(
                 class = "collapse",
                 id = "filteringCard",
-                shiny::checkboxInput('remove_null', 'Plot DETs only',
+                shiny::checkboxInput('remove_null', 'Remove non-significant transcripts',
                                      value = FALSE
                 ),
                 shiny::numericInput("remove_null_threshold",
-                                    "Adjusted P value threshold",
+                                    "Adjusted p-value threshold",
                                     value = 0.05, min = 0.01, max = 0.99,
                                     step = 0.01
                 )
@@ -442,7 +462,17 @@ app <- function(cpo) {
               bslib::card_header(
                 class = "d-flex justify-content-between align-items-center",
                 "Results",
-                shiny::uiOutput("plotTitle")
+                shiny::uiOutput("plotTitle"),
+                div(class = "d-flex align-items-center gap-2",  # Right side with font controls
+                    shiny::tags$span("Size:"),
+                    actionButton("decrease_font", "", icon = icon("minus"),
+                                 class = "btn btn-outline-secondary btn-sm"),
+                    shiny::tags$span(
+                      textOutput("current_font_size", inline = TRUE)
+                    ),
+                    actionButton("increase_font", "", icon = icon("plus"),
+                                 class = "btn btn-outline-secondary btn-sm")
+                )
               ),
               shiny::plotOutput("myPlot", height = "800px"),
               shiny::htmlOutput("plotInfo")
@@ -492,6 +522,30 @@ app <- function(cpo) {
     })
 
     loading <- shiny::reactiveVal(TRUE)
+
+    # Add reactive value for font size
+    font_size <- reactiveVal(16)  # Default size
+
+    # Update font size display
+    output$current_font_size <- renderText({
+      paste0(font_size(), "px")
+    })
+
+    # Increase font size button
+    observeEvent(input$increase_font, {
+      current <- font_size()
+      if(current < 24) {  # Maximum size
+        font_size(current + 2)
+      }
+    })
+
+    # Decrease font size button
+    observeEvent(input$decrease_font, {
+      current <- font_size()
+      if(current > 8) {  # Minimum size
+        font_size(current - 2)
+      }
+    })
 
     # Reactive values for storing state
     rv <- shiny::reactiveValues(
@@ -626,7 +680,8 @@ app <- function(cpo) {
                     cp_fix = if(input$cp_fix!="auto"){as.numeric(input$cp_fix)} else {-999},
                     bs = input$bs,
                     facet = input$facet,
-                    common_y_scale = input$common_y_scale
+                    common_y_scale = input$common_y_scale,
+                    base_size = font_size()
           )
         }
       )

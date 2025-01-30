@@ -327,6 +327,7 @@ predict_lfc <- function(fit, length.out = 200) {
 #' @param common_y_scale logical; for faceted plots of multiple transcripts, should the scale of the y-axis
 #' be common or free.
 #' @param scaled logical; scaled data by overdispersions (for bootstrapped data only)
+#' @param base_size numeric; base font size for the plot
 #'
 #' @details
 #' Plots the fitted trend and data points for a given gene or target. If a gene ID
@@ -395,7 +396,8 @@ plot_cpam <- function(cpo,
                          return_fits_only = F,
                          family = "nb",
                          common_y_scale = T,
-                         scaled = F){
+                         scaled = F,
+                         base_size = 12){
 
   if(family != "nb"){
     warning("Plotting is currently only suppported for negative binomial models. Setting 'family ='nb''")
@@ -536,18 +538,19 @@ plot_cpam <- function(cpo,
     ggplot2::ggplot(ggplot2::aes(x = .data$time)) +
     ggplot2::theme(legend.position = "bottom") +
     ggplot2::scale_color_manual(values = col_values, aesthetics = c("colour","fill")) +
-    ggplot2::theme_classic() +
+    ggplot2::theme_classic(base_size = base_size) +
     ggplot2::theme(strip.background = ggplot2::element_rect(linewidth = 0),
-                   strip.text = ggplot2::element_text(size = 12),
-                   plot.title = ggplot2::element_text(hjust = 0.5, size = 16, face = "bold")) +
+                   #strip.text = ggplot2::element_text(size = 12),
+                   plot.title = ggplot2::element_text(hjust = 0.5, face = "bold")
+                   ) +
     ggplot2::scale_x_continuous(breaks = cpo$times) +
     ggplot2::labs(title = gene_id, y = "counts")
 
 
   if(cpo$model_type == "case-control") gg <- gg + ggplot2::aes(group = factor(.data$case), lty = factor(.data$case)) + ggplot2::scale_linetype_manual(values = c("dashed","solid"))
-  if(show_fit) gg <- gg + ggplot2::geom_line(ggplot2::aes(y = .data$counts, col = .data$target_id))
+  if(show_fit) gg <- gg + ggplot2::geom_line(ggplot2::aes(y = .data$counts, col = .data$target_id), linewidth = base_size/16)
   if(show_fit_ci) gg <- gg + ggplot2::geom_ribbon(ggplot2::aes(ymin = .data$q_lo, ymax = .data$q_hi, fill = target_id), alpha = 0.1)
-  if(show_data) gg <- gg + ggplot2::geom_point(ggplot2::aes(y = .data$counts, col = .data$target_id), data = obs)
+  if(show_data) gg <- gg + ggplot2::geom_point(ggplot2::aes(y = .data$counts, col = .data$target_id), data = obs, size = base_size/7)
   if(show_data_ci) gg <-  gg + ggplot2::geom_linerange(ggplot2::aes(ymin = .data$q_lo, ymax = .data$q_hi, col = target_id),
                                                        data = obs,
                                                        alpha = 0.3)
