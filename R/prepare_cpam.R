@@ -118,7 +118,7 @@ prepare_cpam <- function(exp_design,
     if(is.null(t2g) & !gene_level) stop("'t2g' must be supplied if 'gene_level' is false")
   } else{
     if(!is.null(import_type)) message("'import_type' is being ignored since a count matrix has been supplied")
-    if(is.null(t2g) & gene_level) message("'t2g' has not been supplied. This is fine if the counts in the supplied count matrix are already aggregated to the gene level")
+    #if(is.null(t2g) & gene_level) message("'t2g' has not been supplied. This is fine if the counts in the supplied count matrix are already aggregated to the gene level")
     if(is.null(colnames(count_matrix)) | sum(!colnames(count_matrix) %in% exp_design$sample)>0){
       stop("Column names of 'count_matrix' must match samples in 'exp_design'")}
     bootstrap <- F

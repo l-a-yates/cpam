@@ -267,12 +267,15 @@ plot_cluster <- function(cpo, res, changepoints, shapes, alpha = 0.1){
     dplyr::pull(.data$target_id)
 
   if(length(txs) == 0) {warning("No targets found for the selected shapes and timepoints"); return(NULL)}
+  message(paste0("Plotting ",length(txs)," targets"))
 
   plot_data <-
     txs %>%
     purrr::set_names() %>%
-    purrr::map_dfr(~ plot_cpam(cpo,target_id = .x,return_fits_only = T) %>%
-                     predict_lfc, .id = "target_id")
+    purrr::map(~ plot_cpam(cpo,target_id = .x,return_fits_only = T) %>%
+                     {if(is_na(.)) NULL else predict_lfc(.)}) %>%
+    purrr::compact() %>%
+    list_rbind(names_to = "target_id")
 
   plot_data %>%
     ggplot2::ggplot(ggplot2::aes(x = .data$time, y = .data$lfc, group = .data$target_id)) +
@@ -517,7 +520,10 @@ plot_cpam <- function(cpo,
     dplyr::mutate(pred = list(predict_cpgam(fit = .data$fit, ci_prob = ci_prob, scaled = scaled)))
 
   if(return_fits_only){
-    if(length(fits$fit) == 1) return(fits$fit[[1]]) else return(fits$fit %>% purrr::set_names(fits[["target_id"]]))
+    return(switch(as.character(length(fits$fit)),
+                  "0" = NA,
+                  "1" = fits$fit[[1]],
+                  fits$fit %>% purrr::set_names(fits[["target_id"]])))
   }
 
   preds <-
