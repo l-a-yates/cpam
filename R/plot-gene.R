@@ -273,9 +273,9 @@ plot_cluster <- function(cpo, res, changepoints, shapes, alpha = 0.1){
     txs %>%
     purrr::set_names() %>%
     purrr::map(~ plot_cpam(cpo,target_id = .x,return_fits_only = T) %>%
-                     {if(is_na(.)) NULL else predict_lfc(.)}) %>%
+                     {if(rlang::is_na(.)) NULL else predict_lfc(.)}) %>%
     purrr::compact() %>%
-    list_rbind(names_to = "target_id")
+    purrr::list_rbind(names_to = "target_id")
 
   plot_data %>%
     ggplot2::ggplot(ggplot2::aes(x = .data$time, y = .data$lfc, group = .data$target_id)) +
