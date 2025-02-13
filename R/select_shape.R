@@ -206,7 +206,7 @@ shape_selector <- function(fits, score){
   fits <- fits[names(fits)==purrr::map_chr(fits,"bs")]
 
   #remove fits with very large predictive standard errors
-  fits <- fits[map_dbl(fits,"se_ratio")<5]
+  fits <- fits[purrr::map_dbl(fits,"se_ratio")<5]
 
   # remove cv if it is an micv shape
   if(all(c("micv","cv") %in% names(fits))){

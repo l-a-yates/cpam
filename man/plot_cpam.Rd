@@ -26,7 +26,8 @@ plot_cpam(
   return_fits_only = F,
   family = "nb",
   common_y_scale = T,
-  scaled = F
+  scaled = F,
+  base_size = 12
 )
 }
 \arguments{
@@ -78,6 +79,8 @@ if numerical, sets the probability for the simulation-based estimated of credibl
 be common or free.}
 
 \item{scaled}{logical; scaled data by overdispersions (for bootstrapped data only)}
+
+\item{base_size}{numeric; base font size for the plot}
 }
 \value{
 a ggplot object

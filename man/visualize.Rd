@@ -4,7 +4,14 @@
 \alias{visualize}
 \title{Launches a Shiny app to visualise the data and fitted models of a cpam object}
 \usage{
-visualize(cpo, subset = NULL, degs_only = T, deg_threshold = 0.05)
+visualize(
+  cpo,
+  subset = NULL,
+  degs_only = T,
+  deg_threshold = 0.05,
+  p_type = c("p_gam", "p_mvn"),
+  shape_type = c("shape1", "shape2")
+)
 }
 \arguments{
 \item{cpo}{A cpam object containing count data, model fits, and optional changepoint/shape estimates}
@@ -17,6 +24,15 @@ with adjusted p-value below \code{deg_threshold}. Default is TRUE.}
 
 \item{deg_threshold}{Numeric; significance threshold for differentially expressed genes/targets.
 Only used when \code{degs_only = TRUE}. Default is 0.05.}
+
+\item{p_type}{character; choose the type of p-value. Options are "p_gam" (default)
+or "p_mvn" (see \code{\link[=compute_p_values]{compute_p_values()}} for details).}
+
+\item{shape_type}{character; "shape1" to include unconstrained or otherwise "shape2".
+Default is "shape1". In some instances, all of the transcripts for a gene may be "null" shaped,
+but the p-value for the gene may still be significant. This is due to the different
+methods of determining significance for the changepoints and the gene-level p-values.
+Here, conservatively, we remove these null-shaped genes from the DEG list.}
 }
 \value{
 None (launches Shiny app in browser)

@@ -55,7 +55,7 @@ visualize <- function(cpo,
             if(!is.null(cpo$shapes)){
               dplyr::left_join(.,cpo$shapes %>% dplyr::select(.data$target_id, shape = {{shape_type}}),
                                by = "target_id") %>%
-                filter(!all(shape=="null"),.by = "gene_id")
+                dplyr::filter(!all(.data$shape=="null"),.by = "gene_id")
             } else .
           } %>%
           dplyr::filter(.data$q_val_gene <= deg_threshold) %>%
@@ -463,14 +463,14 @@ app <- function(cpo) {
                 class = "d-flex justify-content-between align-items-center",
                 "Results",
                 shiny::uiOutput("plotTitle"),
-                div(class = "d-flex align-items-center gap-2",  # Right side with font controls
+                shiny::div(class = "d-flex align-items-center gap-2",  # Right side with font controls
                     shiny::tags$span("Size:"),
-                    actionButton("decrease_font", "", icon = icon("minus"),
+                    shiny::actionButton("decrease_font", "", icon = shiny::icon("minus"),
                                  class = "btn btn-outline-secondary btn-sm"),
                     shiny::tags$span(
-                      textOutput("current_font_size", inline = TRUE)
+                      shiny::textOutput("current_font_size", inline = TRUE)
                     ),
-                    actionButton("increase_font", "", icon = icon("plus"),
+                    shiny::actionButton("increase_font", "", icon = shiny::icon("plus"),
                                  class = "btn btn-outline-secondary btn-sm")
                 )
               ),
@@ -524,15 +524,15 @@ app <- function(cpo) {
     loading <- shiny::reactiveVal(TRUE)
 
     # Add reactive value for font size
-    font_size <- reactiveVal(16)  # Default size
+    font_size <- shiny::reactiveVal(16)  # Default size
 
     # Update font size display
-    output$current_font_size <- renderText({
+    output$current_font_size <- shiny::renderText({
       paste0(font_size(), "px")
     })
 
     # Increase font size button
-    observeEvent(input$increase_font, {
+    shiny::observeEvent(input$increase_font, {
       current <- font_size()
       if(current < 24) {  # Maximum size
         font_size(current + 2)
@@ -540,7 +540,7 @@ app <- function(cpo) {
     })
 
     # Decrease font size button
-    observeEvent(input$decrease_font, {
+    shiny::observeEvent(input$decrease_font, {
       current <- font_size()
       if(current > 8) {  # Minimum size
         font_size(current - 2)

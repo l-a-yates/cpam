@@ -15,7 +15,8 @@ results(
   add_counts = T,
   cp_type = c("cp_1se", "cp_min"),
   shape_type = c("shape1", "shape2"),
-  summarise_to_gene = F
+  summarise_to_gene = F,
+  remove_null_targets = T
 )
 }
 \arguments{
@@ -43,6 +44,10 @@ the set of observed time points must exceed this minimum value for}
 \item{shape_type}{character; "shape1" to include unconstrained or otherwise "shape2"}
 
 \item{summarise_to_gene}{logical; return gene-level results only}
+
+\item{remove_null_targets}{logical; remove targets with null shapes (default is T).
+If F, targets with null shapes will be included if the aggregated p-value for
+the corresponding gene passes the specified filtering thresholds.}
 }
 \value{
 a tibble

@@ -60,7 +60,7 @@ prepare_cpam(
 \item{intercept_cc}{string; intercept for case-control model: "1" (default) for common intercept  or "condition"}
 }
 \value{
-an object of class \code{cpo}
+an object of class cpam
 }
 \description{
 Prepare a cpam object
