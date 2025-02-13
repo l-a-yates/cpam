@@ -184,7 +184,7 @@ results <- function(cpo,
 
   if(remove_null_targets & !is.null(p_table$shape)){
     p_table <- p_table %>%
-      filter(shape != "null")
+      filter(.data$shape != "null")
   }
 
   p_table %>% dplyr::arrange(.data$p)
