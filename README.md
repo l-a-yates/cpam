@@ -3,7 +3,7 @@
 
 ### An R package for omics time series analysis.
 
-Read the full paper [here](https://www.biorxiv.org/)
+Read the full paper [here](https://doi.org/10.1101/2024.12.22.630003)
 
 <img src="assets/example_trends.png" width="800" height="600" />
 
@@ -45,7 +45,7 @@ and discussion about using **cpam** for your research through
 [Discussions](https://github.com/l-a-yates/cpam/discussions/). Our goal
 is to work with users to make **cpam** a robust and valuable tool for
 time series omics analysis. We can also be contacted via the email
-addresses listed in our paper [here](https://www.biorxiv.org/).
+addresses listed in our paper [here](https://doi.org/10.1101/2024.12.22.630003).
 
 ## Installation
 
