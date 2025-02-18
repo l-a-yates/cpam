@@ -4,3 +4,7 @@
 ^README\.Rmd$
 ^assets$
 ^README.html$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^\.github$

@@ -5,7 +5,7 @@
 
 Read the full paper [here](https://doi.org/10.1101/2024.12.22.630003)
 
-<img src="assets/example_trends.png" width="800" height="600" />
+<img src="man/figures/example_trends.png" alt = "Example gene plot (see manuscript if not rendered here)" width="800" height="600" />
 
 Application of **cpam** to RNA-seq time series of *Arabidopsis* plants
 treated with excess-light.
@@ -138,7 +138,7 @@ Or plot one gene at a time:
   plot_cpam(cpo, gene_id = "AT3G23280")
 ```
 
-<img src="assets/example_gene_plot.png" width="550" height="450" />
+<img src="man/figures/example_gene_plot.png" alt = "Example gene plot (see manuscript if not rendered here)" width="550" height="450" />
 Isoform 1 (AT3G23280.1) has a changepoint at 67.5 min and has a
 monotonic increasing concave (micv) shape.<br> Isoform 2 (AT3G23280.2)
 has no changepoint and has an unconstrained thin-plate (tp) shape.
