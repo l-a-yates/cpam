@@ -148,4 +148,14 @@ has no changepoint and has an unconstrained thin-plate (tp) shape.
   results(cpo)
 ```
 
-### More examples and detailed tutorials coming soon!
+### Detailed tutorials
+
+The following two tutorials serve an introduction to the package and 
+they provide code to reproduce the results for the case studies
+presented in the 
+[manuscript](https://doi.org/10.1101/2024.12.22.630003)
+accompanying the `cpam` package.
+
+ - [Case Study 1](https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/crisp.html)
+ - [Case Study 2](https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/torre.html)
+
