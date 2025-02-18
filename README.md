@@ -156,6 +156,6 @@ presented in the
 [manuscript](https://doi.org/10.1101/2024.12.22.630003)
 accompanying the `cpam` package.
 
- - [Case Study 1](https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/crisp.html)
- - [Case Study 2](https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/torre.html)
+ - [Case Study 1](https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/torre.html)
+ - [Case Study 2](https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/crisp.html)
 
