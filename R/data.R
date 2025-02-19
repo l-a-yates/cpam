@@ -23,3 +23,43 @@
 #' }
 #' @source The TAIR database.
 "t2g"
+
+
+#' A small case-only count matrix to run light-weight examples
+#'
+#' See `cpo_example` for fitted CPAM object.
+#' See `exp_design_example` for experimental design.
+#' 1000 genes x 6 time points x 5 reps
+#'
+#' @format A matrix with 1000 rows and 30 columns:
+#' \describe{
+#'   \item{rownames}{Gene ID}
+#'   \item{colnames}{Samples}
+#' }
+#' @source Simulated data, see data-raw directory for details
+"count_matrix_example"
+
+#' An experimental design run light-weight examples
+#' Six time points x 3 reps
+#' #' See `cpo_example` for fitted CPAM object.
+#'
+#'#'
+#' @format A tibble with columns:
+#' \describe{
+#'   \item{sample}{Character vector of sample names.}
+#'   \item{time}{Numeric vector of time points.}
+#'   ...
+#' }
+#' @source Simulated data, see data-raw directory for details
+"exp_design_example"
+
+
+#' A fit CPAM object to run light-weight examples
+#' Six time points x 3 reps
+#' See `cpo_example` for fitted CPAM object.
+#' See `exp_design_example` for experimental design.
+#'#'
+#' @format A cpam object with p-values, changpoints, and shapes estimated
+#'
+#' @source Simulated data, see data-raw directory for details
+"cpo_example"
