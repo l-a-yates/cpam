@@ -8,6 +8,13 @@
 \description{
 What the package does (one paragraph).
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://l-a-yates.github.io/cpam/}
+}
+
+}
 \author{
 \strong{Maintainer}: Luke Yates \email{luke.yates@utas.edu.au} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
 
