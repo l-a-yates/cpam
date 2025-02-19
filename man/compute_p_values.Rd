@@ -8,7 +8,6 @@ compute_p_values(
   cpo,
   subset = NULL,
   p_adj_method = "BH",
-  fixed_effects = NULL,
   gam_method = "REML",
   gam_optimizer = "efs",
   silent = TRUE
@@ -20,9 +19,6 @@ compute_p_values(
 \item{subset}{a character vector of target_id names}
 
 \item{p_adj_method}{method for p-value adjustment}
-
-\item{fixed_effects}{a model formula (RHS only) to provide or update
-fixed affects. Terms must correspond to columns in \code{exp_design}}
 
 \item{gam_method}{fitting method for \code{mgcv::gam} (default is "REML")}
 
