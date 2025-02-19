@@ -97,160 +97,63 @@ prepare_cpam <- function(exp_design,
   intercept_cc <- match.arg(intercept_cc)
   import <- ifelse(is.null(count_matrix),T,F)
 
-  # check that design matrix is non-singular
-  if(is.null(exp_design[["time"]])) stop("'exp_design' must include a 'time' column")
-  if(length(unique(exp_design$time))<3) stop("The experimental design must have a least three distinct time points")
+  validate_inputs(exp_design, count_matrix, t2g, import_type, model_type,
+                  condition_var, case_value, fixed_effects,
+                  aggregate_to_gene, gene_level, import)
 
-  # make this a helper function check_fixed_effects()
-  if(!is.null(fixed_effects)){
-    e <- try(stats::model.frame(fixed_effects, exp_design), silent = T)
-    if(inherits(e, "try-error")){
-      stop((paste0("Fixed effects do not match the supplied design: ",
-                   stringr::str_split_i(as.character(attr(e,"condition")),":",2))))
-    }
-    fixed_effects <- deparse(fixed_effects[[2]])
+  if (model_type == "case-control") {
+    exp_design <- prepare_case_control(exp_design, condition_var, case_value)
   }
-  if(is.null(t2g) & aggregate_to_gene) stop("'t2g' must be supplied if 'aggregate_to_gene' is true")
 
-  if(import){
-    if(is.null(import_type)) stop("'import_type' must be given if count matrix is not supplied")
-    if(is.null(exp_design["path"])) stop("'exp_design' must contain a 'path' column if count matrix is not supplied")
-    if(is.null(t2g) & !gene_level) stop("'t2g' must be supplied if 'gene_level' is false")
-  } else{
-    if(!is.null(import_type)) message("'import_type' is being ignored since a count matrix has been supplied")
-    #if(is.null(t2g) & gene_level) message("'t2g' has not been supplied. This is fine if the counts in the supplied count matrix are already aggregated to the gene level")
-    if(is.null(colnames(count_matrix)) | sum(!colnames(count_matrix) %in% exp_design$sample)>0){
-      stop("Column names of 'count_matrix' must match samples in 'exp_design'")}
+  fixed_effects <- validate_fixed_effects(fixed_effects,exp_design)
+
+  num_cores <- validate_cores(num_cores)
+
+  # Import data if needed, otherwise use provided count matrix
+  if (import) {
+    message(paste0("Loading ", length(exp_design$path), " samples"))
+    result <- import_count_data(exp_design, t2g, import_type, gene_level, bootstrap)
+    counts_raw <- result$counts_raw
+    bootstrap <- result$bootstrap
+    overdispersion.prior <- result$overdispersion.prior
+    nboot <- result$nboot
+    catch <- result$catch
+    boot <- result$boot
+  } else {
+    counts_raw <- process_count_matrix(count_matrix, t2g, gene_level)
+    overdispersion.prior <- nboot <- NULL
     bootstrap <- F
   }
 
+  # Convert to long format and join with experiment design
+  data_long <- convert_to_long_format(counts_raw, exp_design)
 
-  if(model_type == "case-control"){
-    if(is.null(exp_design[[condition_var]])){
-      stop(paste("type = 'case-control', but the column",condition_var,"does not exist in 'exp_design"))
-    }
+  # Handle gene aggregation
+  data_long <- handle_gene_aggregation(data_long, t2g, aggregate_to_gene)
 
-    if(!is.null(exp_design[["case"]])) stop("The column name 'case' is reserved and cannot be used in 'exp_design'")
-    exp_design <- exp_design %>% dplyr::mutate(case = as.numeric(exp_design[[condition_var]] == case_value))
-    # check the case values by timepoint
+  # Handle bootstrap if needed
+  if (bootstrap) {
+    data_long <- process_bootstrap_data(data_long, catch, boot)
   }
 
-  if(!num_cores%%1==0) stop("num_cores must be integer values")
-  if(num_cores > parallel::detectCores()){
-    warning(paste0("num_cores is greater than ",parallel::detectCores(),
-                   ", the available number of cores. Setting num_cores = ",
-                   floor(parallel::detectCores()/4),
-                   " (1/4 x number cores)"),
-            call. = F)
-    num_cores <- floor(parallel::detectCores()/4)}
-
-
-  if(import){
-    message(paste0("Loading ",length(exp_design$path), " samples"))
-    if(gene_level){
-      message("Summarizing to gene level")
-      aggregate_to_gene <- F
-      bootstrap <- F
-    }
-    txi <- tximport::tximport(
-      exp_design$path,
-      txIn = T,
-      type = import_type,
-      txOut = !gene_level,
-      dropInfReps = !bootstrap,
-      varReduce = F,
-      countsFromAbundance = "no",
-      tx2gene = t2g
-    )
-
-    colnames(txi$counts) <- exp_design$sample
-    counts_raw <- txi$counts
-
-    if(bootstrap & is.null(txi$infReps)){
-      message("No inferential replicates found, setting bootstrap = FALSE")
-      bootstrap <- F
-    }
-
-    if(bootstrap){
-      catch <- calculate_overdispersions(txi)
-      overdispersion.prior = catch$overdispersion.prior
-      boot <- summarise_bootstraps(txi)
-      nboot <- txi$infReps[[1]] %>% ncol
-    } else {
-      overdispersion.prior <- nboot <- NULL
-    }
-  } else {
-    if(gene_level & !is.null(t2g)){
-      counts_raw <-
-        count_matrix %>%
-        tidyr::as_tibble(rownames = "target_id") %>%
-        dplyr::left_join(t2g, by = "target_id") %>%
-        dplyr::group_by(.data[["gene_id"]]) %>%
-        dplyr::summarise(dplyr::across(-.data[["target_id"]], sum)) %>%
-        (\(x){as.matrix(x[,-1]) %>% `rownames<-`(dplyr::pull(x,"gene_id"))})
-    } else {
-      counts_raw <- count_matrix
-    }
-    overdispersion.prior <- nboot <- NULL
-  }
-
-  data_long <-
-    counts_raw %>%
-    tidyr::as_tibble(rownames = "target_id") %>%
-    tidyr::pivot_longer(-.data$target_id, names_to = "sample", values_to = "counts_raw") %>%
-    dplyr::mutate(counts = counts_raw) %>%
-    dplyr::left_join(exp_design %>% dplyr::select(-tidyr::any_of(c("path"))), by = "sample") %>%
-    dplyr::arrange(.data$target_id)
-
-  if(aggregate_to_gene){
-    data_long <- data_long %>% dplyr::left_join(t2g, by = c("target_id"))
-  } else {
-    data_long <- data_long %>% dplyr::mutate(gene_id = .data$target_id)
-  }
-
-  if(bootstrap){
-    data_long <-
-      data_long %>%
-      dplyr::mutate(overdispersions = catch$overdispersion[.data$target_id],
-                    counts_scaled = counts_raw/.data$overdispersions,
-                    counts = .data$counts_scaled) %>%
-      dplyr::left_join(boot, by = c("sample","target_id"))
-  }
-
+  # Filter low count genes
   message("Filtering low count genes")
-  target_to_keep <- do.call(filter_fun, args = c(list(data = data_long),filter_fun_args))
+  target_to_keep <- do.call(filter_fun, args = c(list(data = data_long), filter_fun_args))
+  count_matrix_filtered <- counts_raw[target_to_keep, ]
 
-  #if(aggregate_to_gene){
-  #  genes_to_keep <-  dplyr::filter(t2g, .data$target_id %in% target_to_keep) %>% dplyr::pull(.data$gene_id) %>% unique
-  #  target_to_keep <-
-  #    data_long %>%
-  #    dplyr::filter(.data$gene_id %in% genes_to_keep) %>%
-  #    dplyr::filter(sum(round(.data$counts))>0, .by = "target_id") %>%
-  #    dplyr::pull(.data$target_id) %>% unique
-  #}
+  # Normalize if requested
+  norm_factor <- compute_normalization_factors(count_matrix_filtered, normalize)
 
-  count_matrix_filtered <- counts_raw[target_to_keep,]
-  if(normalize){
-    norm_factor <- DESeq2::estimateSizeFactorsForMatrix(count_matrix_filtered)
-  } else norm_factor <- rep(1, nrow(exp_design)) %>% `names<-`(exp_design$sample)
+  # Filter and update data_long
+  data_long <- filter_and_update_data(data_long, target_to_keep, norm_factor)
 
-  data_long <-
-    data_long %>%
-    dplyr::filter(.data$target_id %in% target_to_keep) %>%
-    dplyr::mutate(norm_factor = norm_factor[sample]) %>%
-    dplyr::relocate(.data$target_id)
-
-  if(regularize){
-    if(bootstrap){
-      dispersions <- estimate_dispersions(count_matrix_filtered/catch$overdispersion[rownames(count_matrix_filtered)],exp_design)
-    } else {
-      dispersions <- estimate_dispersions(count_matrix_filtered,exp_design)
-    }
-    data_long <-
-      data_long %>%
-      dplyr::mutate(disp = dispersions[.data$target_id] %>% as.numeric)
+  # Estimate dispersions if regularization is requested
+  if (regularize) {
+    dispersions <- estimate_dispersions_wrapper(count_matrix_filtered, exp_design, bootstrap, catch)
+    data_long <- data_long %>% dplyr::mutate(disp = dispersions[.data$target_id] %>% as.numeric)
   }
 
+  # create cpam object
   list(exp_design = exp_design %>% dplyr::select(-tidyr::any_of(c("path"))),
        count_matrix_raw = counts_raw,
        count_matrix_filtered = count_matrix_filtered,
@@ -274,7 +177,6 @@ prepare_cpam <- function(exp_design,
        bss = c("micv","mdcx","cv","cx","micx","mdcv","tp")
   ) %>%
     `class<-`("cpam")
-
 }
 
 
@@ -315,6 +217,12 @@ ts_filter <- function(data, min_reads = 5, min_prop = 3/5) {
     dplyr::pull(.data$target_id)
 }
 
+#' Summarize bootstrap samples
+#'
+#' Internal function to process inferential replicates from tximport objects.
+#'
+#' @param txi A tximport object containing inferential replicates
+#' @return A tibble with bootstrap summary statistics
 summarise_bootstraps <- function(txi){
   message("Summarising bootstrap samples")
   txi$infReps %>%
@@ -326,7 +234,13 @@ summarise_bootstraps <- function(txi){
     dplyr::bind_rows(.id = "sample")
 }
 
-
+#' Estimate dispersions for count data
+#'
+#' Internal function to calculate tagwise dispersions using edgeR.
+#'
+#' @param counts Count matrix (genes/transcripts × samples)
+#' @param exp_design Experimental design with time column
+#' @return Named vector of tagwise dispersion estimates
 estimate_dispersions <- function(counts, exp_design){
   # update for case-control series (i.e., use condition in the design matrix)
   message("Estimating dispersions using edgeR")
@@ -342,4 +256,278 @@ estimate_dispersions <- function(counts, exp_design){
   names(disp) <- rownames(counts)
 
   disp
+}
+
+
+#' Validate input parameters for prepare_cpam
+#'
+#' @param exp_design Experimental design data frame
+#' @param count_matrix Count matrix
+#' @param t2g Transcript to gene mapping
+#' @param import_type Import type
+#' @param model_type Model type
+#' @param condition_var Condition variable
+#' @param case_value Case value
+#' @param fixed_effects Fixed effects formula
+#' @param aggregate_to_gene Whether to aggregate to gene level
+#' @param gene_level Whether data is at gene level
+#' @param import Whether to import data
+#'
+#' @return NULL, throws error if validation fails
+validate_inputs <- function(exp_design, count_matrix, t2g, import_type, model_type,
+                            condition_var, case_value, fixed_effects,
+                            aggregate_to_gene, gene_level, import) {
+  # Check time column exists with sufficient distinct values
+  if (is.null(exp_design[["time"]])) {
+    stop("'exp_design' must include a 'time' column")
+  }
+  if (length(unique(exp_design$time)) < 3) {
+    stop("The experimental design must have at least three distinct time points")
+  }
+
+  # Check t2g requirement
+  if (is.null(t2g) & aggregate_to_gene) {
+    stop("'t2g' must be supplied if 'aggregate_to_gene' is true")
+  }
+
+  # Import-specific validations
+  if (import) {
+    if (is.null(import_type)) {
+      stop("'import_type' must be given if count matrix is not supplied")
+    }
+    if (is.null(exp_design["path"])) {
+      stop("'exp_design' must contain a 'path' column if count matrix is not supplied")
+    }
+    if (is.null(t2g) & !gene_level) {
+      stop("'t2g' must be supplied if 'gene_level' is false")
+    }
+  } else {
+    if (!is.null(import_type)) {
+      message("'import_type' is being ignored since a count matrix has been supplied")
+    }
+    if (is.null(colnames(count_matrix)) | sum(!colnames(count_matrix) %in% exp_design$sample) > 0) {
+      stop("Column names of 'count_matrix' must match samples in 'exp_design'")
+    }
+  }
+
+  # Case-control specific validations
+  if (model_type == "case-control") {
+    if (is.null(exp_design[[condition_var]])) {
+      stop(paste("type = 'case-control', but the column", condition_var, "does not exist in 'exp_design'"))
+    }
+    if (!is.null(exp_design[["case"]])) {
+      stop("The column name 'case' is reserved and cannot be used in 'exp_design'")
+    }
+    if(all(exp_design[[condition_var]]!=case_value)){
+      stop("type = 'case-control', but there are no case samples")
+    }
+    if(all(exp_design[[condition_var]]==case_value)){
+      stop("type = 'case-control', but there are no control samples")
+    }
+    df <- exp_design %>% dplyr::select("time",condition_var) %>% dplyr::distinct()
+    if(sum(exp_design[[condition_var]]==case_value) != sum(exp_design[[condition_var]]==case_value)){
+      stop("The observed time points for case and control samples must be equal")
+    }
+  }
+}
+
+
+#' Prepare case-control data by adding case indicator
+#'
+#' @param exp_design Experimental design data frame
+#' @param condition_var Name of condition variable
+#' @param case_value Value indicating case
+#' @return Updated experimental design with case indicator
+prepare_case_control <- function(exp_design, condition_var, case_value) {
+  exp_design %>%
+    dplyr::mutate(case = as.numeric(.data[[condition_var]] == case_value))
+}
+
+
+#' Validate and adjust number of cores
+#'
+#' @param num_cores Number of cores requested
+#' @return Validated number of cores
+validate_cores <- function(num_cores) {
+  if (!num_cores %% 1 == 0) {
+    stop("num_cores must be integer values")
+  }
+
+  available_cores <- parallel::detectCores()
+  if (num_cores > available_cores) {
+    suggested_cores <- floor(available_cores / 4)
+    warning(paste0("num_cores is greater than ", available_cores,
+                   ", the available number of cores. Setting num_cores = ",
+                   suggested_cores, " (1/4 x number cores)"),
+            call. = FALSE)
+    num_cores <- suggested_cores
+  }
+
+  return(num_cores)
+}
+
+
+#' Import count data from files
+#'
+#' @param exp_design Experimental design
+#' @param t2g Transcript to gene mapping
+#' @param import_type Import type
+#' @param gene_level Whether to aggregate to gene level
+#' @param bootstrap Whether to use bootstrap samples
+#' @return List containing imported data and related variables
+import_count_data <- function(exp_design, t2g, import_type, gene_level, bootstrap) {
+  if (gene_level) {
+    message("Summarizing to gene level")
+    bootstrap <- FALSE
+  }
+
+  txi <- tximport::tximport(
+    exp_design$path,
+    txIn = TRUE,
+    type = import_type,
+    txOut = !gene_level,
+    dropInfReps = !bootstrap,
+    varReduce = FALSE,
+    countsFromAbundance = "no",
+    tx2gene = t2g
+  )
+
+  colnames(txi$counts) <- exp_design$sample
+  counts_raw <- txi$counts
+
+  # Handle bootstrap samples
+  catch <- boot <- nboot <- overdispersion.prior <- NULL
+  if (bootstrap && is.null(txi$infReps)) {
+    message("No inferential replicates found, setting bootstrap = FALSE")
+    bootstrap <- FALSE
+  }
+
+  if (bootstrap) {
+    catch <- calculate_overdispersions(txi)
+    overdispersion.prior <- catch$overdispersion.prior
+    boot <- summarise_bootstraps(txi)
+    nboot <- txi$infReps[[1]] %>% ncol
+  }
+
+  list(
+    counts_raw = counts_raw,
+    bootstrap = bootstrap,
+    overdispersion.prior = overdispersion.prior,
+    nboot = nboot,
+    catch = catch,
+    boot = boot
+  )
+}
+
+
+#' Process count matrix when importing is not needed
+#'
+#' @param count_matrix Count matrix
+#' @param t2g Transcript to gene mapping
+#' @param gene_level Whether to aggregate to gene level
+#' @return Processed count matrix
+process_count_matrix <- function(count_matrix, t2g, gene_level) {
+  if (gene_level & !is.null(t2g)) {
+    count_matrix %>%
+      tidyr::as_tibble(rownames = "target_id") %>%
+      dplyr::left_join(t2g, by = "target_id") %>%
+      dplyr::group_by(.data[["gene_id"]]) %>%
+      dplyr::summarise(dplyr::across(-.data[["target_id"]], sum)) %>%
+      (\(x) {
+        as.matrix(x[, -1]) %>% `rownames<-`(dplyr::pull(x, "gene_id"))
+      })
+  } else {
+    count_matrix
+  }
+}
+
+#' Convert count matrix to long format and join with experiment design
+#'
+#' @param counts_raw Raw count matrix
+#' @param exp_design Experimental design
+#' @return Long format data frame
+convert_to_long_format <- function(counts_raw, exp_design) {
+  counts_raw %>%
+    tidyr::as_tibble(rownames = "target_id") %>%
+    tidyr::pivot_longer(-.data$target_id, names_to = "sample", values_to = "counts_raw") %>%
+    dplyr::mutate(counts = counts_raw) %>%
+    dplyr::left_join(exp_design %>% dplyr::select(-tidyr::any_of(c("path"))), by = "sample") %>%
+    dplyr::arrange(.data$target_id)
+}
+
+
+#' Handle gene aggregation in long format data
+#'
+#' @param data_long Long format data
+#' @param t2g Transcript to gene mapping
+#' @param aggregate_to_gene Whether to aggregate to gene level
+#' @return Updated long format data with gene ID information
+handle_gene_aggregation <- function(data_long, t2g, aggregate_to_gene) {
+  if (aggregate_to_gene) {
+    data_long %>% dplyr::left_join(t2g, by = c("target_id"))
+  } else {
+    data_long %>% dplyr::mutate(gene_id = .data$target_id)
+  }
+}
+
+#' Process bootstrap data
+#'
+#' @param data_long Long format data
+#' @param catch Overdispersion calculations
+#' @param boot Bootstrap summary
+#' @return Updated data with bootstrap information
+process_bootstrap_data <- function(data_long, catch, boot) {
+  data_long %>%
+    dplyr::mutate(
+      overdispersions = catch$overdispersion[.data$target_id],
+      counts_scaled = .data$counts_raw / .data$overdispersions,
+      counts = .data$counts_scaled
+    ) %>%
+    dplyr::left_join(boot, by = c("sample", "target_id"))
+}
+
+#' Compute normalization factors
+#'
+#' @param count_matrix_filtered Filtered count matrix
+#' @param normalize Whether to perform normalization
+#' @return Vector of normalization factors
+compute_normalization_factors <- function(count_matrix_filtered, normalize) {
+  if (normalize) {
+    DESeq2::estimateSizeFactorsForMatrix(count_matrix_filtered)
+  } else {
+    rep(1, ncol(count_matrix_filtered)) %>%
+      `names<-`(colnames(count_matrix_filtered))
+  }
+}
+
+
+#' Filter and update data_long with normalization factors
+#'
+#' @param data_long Long format data
+#' @param target_to_keep Targets to keep after filtering
+#' @param norm_factor Normalization factors
+#' @return Filtered and updated data
+filter_and_update_data <- function(data_long, target_to_keep, norm_factor) {
+  data_long %>%
+    dplyr::filter(.data$target_id %in% target_to_keep) %>%
+    dplyr::mutate(norm_factor = norm_factor[sample]) %>%
+    dplyr::relocate(.data$target_id)
+}
+
+#' Wrapper for estimating dispersions
+#'
+#' @param count_matrix_filtered Filtered count matrix
+#' @param exp_design Experimental design
+#' @param bootstrap Whether bootstrap was used
+#' @param catch Overdispersion calculations from bootstrap
+#' @return Estimated dispersions
+estimate_dispersions_wrapper <- function(count_matrix_filtered, exp_design, bootstrap, catch) {
+  if (bootstrap) {
+    estimate_dispersions(
+      count_matrix_filtered / catch$overdispersion[rownames(count_matrix_filtered)],
+      exp_design
+    )
+  } else {
+    estimate_dispersions(count_matrix_filtered, exp_design)
+  }
 }
