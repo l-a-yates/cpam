@@ -15,3 +15,4 @@ Validated number of cores
 \description{
 Validate and adjust number of cores
 }
+\keyword{internal}

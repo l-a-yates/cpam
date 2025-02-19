@@ -47,3 +47,4 @@ NULL, throws error if validation fails
 \description{
 Validate input parameters for prepare_cpam
 }
+\keyword{internal}

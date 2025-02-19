@@ -19,3 +19,4 @@ Updated long format data with gene ID information
 \description{
 Handle gene aggregation in long format data
 }
+\keyword{internal}

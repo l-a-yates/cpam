@@ -23,3 +23,4 @@ List containing imported data and related variables
 \description{
 Import count data from files
 }
+\keyword{internal}

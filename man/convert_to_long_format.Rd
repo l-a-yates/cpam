@@ -17,3 +17,4 @@ Long format data frame
 \description{
 Convert count matrix to long format and join with experiment design
 }
+\keyword{internal}

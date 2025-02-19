@@ -26,3 +26,4 @@ Estimated dispersions
 \description{
 Wrapper for estimating dispersions
 }
+\keyword{internal}

@@ -19,3 +19,4 @@ Updated experimental design with case indicator
 \description{
 Prepare case-control data by adding case indicator
 }
+\keyword{internal}

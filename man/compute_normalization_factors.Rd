@@ -17,3 +17,4 @@ Vector of normalization factors
 \description{
 Compute normalization factors
 }
+\keyword{internal}

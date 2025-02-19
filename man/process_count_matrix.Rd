@@ -19,3 +19,4 @@ Processed count matrix
 \description{
 Process count matrix when importing is not needed
 }
+\keyword{internal}

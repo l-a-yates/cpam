@@ -241,6 +241,7 @@ summarise_bootstraps <- function(txi){
 #' @param counts Count matrix (genes/transcripts × samples)
 #' @param exp_design Experimental design with time column
 #' @return Named vector of tagwise dispersion estimates
+#' @noRd
 estimate_dispersions <- function(counts, exp_design){
   # update for case-control series (i.e., use condition in the design matrix)
   message("Estimating dispersions using edgeR")
@@ -274,6 +275,7 @@ estimate_dispersions <- function(counts, exp_design){
 #' @param import Whether to import data
 #'
 #' @return NULL, throws error if validation fails
+#' @keywords internal
 validate_inputs <- function(exp_design, count_matrix, t2g, import_type, model_type,
                             condition_var, case_value, fixed_effects,
                             aggregate_to_gene, gene_level, import) {
@@ -338,6 +340,7 @@ validate_inputs <- function(exp_design, count_matrix, t2g, import_type, model_ty
 #' @param condition_var Name of condition variable
 #' @param case_value Value indicating case
 #' @return Updated experimental design with case indicator
+#' @keywords internal
 prepare_case_control <- function(exp_design, condition_var, case_value) {
   exp_design %>%
     dplyr::mutate(case = as.numeric(.data[[condition_var]] == case_value))
@@ -348,6 +351,7 @@ prepare_case_control <- function(exp_design, condition_var, case_value) {
 #'
 #' @param num_cores Number of cores requested
 #' @return Validated number of cores
+#' @keywords internal
 validate_cores <- function(num_cores) {
   if (!num_cores %% 1 == 0) {
     stop("num_cores must be integer values")
@@ -375,6 +379,7 @@ validate_cores <- function(num_cores) {
 #' @param gene_level Whether to aggregate to gene level
 #' @param bootstrap Whether to use bootstrap samples
 #' @return List containing imported data and related variables
+#' @keywords internal
 import_count_data <- function(exp_design, t2g, import_type, gene_level, bootstrap) {
   if (gene_level) {
     message("Summarizing to gene level")
@@ -426,6 +431,7 @@ import_count_data <- function(exp_design, t2g, import_type, gene_level, bootstra
 #' @param t2g Transcript to gene mapping
 #' @param gene_level Whether to aggregate to gene level
 #' @return Processed count matrix
+#' @keywords internal
 process_count_matrix <- function(count_matrix, t2g, gene_level) {
   if (gene_level & !is.null(t2g)) {
     count_matrix %>%
@@ -446,6 +452,7 @@ process_count_matrix <- function(count_matrix, t2g, gene_level) {
 #' @param counts_raw Raw count matrix
 #' @param exp_design Experimental design
 #' @return Long format data frame
+#' @keywords internal
 convert_to_long_format <- function(counts_raw, exp_design) {
   counts_raw %>%
     tidyr::as_tibble(rownames = "target_id") %>%
@@ -462,6 +469,7 @@ convert_to_long_format <- function(counts_raw, exp_design) {
 #' @param t2g Transcript to gene mapping
 #' @param aggregate_to_gene Whether to aggregate to gene level
 #' @return Updated long format data with gene ID information
+#' @keywords internal
 handle_gene_aggregation <- function(data_long, t2g, aggregate_to_gene) {
   if (aggregate_to_gene) {
     data_long %>% dplyr::left_join(t2g, by = c("target_id"))
@@ -476,6 +484,7 @@ handle_gene_aggregation <- function(data_long, t2g, aggregate_to_gene) {
 #' @param catch Overdispersion calculations
 #' @param boot Bootstrap summary
 #' @return Updated data with bootstrap information
+#' @keywords internal
 process_bootstrap_data <- function(data_long, catch, boot) {
   data_long %>%
     dplyr::mutate(
@@ -491,6 +500,7 @@ process_bootstrap_data <- function(data_long, catch, boot) {
 #' @param count_matrix_filtered Filtered count matrix
 #' @param normalize Whether to perform normalization
 #' @return Vector of normalization factors
+#' @keywords internal
 compute_normalization_factors <- function(count_matrix_filtered, normalize) {
   if (normalize) {
     DESeq2::estimateSizeFactorsForMatrix(count_matrix_filtered)
@@ -507,6 +517,7 @@ compute_normalization_factors <- function(count_matrix_filtered, normalize) {
 #' @param target_to_keep Targets to keep after filtering
 #' @param norm_factor Normalization factors
 #' @return Filtered and updated data
+#' @keywords internal
 filter_and_update_data <- function(data_long, target_to_keep, norm_factor) {
   data_long %>%
     dplyr::filter(.data$target_id %in% target_to_keep) %>%
@@ -521,6 +532,7 @@ filter_and_update_data <- function(data_long, target_to_keep, norm_factor) {
 #' @param bootstrap Whether bootstrap was used
 #' @param catch Overdispersion calculations from bootstrap
 #' @return Estimated dispersions
+#' @keywords internal
 estimate_dispersions_wrapper <- function(count_matrix_filtered, exp_design, bootstrap, catch) {
   if (bootstrap) {
     estimate_dispersions(

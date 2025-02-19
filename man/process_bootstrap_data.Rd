@@ -19,3 +19,4 @@ Updated data with bootstrap information
 \description{
 Process bootstrap data
 }
+\keyword{internal}
