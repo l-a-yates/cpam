@@ -3,8 +3,6 @@
 #' @param cpo a cpam object
 #' @param subset a character vector of target_id names
 #' @param p_adj_method method for p-value adjustment
-#' @param fixed_effects a model formula (RHS only) to provide or update
-#' fixed affects. Terms must correspond to columns in `exp_design`
 #' @param gam_method fitting method for `mgcv::gam` (default is "REML")
 #' @param gam_optimizer optimization method for `mgcv::gam` (default is "efs")
 #' @param silent logical; silences warnings from model fitting (default is TRUE)
@@ -65,7 +63,6 @@
 compute_p_values <- function(cpo,
                              subset = NULL,
                              p_adj_method = "BH",
-                             fixed_effects = NULL,
                              gam_method = "REML",
                              gam_optimizer = "efs",
                              silent = TRUE){
@@ -81,21 +78,10 @@ compute_p_values <- function(cpo,
 
   regularize <- cpo$regularize
 
-
-  if (is.null(cpo$fixed_effects)) {
-    if (is.null(fixed_effects)) {
-      fe_string <- ""
-    } else {
-      message("Setting fixed effects")
-      cpo$fixed_effects <- deparse(fixed_effects[[2]])
-      fe_string <- paste(cpo$fixed_effects,"+")
-    }
-  } else {
-    if(!is.null(fixed_effects)){
-      message("Updating fixed effects")
-      cpo$fixed_effects <- deparse(fixed_effects[[2]])
-    }
+  if(!is.null(cpo$fixed_effects)){
     fe_string <- paste(cpo$fixed_effects,"+")
+  } else {
+    fe_string <- ""
   }
 
   f_string <- paste0("counts ~",
