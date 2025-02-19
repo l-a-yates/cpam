@@ -3,9 +3,7 @@
 \docType{data}
 \name{exp_design_example}
 \alias{exp_design_example}
-\title{An experimental design run light-weight examples
-Six time points x 3 reps
-#' See \code{cpo_example} for fitted CPAM object.}
+\title{An experimental design run light-weight examples}
 \format{
 A tibble with columns:
 \describe{
@@ -21,6 +19,10 @@ Simulated data, see data-raw directory for details
 exp_design_example
 }
 \description{
+Six time points x 3 reps
+#' See \code{cpo_example} for fitted CPAM object.
+}
+\details{
 #'
 }
 \keyword{datasets}

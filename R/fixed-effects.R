@@ -3,6 +3,7 @@
 #' @param fixed_effects A model formula (e.g., ~ effect1 + effect2) or NULL
 #' @param exp_design A data frame containing the experimental design
 #' @return The validated and processed fixed effects as character, or NULL
+#' @keywords internal
 validate_fixed_effects <- function(fixed_effects, exp_design) {
   if (is.null(fixed_effects)) {
     return(NULL)
@@ -45,6 +46,7 @@ validate_fixed_effects <- function(fixed_effects, exp_design) {
 #' @param exp_design Experimental design data frame
 #' @param fe_terms Fixed effects terms to check
 #' @return Logical indicating whether collinearity was detected
+#' @keywords internal
 check_collinearity_with_time <- function(exp_design, fe_terms) {
   # For simpler cases, check direct correlation
   if (length(fe_terms) == 1) {
@@ -67,6 +69,7 @@ check_collinearity_with_time <- function(exp_design, fe_terms) {
 #' @param exp_design Experimental design data frame
 #' @param fe_terms Fixed effects terms to check
 #' @return NULL, issues warning if perfect separation detected
+#' @keywords internal
 check_perfect_separation <- function(exp_design, fe_terms) {
   categorical_terms <- fe_terms[sapply(exp_design[fe_terms], function(x) {
     is.factor(x) || is.character(x)

@@ -17,3 +17,4 @@ NULL, issues warning if perfect separation detected
 \description{
 Check for perfect separation in categorical fixed effects
 }
+\keyword{internal}

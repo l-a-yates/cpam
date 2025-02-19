@@ -17,3 +17,4 @@ The validated and processed fixed effects as character, or NULL
 \description{
 Validate fixed effects formula against experimental design
 }
+\keyword{internal}

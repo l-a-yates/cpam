@@ -40,6 +40,7 @@
 "count_matrix_example"
 
 #' An experimental design run light-weight examples
+#'
 #' Six time points x 3 reps
 #' #' See `cpo_example` for fitted CPAM object.
 #'
@@ -55,6 +56,7 @@
 
 
 #' A fit CPAM object to run light-weight examples
+#'
 #' Six time points x 3 reps
 #' See `cpo_example` for fitted CPAM object.
 #' See `exp_design_example` for experimental design.

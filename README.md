@@ -159,3 +159,6 @@ accompanying the `cpam` package.
  - [Case Study 1](https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/torre.html)
  - [Case Study 2](https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/crisp.html)
 
+There is also an introductory example using a small simulated data set to get started with the package
+ - [Introductory Example](https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/example.html)
+

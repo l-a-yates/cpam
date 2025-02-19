@@ -3,11 +3,7 @@
 \docType{data}
 \name{cpo_example}
 \alias{cpo_example}
-\title{A fit CPAM object to run light-weight examples
-Six time points x 3 reps
-See \code{cpo_example} for fitted CPAM object.
-See \code{exp_design_example} for experimental design.
-#'}
+\title{A fit CPAM object to run light-weight examples}
 \format{
 A cpam object with p-values, changpoints, and shapes estimated
 }
@@ -18,7 +14,6 @@ Simulated data, see data-raw directory for details
 cpo_example
 }
 \description{
-A fit CPAM object to run light-weight examples
 Six time points x 3 reps
 See \code{cpo_example} for fitted CPAM object.
 See \code{exp_design_example} for experimental design.

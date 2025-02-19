@@ -17,3 +17,4 @@ Logical indicating whether collinearity was detected
 \description{
 Check for collinearity between fixed effects and time variable
 }
+\keyword{internal}
