@@ -139,7 +139,7 @@ Or plot one gene at a time:
 ```
 
 <img src="man/figures/example_gene_plot.png" alt = "Example gene plot (see manuscript if not rendered here)" width="550" height="450" />
-Isoform 1 (AT3G23280.1) has a changepoint at 67.5 min and has a
+<br>Isoform 1 (AT3G23280.1) has a changepoint at 67.5 min and has a
 monotonic increasing concave (micv) shape.<br> Isoform 2 (AT3G23280.2)
 has no changepoint and has an unconstrained thin-plate (tp) shape.
 <br><br> Generate a results table (tibble):
