@@ -34,6 +34,6 @@ Imports:
     tidyr,
     tximport
 Depends: 
-    R (>= 2.10)
+    R (>= 3.5)
 LazyData: true
 URL: https://l-a-yates.github.io/cpam/
