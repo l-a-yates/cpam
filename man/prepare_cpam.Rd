@@ -99,9 +99,9 @@ cpo <- prepare_cpam(
  import_type = "kallisto",
  num_cores = 5)
 
- # Print the object
- cpo
- }
+# Print the object
+cpo
+}
 
 }
 \references{

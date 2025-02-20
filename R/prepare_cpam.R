@@ -55,9 +55,9 @@
 #'  import_type = "kallisto",
 #'  num_cores = 5)
 #'
-#'  # Print the object
-#'  cpo
-#'  }
+#' # Print the object
+#' cpo
+#' }
 #'
 #' @references
 #'  Pedro L Baldoni, Yunshun Chen, Soroor Hediyeh-zadeh, Yang Liao, Xueyi Dong,

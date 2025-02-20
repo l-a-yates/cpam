@@ -50,7 +50,6 @@ addresses listed in our paper [here](https://doi.org/10.1101/2024.12.22.630003).
 ## Installation
 
 ``` r
-# Installation code here
 remotes::install_github("l-a-yates/cpam")
 ```
 
@@ -118,10 +117,10 @@ t2g
                       t2g = t2g,
                       model = "case-only",
                       import_type = "kallisto",
-                      num_cores = 5) # about 1 min
-  cpo <- compute_p_values(cpo) # 30 secs to 5 min
-  cpo <- estimate_changepoint(cpo) # 1-10 min
-  cpo <- select_shape(cpo) # 1-20 min
+                      num_cores = 5) 
+  cpo <- compute_p_values(cpo)
+  cpo <- estimate_changepoint(cpo) 
+  cpo <- select_shape(cpo) 
 ```
 
 ### Step 5: Visualise the results
@@ -138,10 +137,10 @@ Or plot one gene at a time:
   plot_cpam(cpo, gene_id = "AT3G23280")
 ```
 
-<img src="man/figures/example_gene_plot.png" alt = "Example gene plot (see manuscript if not rendered here)" width="550" height="450" />
+<img src="man/figures/example_gene_plot.png" alt = "Example gene plot (see manuscript if not rendered here)" width="650" height="450" />
 <br>Isoform 1 (AT3G23280.1) has a changepoint at 67.5 min and has a
-monotonic increasing concave (micv) shape.<br> Isoform 2 (AT3G23280.2)
-has no changepoint and has an unconstrained thin-plate (tp) shape.
+monotonic increasing concave (micv) shape. Isoform 2 (AT3G23280.2)
+has no changepoint and has an unconstrained thinplate (tp) shape.
 <br><br> Generate a results table (tibble):
 
 ``` r

@@ -28,9 +28,9 @@ validate_fixed_effects <- function(fixed_effects, exp_design) {
   }
 
   # Check for perfect collinearity with time
-  time_collinear <- check_collinearity_with_time(exp_design, fe_terms)
-  if (time_collinear) {
-    warning("Some fixed effects may be collinear with time, which could affect model estimation",
+  collinear <- check_collinearity(exp_design, fixed_effects)
+  if (collinear) {
+    stop("The model matrix is not full rank. This is likely due to collinear fixed effects.",
             call. = FALSE)
   }
 
@@ -41,28 +41,18 @@ validate_fixed_effects <- function(fixed_effects, exp_design) {
   paste(fe_terms, collapse = " + ")
 }
 
-#' Check for collinearity between fixed effects and time variable
+
+#' Check for collinearity between predictors and with time variable
 #'
+#' @param formula Model formula
 #' @param exp_design Experimental design data frame
-#' @param fe_terms Fixed effects terms to check
 #' @return Logical indicating whether collinearity was detected
-#' @keywords internal
-check_collinearity_with_time <- function(exp_design, fe_terms) {
-  # For simpler cases, check direct correlation
-  if (length(fe_terms) == 1) {
-    # For categorical variables
-    if (is.factor(exp_design[[fe_terms]]) || is.character(exp_design[[fe_terms]])) {
-      # Check if time perfectly determines the fixed effect
-      return(length(unique(paste0(exp_design$time, "_", exp_design[[fe_terms]]))) ==
-               length(unique(exp_design$time)))
-    } else {
-      # For numeric variables, check correlation
-      cor_val <- stats::cor(exp_design$time, exp_design[[fe_terms]])
-      return(abs(cor_val) > 0.95) # High correlation threshold
-    }
-  }
-  return(FALSE)
+check_collinearity <- function(exp_design, formula){
+  design_matrix <- model.matrix(formula, exp_design)
+  design_matrix_time <- cbind(design_matrix, exp_design[["time"]])
+  qr(design_matrix_time)$rank < ncol(design_matrix_time)
 }
+
 
 #' Check for perfect separation in categorical fixed effects
 #'
@@ -75,14 +65,19 @@ check_perfect_separation <- function(exp_design, fe_terms) {
     is.factor(x) || is.character(x)
   })]
 
+  ps <- c()
   if (length(categorical_terms) > 0) {
     for (term in categorical_terms) {
       levels_count <- table(exp_design[[term]])
       if (any(levels_count == 1)) {
-        warning(paste0("Fixed effect '", term,
-                       "' has levels with only one observation, which may cause estimation issues"),
-                call. = FALSE)
+        ps <- c(ps, term)
       }
+    }
+    if (length(ps) > 0) {
+      warning(paste0("Perfect separation detected in the following terms: ",
+                     paste(ps, collapse = ", ")),
+              call. = FALSE)
     }
   }
 }
+
