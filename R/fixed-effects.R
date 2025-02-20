@@ -9,35 +9,28 @@ validate_fixed_effects <- function(fixed_effects, exp_design) {
     return(NULL)
   }
 
-  # Ensure formula is properly formatted
   if (!inherits(fixed_effects, "formula")) {
     stop("fixed_effects must be a formula (e.g., ~ effect1 + effect2)")
   }
 
-  # Validate that formula terms exist in exp_design
   fe_terms <- attr(stats::terms(fixed_effects), "term.labels")
 
   if (length(fe_terms) == 0) {
     return(NULL)    }
 
-  # Check all terms exist in exp_design
   missing_terms <- fe_terms[!fe_terms %in% names(exp_design)]
   if (length(missing_terms) > 0) {
     stop(paste0("The following fixed effects variables are missing from exp_design: ",
                 paste(missing_terms, collapse = ", ")))
   }
 
-  # Check for perfect collinearity with time
   collinear <- check_collinearity(exp_design, fixed_effects)
   if (collinear) {
     stop("The model matrix is not full rank. This is likely due to collinear fixed effects.",
             call. = FALSE)
   }
 
-  # Check for perfect separation
   check_perfect_separation(exp_design, fe_terms)
-
-  # Return terms as character string
   paste(fe_terms, collapse = " + ")
 }
 
@@ -48,7 +41,7 @@ validate_fixed_effects <- function(fixed_effects, exp_design) {
 #' @param exp_design Experimental design data frame
 #' @return Logical indicating whether collinearity was detected
 check_collinearity <- function(exp_design, formula){
-  design_matrix <- model.matrix(formula, exp_design)
+  design_matrix <- stats::model.matrix(formula, exp_design)
   design_matrix_time <- cbind(design_matrix, exp_design[["time"]])
   qr(design_matrix_time)$rank < ncol(design_matrix_time)
 }
