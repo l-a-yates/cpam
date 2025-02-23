@@ -3,9 +3,9 @@
 
 ### An R package for omics time series analysis.
 
-Read the full paper [here](https://doi.org/10.1101/2024.12.22.630003)
+Read the methods paper [here](https://doi.org/10.1101/2024.12.22.630003)
 
-<img src="man/figures/example_trends.png" alt = "Example gene plot (see manuscript if not rendered here)" width="800" height="600" />
+<img src="assets/example_trends.png" width="800" height="600" />
 
 Application of **cpam** to RNA-seq time series of *Arabidopsis* plants
 treated with excess-light.
@@ -45,11 +45,13 @@ and discussion about using **cpam** for your research through
 [Discussions](https://github.com/l-a-yates/cpam/discussions/). Our goal
 is to work with users to make **cpam** a robust and valuable tool for
 time series omics analysis. We can also be contacted via the email
-addresses listed in our paper [here](https://doi.org/10.1101/2024.12.22.630003).
+addresses listed in our paper
+[here](https://doi.org/10.1101/2024.12.22.630003).
 
 ## Installation
 
 ``` r
+# Installation code here
 remotes::install_github("l-a-yates/cpam")
 ```
 
@@ -63,9 +65,11 @@ library(cpam)
 
 ### Step 2: Create a tibble for the experimental design.
 
-In this example, we are using kallisto-generated counts, so we provide
-the file path for each sample (otherwise you can provide the counts
-directly as count matrix)
+In this *Arabidopsis thaliana* time series example, we used the software
+[kallisto]() to generate counts from RNA-seq data. To load the counts,
+we provide the file path for each kallisto output file (alternatively
+you can provide the counts directly as count matrix, or use other
+quantification software)
 
 ``` r
 exp_design
@@ -117,10 +121,10 @@ t2g
                       t2g = t2g,
                       model = "case-only",
                       import_type = "kallisto",
-                      num_cores = 5) 
-  cpo <- compute_p_values(cpo)
-  cpo <- estimate_changepoint(cpo) 
-  cpo <- select_shape(cpo) 
+                      num_cores = 5) # about 1 min
+  cpo <- compute_p_values(cpo) # 30 secs to 5 min
+  cpo <- estimate_changepoint(cpo) # 1-10 min
+  cpo <- select_shape(cpo) # 1-20 min
 ```
 
 ### Step 5: Visualise the results
@@ -137,11 +141,14 @@ Or plot one gene at a time:
   plot_cpam(cpo, gene_id = "AT3G23280")
 ```
 
-<img src="man/figures/example_gene_plot.png" alt = "Example gene plot (see manuscript if not rendered here)" width="650" height="450" />
-<br>Isoform 1 (AT3G23280.1) has a changepoint at 67.5 min and has a
-monotonic increasing concave (micv) shape. Isoform 2 (AT3G23280.2)
-has no changepoint and has an unconstrained thinplate (tp) shape.
-<br><br> Generate a results table (tibble):
+<img src="assets/example_gene_plot.png" width="550" height="450" />
+
+Isoform 1 (AT3G23280.1) has a changepoint at 67.5 min and has a
+monotonic increasing concave (micv) shape. Isoform 2 (AT3G23280.2) has
+no changepoint and has an unconstrained thin-plate (tp) shape. <br><br>
+
+We can generate a results table which has $p$-values, shapes, log-fold
+changes and counts with many optimal filters (see tutorials):
 
 ``` r
   results(cpo)
@@ -149,15 +156,18 @@ has no changepoint and has an unconstrained thinplate (tp) shape.
 
 ### Detailed tutorials
 
-The following two tutorials serve an introduction to the package and 
-they provide code to reproduce the results for the case studies
-presented in the 
-[manuscript](https://doi.org/10.1101/2024.12.22.630003)
-accompanying the `cpam` package.
+For a quick-to-run introductory example, we have provided a tutorial
+using a small simulated data set to get started with the package -
+[Introductory
+Example](https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/example.html)
 
- - [Case Study 1](https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/torre.html)
- - [Case Study 2](https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/crisp.html)
+The following two tutorials use real-world data to demonstrate the
+capabilities of the `cpam` package. In addition, they provide code to
+reproduce the results for the case studies presented in the
+[manuscript](https://doi.org/10.1101/2024.12.22.630003) accompanying the
+`cpam` package.
 
-There is also an introductory example using a small simulated data set to get started with the package
- - [Introductory Example](https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/example.html)
-
+- [Arabidopsis Case
+  Study](https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/crisp.html)
+- [Human Embryo Case
+  Study](https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/torre.html)
