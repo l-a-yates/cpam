@@ -51,8 +51,8 @@
 <div class="section level3">
 <h3 id="an-r-package-for-omics-time-series-analysis">An R package for omics time series analysis.<a class="anchor" aria-label="anchor" href="#an-r-package-for-omics-time-series-analysis"></a>
 </h3>
-<p>Read the full paper <a href="https://doi.org/10.1101/2024.12.22.630003" class="external-link">here</a></p>
-<p><img src="reference/figures/example_trends.png" alt="Example gene plot (see manuscript if not rendered here)" width="800" height="600"></p>
+<p>Read the methods paper <a href="https://doi.org/10.1101/2024.12.22.630003" class="external-link">here</a></p>
+<p><img src="assets/example_trends.png" width="800" height="600"></p>
 <p>Application of <strong>cpam</strong> to RNA-seq time series of <em>Arabidopsis</em> plants treated with excess-light.</p>
 </div>
 </div>
@@ -87,7 +87,8 @@
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"l-a-yates/cpam"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Installation code here</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"l-a-yates/cpam"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
@@ -101,7 +102,7 @@
 <div class="section level3">
 <h3 id="step-2-create-a-tibble-for-the-experimental-design">Step 2: Create a tibble for the experimental design.<a class="anchor" aria-label="anchor" href="#step-2-create-a-tibble-for-the-experimental-design"></a>
 </h3>
-<p>In this example, we are using kallisto-generated counts, so we provide the file path for each sample (otherwise you can provide the counts directly as count matrix)</p>
+<p>In this <em>Arabidopsis thaliana</em> time series example, we used the software <a href="">kallisto</a> to generate counts from RNA-seq data. To load the counts, we provide the file path for each kallisto output file (alternatively you can provide the counts directly as count matrix, or use other quantification software)</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">exp_design</span></span>
 <span><span class="co">#&gt; # A tibble: 50 × 4</span></span>
@@ -150,10 +151,10 @@
 <span>                      t2g <span class="op">=</span> <span class="va">t2g</span>,</span>
 <span>                      model <span class="op">=</span> <span class="st">"case-only"</span>,</span>
 <span>                      import_type <span class="op">=</span> <span class="st">"kallisto"</span>,</span>
-<span>                      num_cores <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> </span>
-<span>  <span class="va">cpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/compute_p_values.html">compute_p_values</a></span><span class="op">(</span><span class="va">cpo</span><span class="op">)</span></span>
-<span>  <span class="va">cpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/estimate_changepoint.html">estimate_changepoint</a></span><span class="op">(</span><span class="va">cpo</span><span class="op">)</span> </span>
-<span>  <span class="va">cpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/select_shape.html">select_shape</a></span><span class="op">(</span><span class="va">cpo</span><span class="op">)</span> </span></code></pre></div>
+<span>                      num_cores <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="co"># about 1 min</span></span>
+<span>  <span class="va">cpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/compute_p_values.html">compute_p_values</a></span><span class="op">(</span><span class="va">cpo</span><span class="op">)</span> <span class="co"># 30 secs to 5 min</span></span>
+<span>  <span class="va">cpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/estimate_changepoint.html">estimate_changepoint</a></span><span class="op">(</span><span class="va">cpo</span><span class="op">)</span> <span class="co"># 1-10 min</span></span>
+<span>  <span class="va">cpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/select_shape.html">select_shape</a></span><span class="op">(</span><span class="va">cpo</span><span class="op">)</span> <span class="co"># 1-20 min</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="step-5-visualise-the-results">Step 5: Visualise the results<a class="anchor" aria-label="anchor" href="#step-5-visualise-the-results"></a>
@@ -164,19 +165,21 @@
 <p>Or plot one gene at a time:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span>  <span class="fu"><a href="reference/plot_cpam.html">plot_cpam</a></span><span class="op">(</span><span class="va">cpo</span>, gene_id <span class="op">=</span> <span class="st">"AT3G23280"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/example_gene_plot.png" alt="Example gene plot (see manuscript if not rendered here)" width="650" height="450"><br>Isoform 1 (AT3G23280.1) has a changepoint at 67.5 min and has a monotonic increasing concave (micv) shape. Isoform 2 (AT3G23280.2) has no changepoint and has an unconstrained thinplate (tp) shape. <br><br> Generate a results table (tibble):</p>
+<p><img src="assets/example_gene_plot.png" width="550" height="450"></p>
+<p>Isoform 1 (AT3G23280.1) has a changepoint at 67.5 min and has a monotonic increasing concave (micv) shape. Isoform 2 (AT3G23280.2) has no changepoint and has an unconstrained thin-plate (tp) shape. <br><br></p>
+<p>We can generate a results table which has <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>-values, shapes, log-fold changes and counts with many optimal filters (see tutorials):</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span>  <span class="fu"><a href="reference/results.html">results</a></span><span class="op">(</span><span class="va">cpo</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="detailed-tutorials">Detailed tutorials<a class="anchor" aria-label="anchor" href="#detailed-tutorials"></a>
 </h3>
-<p>The following two tutorials serve an introduction to the package and they provide code to reproduce the results for the case studies presented in the <a href="https://doi.org/10.1101/2024.12.22.630003" class="external-link">manuscript</a> accompanying the <code>cpam</code> package.</p>
+<p>For a quick-to-run introductory example, we have provided a tutorial using a small simulated data set to get started with the package - <a href="https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/example.html" class="external-link">Introductory Example</a></p>
+<p>The following two tutorials use real-world data to demonstrate the capabilities of the <code>cpam</code> package. In addition, they provide code to reproduce the results for the case studies presented in the <a href="https://doi.org/10.1101/2024.12.22.630003" class="external-link">manuscript</a> accompanying the <code>cpam</code> package.</p>
 <ul>
-<li><a href="https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/torre.html" class="external-link">Case Study 1</a></li>
-<li><a href="https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/crisp.html" class="external-link">Case Study 2</a></li>
+<li><a href="https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/crisp.html" class="external-link">Arabidopsis Case Study</a></li>
+<li><a href="https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/torre.html" class="external-link">Human Embryo Case Study</a></li>
 </ul>
-<p>There is also an introductory example using a small simulated data set to get started with the package - <a href="https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/example.html" class="external-link">Introductory Example</a></p>
 </div>
 </div>
 

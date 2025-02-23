@@ -3,7 +3,10 @@
 <url><loc>https://l-a-yates.github.io/cpam/LICENSE.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/authors.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/index.html</loc></url>
+<url><loc>https://l-a-yates.github.io/cpam/reference/aic.html</loc></url>
+<url><loc>https://l-a-yates.github.io/cpam/reference/aic_negbin.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/app_old.html</loc></url>
+<url><loc>https://l-a-yates.github.io/cpam/reference/calc_score_table.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/check_collinearity.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/check_perfect_separation.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/compute_normalization_factors.html</loc></url>
@@ -12,14 +15,18 @@
 <url><loc>https://l-a-yates.github.io/cpam/reference/count_matrix_example.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/cpam-package.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/cpo_example.html</loc></url>
+<url><loc>https://l-a-yates.github.io/cpam/reference/dnbl.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/estimate_changepoint.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/estimate_dispersions_wrapper.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/exp_design.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/exp_design_example.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/filter_and_update_data.html</loc></url>
+<url><loc>https://l-a-yates.github.io/cpam/reference/gcv.gam.html</loc></url>
+<url><loc>https://l-a-yates.github.io/cpam/reference/gcv.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/handle_gene_aggregation.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/import_count_data.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/index.html</loc></url>
+<url><loc>https://l-a-yates.github.io/cpam/reference/ose_rule.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/pipe.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/plot_cluster.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/plot_cpam.html</loc></url>
@@ -29,6 +36,7 @@
 <url><loc>https://l-a-yates.github.io/cpam/reference/process_count_matrix.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/results.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/select_shape.html</loc></url>
+<url><loc>https://l-a-yates.github.io/cpam/reference/simulate_p_mvn.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/summarise_bootstraps.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/t2g.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/ts_filter.html</loc></url>
