@@ -2,6 +2,8 @@
 ## cpam <span style="font-weight: normal">(**c**hange**p**oint **a**dditive **m**odels)</span>
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/l-a-yates/cpam/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/l-a-yates/cpam/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 ### An R package for omics time series analysis.
@@ -175,12 +177,13 @@ changes and counts with many optimal filters (see tutorials):
 #> #   counts.90 <dbl>, counts.180 <dbl>, counts.240 <dbl>
 ```
 
-### Detailed tutorials
+### Tutorials
 
-For a quick-to-run introductory example, we have provided a tutorial
-using a small simulated data set to get started with the package -
-[Introductory
-Example](https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/example.html)
+For a quick-to-run introductory example, we have provided a small
+simulated data set as part of the
+
+- [Introductory
+  Example](https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/example.html)
 
 The following two tutorials use real-world data to demonstrate the
 capabilities of the `cpam` package. In addition, they provide code to
