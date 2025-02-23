@@ -48,11 +48,13 @@
 <h2 id="cpam-changepoint-additive-models">cpam <span style="font-weight: normal">(<strong>c</strong>hange<strong>p</strong>oint <strong>a</strong>dditive <strong>m</strong>odels)</span>
 <a class="anchor" aria-label="anchor" href="#cpam-changepoint-additive-models"></a>
 </h2>
+<!-- badges: start -->
+<!-- badges: end -->
 <div class="section level3">
 <h3 id="an-r-package-for-omics-time-series-analysis">An R package for omics time series analysis.<a class="anchor" aria-label="anchor" href="#an-r-package-for-omics-time-series-analysis"></a>
 </h3>
 <p>Read the methods paper <a href="https://doi.org/10.1101/2024.12.22.630003" class="external-link">here</a></p>
-<p><img src="assets/example_trends.png" width="800" height="600"></p>
+<p><img src="reference/figures/example_trends.png" width="800" height="600"></p>
 <p>Application of <strong>cpam</strong> to RNA-seq time series of <em>Arabidopsis</em> plants treated with excess-light.</p>
 </div>
 </div>
@@ -165,11 +167,29 @@
 <p>Or plot one gene at a time:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span>  <span class="fu"><a href="reference/plot_cpam.html">plot_cpam</a></span><span class="op">(</span><span class="va">cpo</span>, gene_id <span class="op">=</span> <span class="st">"AT3G23280"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="assets/example_gene_plot.png" width="550" height="450"></p>
+<p><img src="reference/figures/example_gene_plot.png" width="650" height="550"></p>
 <p>Isoform 1 (AT3G23280.1) has a changepoint at 67.5 min and has a monotonic increasing concave (micv) shape. Isoform 2 (AT3G23280.2) has no changepoint and has an unconstrained thin-plate (tp) shape. <br><br></p>
 <p>We can generate a results table which has <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>-values, shapes, log-fold changes and counts with many optimal filters (see tutorials):</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span>  <span class="fu"><a href="reference/results.html">results</a></span><span class="op">(</span><span class="va">cpo</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span>  <span class="fu"><a href="reference/results.html">results</a></span><span class="op">(</span><span class="va">cpo</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 15,279 × 25</span></span>
+<span><span class="co">#&gt;    target_id   gene_id     p    cp shape lfc.0 lfc.5 lfc.10 lfc.20 lfc.30 lfc.45</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;       &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt;  1 AT1G01910.1 AT1G01…     0     0 micv      0 1.01   1.70   2.38   2.60   2.73 </span></span>
+<span><span class="co">#&gt;  2 AT1G01910.2 AT1G01…     0    10 cv        0 0      0      0.553  0.775  0.790</span></span>
+<span><span class="co">#&gt;  3 AT1G01910.5 AT1G01…     0    10 cx        0 0      0     -3.20  -4.57  -4.82 </span></span>
+<span><span class="co">#&gt;  4 AT1G02610.1 AT1G02…     0    45 mdcx      0 0      0      0      0      0    </span></span>
+<span><span class="co">#&gt;  5 AT1G02610.2 AT1G02…     0    10 cx        0 0      0     -0.645 -1.16  -1.71 </span></span>
+<span><span class="co">#&gt;  6 AT1G02610.3 AT1G02…     0    10 mdcx      0 0      0     -1.48  -2.11  -2.25 </span></span>
+<span><span class="co">#&gt;  7 AT1G04080.1 AT1G04…     0    10 cv        0 0      0      2.75   3.85   3.97 </span></span>
+<span><span class="co">#&gt;  8 AT1G04080.2 AT1G04…     0    45 micv      0 0      0      0      0      0    </span></span>
+<span><span class="co">#&gt;  9 AT1G04080.3 AT1G04…     0     0 micv      0 0.268  0.445  0.603  0.638  0.656</span></span>
+<span><span class="co">#&gt; 10 AT1G04080.5 AT1G04…     0    10 cx        0 0      0     -2.17  -3.04  -3.10 </span></span>
+<span><span class="co">#&gt; # ℹ 15,269 more rows</span></span>
+<span><span class="co">#&gt; # ℹ 14 more variables: lfc.60 &lt;dbl&gt;, lfc.90 &lt;dbl&gt;, lfc.180 &lt;dbl&gt;,</span></span>
+<span><span class="co">#&gt; #   lfc.240 &lt;dbl&gt;, counts.0 &lt;dbl&gt;, counts.5 &lt;dbl&gt;, counts.10 &lt;dbl&gt;,</span></span>
+<span><span class="co">#&gt; #   counts.20 &lt;dbl&gt;, counts.30 &lt;dbl&gt;, counts.45 &lt;dbl&gt;, counts.60 &lt;dbl&gt;,</span></span>
+<span><span class="co">#&gt; #   counts.90 &lt;dbl&gt;, counts.180 &lt;dbl&gt;, counts.240 &lt;dbl&gt;</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="detailed-tutorials">Detailed tutorials<a class="anchor" aria-label="anchor" href="#detailed-tutorials"></a>
