@@ -1,11 +1,14 @@
 
 ## cpam <span style="font-weight: normal">(**c**hange**p**oint **a**dditive **m**odels)</span>
 
+<!-- badges: start -->
+<!-- badges: end -->
+
 ### An R package for omics time series analysis.
 
 Read the methods paper [here](https://doi.org/10.1101/2024.12.22.630003)
 
-<img src="assets/example_trends.png" width="800" height="600" />
+<img src="man/figures/example_trends.png" width="800" height="600" />
 
 Application of **cpam** to RNA-seq time series of *Arabidopsis* plants
 treated with excess-light.
@@ -141,7 +144,7 @@ Or plot one gene at a time:
   plot_cpam(cpo, gene_id = "AT3G23280")
 ```
 
-<img src="assets/example_gene_plot.png" width="550" height="450" />
+<img src="man/figures/example_gene_plot.png" width="650" height="550" />
 
 Isoform 1 (AT3G23280.1) has a changepoint at 67.5 min and has a
 monotonic increasing concave (micv) shape. Isoform 2 (AT3G23280.2) has
@@ -152,6 +155,24 @@ changes and counts with many optimal filters (see tutorials):
 
 ``` r
   results(cpo)
+#> # A tibble: 15,279 × 25
+#>    target_id   gene_id     p    cp shape lfc.0 lfc.5 lfc.10 lfc.20 lfc.30 lfc.45
+#>    <chr>       <chr>   <dbl> <dbl> <chr> <dbl> <dbl>  <dbl>  <dbl>  <dbl>  <dbl>
+#>  1 AT1G01910.1 AT1G01…     0     0 micv      0 1.01   1.70   2.38   2.60   2.73 
+#>  2 AT1G01910.2 AT1G01…     0    10 cv        0 0      0      0.553  0.775  0.790
+#>  3 AT1G01910.5 AT1G01…     0    10 cx        0 0      0     -3.20  -4.57  -4.82 
+#>  4 AT1G02610.1 AT1G02…     0    45 mdcx      0 0      0      0      0      0    
+#>  5 AT1G02610.2 AT1G02…     0    10 cx        0 0      0     -0.645 -1.16  -1.71 
+#>  6 AT1G02610.3 AT1G02…     0    10 mdcx      0 0      0     -1.48  -2.11  -2.25 
+#>  7 AT1G04080.1 AT1G04…     0    10 cv        0 0      0      2.75   3.85   3.97 
+#>  8 AT1G04080.2 AT1G04…     0    45 micv      0 0      0      0      0      0    
+#>  9 AT1G04080.3 AT1G04…     0     0 micv      0 0.268  0.445  0.603  0.638  0.656
+#> 10 AT1G04080.5 AT1G04…     0    10 cx        0 0      0     -2.17  -3.04  -3.10 
+#> # ℹ 15,269 more rows
+#> # ℹ 14 more variables: lfc.60 <dbl>, lfc.90 <dbl>, lfc.180 <dbl>,
+#> #   lfc.240 <dbl>, counts.0 <dbl>, counts.5 <dbl>, counts.10 <dbl>,
+#> #   counts.20 <dbl>, counts.30 <dbl>, counts.45 <dbl>, counts.60 <dbl>,
+#> #   counts.90 <dbl>, counts.180 <dbl>, counts.240 <dbl>
 ```
 
 ### Detailed tutorials
