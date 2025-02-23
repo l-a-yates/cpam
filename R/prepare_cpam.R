@@ -102,7 +102,8 @@ prepare_cpam <- function(exp_design,
                   aggregate_to_gene, gene_level, import)
 
   if (model_type == "case-control") {
-    exp_design <- prepare_case_control(exp_design, condition_var, case_value)
+    exp_design <- exp_design %>%
+      dplyr::mutate(case = as.numeric(.data[[condition_var]] == case_value))
   }
 
   fixed_effects <- validate_fixed_effects(fixed_effects,exp_design)
@@ -145,7 +146,10 @@ prepare_cpam <- function(exp_design,
   norm_factor <- compute_normalization_factors(count_matrix_filtered, normalize)
 
   # Filter and update data_long
-  data_long <- filter_and_update_data(data_long, target_to_keep, norm_factor)
+  data_long <-   data_long %>%
+    dplyr::filter(.data$target_id %in% target_to_keep) %>%
+    dplyr::mutate(norm_factor = norm_factor[sample]) %>%
+    dplyr::relocate("target_id")
 
   # Estimate dispersions if regularization is requested
   if (regularize) {
@@ -214,7 +218,7 @@ ts_filter <- function(data, min_reads = 5, min_prop = 3/5) {
     dplyr::summarise(k = mean(.data$counts >= min_reads) >= min_prop, .by = c("target_id","time")) %>%
     dplyr::summarise(keep = any(.data$k), .by = "target_id") %>%
     dplyr::filter(.data$keep) %>%
-    dplyr::pull(.data$target_id)
+    dplyr::pull("target_id")
 }
 
 #' Summarize bootstrap samples
@@ -326,24 +330,11 @@ validate_inputs <- function(exp_design, count_matrix, t2g, import_type, model_ty
     if(all(exp_design[[condition_var]]==case_value)){
       stop("type = 'case-control', but there are no control samples")
     }
-    df <- exp_design %>% dplyr::select("time",condition_var) %>% dplyr::distinct()
+    df <- exp_design %>% dplyr::select(tidyr::all_of(c("time",condition_var))) %>% dplyr::distinct()
     if(sum(exp_design[[condition_var]]==case_value) != sum(exp_design[[condition_var]]==case_value)){
       stop("The observed time points for case and control samples must be equal")
     }
   }
-}
-
-
-#' Prepare case-control data by adding case indicator
-#'
-#' @param exp_design Experimental design data frame
-#' @param condition_var Name of condition variable
-#' @param case_value Value indicating case
-#' @return Updated experimental design with case indicator
-#' @keywords internal
-prepare_case_control <- function(exp_design, condition_var, case_value) {
-  exp_design %>%
-    dplyr::mutate(case = as.numeric(.data[[condition_var]] == case_value))
 }
 
 
@@ -355,6 +346,11 @@ prepare_case_control <- function(exp_design, condition_var, case_value) {
 validate_cores <- function(num_cores) {
   if (!num_cores %% 1 == 0) {
     stop("num_cores must be integer values")
+  }
+
+  if(.Platform$OS.type == "windows"){
+    warning("Parallel processing is not supported on Windows. Setting num_cores = 1")
+    return(1)
   }
 
   available_cores <- parallel::detectCores()
@@ -456,7 +452,7 @@ process_count_matrix <- function(count_matrix, t2g, gene_level) {
 convert_to_long_format <- function(counts_raw, exp_design) {
   counts_raw %>%
     tidyr::as_tibble(rownames = "target_id") %>%
-    tidyr::pivot_longer(-.data$target_id, names_to = "sample", values_to = "counts_raw") %>%
+    tidyr::pivot_longer(-"target_id", names_to = "sample", values_to = "counts_raw") %>%
     dplyr::mutate(counts = counts_raw) %>%
     dplyr::left_join(exp_design %>% dplyr::select(-tidyr::any_of(c("path"))), by = "sample") %>%
     dplyr::arrange(.data$target_id)
@@ -508,21 +504,6 @@ compute_normalization_factors <- function(count_matrix_filtered, normalize) {
     rep(1, ncol(count_matrix_filtered)) %>%
       `names<-`(colnames(count_matrix_filtered))
   }
-}
-
-
-#' Filter and update data_long with normalization factors
-#'
-#' @param data_long Long format data
-#' @param target_to_keep Targets to keep after filtering
-#' @param norm_factor Normalization factors
-#' @return Filtered and updated data
-#' @keywords internal
-filter_and_update_data <- function(data_long, target_to_keep, norm_factor) {
-  data_long %>%
-    dplyr::filter(.data$target_id %in% target_to_keep) %>%
-    dplyr::mutate(norm_factor = norm_factor[sample]) %>%
-    dplyr::relocate(.data$target_id)
 }
 
 #' Wrapper for estimating dispersions

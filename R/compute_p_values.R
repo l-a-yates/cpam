@@ -71,8 +71,11 @@ compute_p_values <- function(cpo,
     if(!is.character(subset)){
       stop("subset must be character vector of target_id values")
     } else {
-      if(!all(subset %in% rownames(cpo$count_matrix_raw))) warning("Subset contains invalid targets")
-      if(!all(subset %in% cpo$target_to_keep)) warning("Subset contains targets that have been filtered out")
+      if(!all(subset %in% rownames(cpo$count_matrix_raw))){
+        stop("Subset contains invalid targets")}
+      else if(!all(subset %in% cpo$target_to_keep)) {
+        stop("Subset contains targets that have been filtered out")
+      }
     }
   }
 
@@ -98,7 +101,7 @@ compute_p_values <- function(cpo,
         .
       }
     } %>%
-    tidyr::nest(.by = .data$target_id, .key = "data") %>%
+    tidyr::nest(.by = "target_id", .key = "data") %>%
     {
       if (is.null(subset))
         .
@@ -207,7 +210,7 @@ compute_p_values <- function(cpo,
       dplyr::mutate(p_val_gene = lancaster(pmax(.data$p_val_target,10e-320),.data$counts_mean/sum(.data$counts_mean))) %>%
       dplyr::ungroup() %>%
       dplyr::mutate(q_val_gene = stats::p.adjust(.data$p_val_gene, method = p_adj_method)) %>%
-      dplyr::relocate(.data$target_id, .data$gene_id, .data$counts_mean)
+      dplyr::relocate("target_id", "gene_id", "counts_mean")
   }
 
   cpo$p_table <- p_table

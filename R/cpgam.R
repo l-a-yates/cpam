@@ -1,3 +1,38 @@
+#' Fit a changepoint GAM model (internal)
+#'
+#' @description
+#' Internal function to fit a generalized additive model (GAM) with changepoint at a specified time.
+#' Supports both case-only and case-control designs with negative binomial or gaussian families.
+#'
+#' @param data A data frame containing the time series data
+#' @param cp Numeric changepoint time
+#' @param regularize Logical; whether to use regularization for negative binomial models
+#' @param model_type Character; either "case-only" or "case-control"
+#' @param bs Character; basis type. Can be GAM bases ("tp", "null", "lin", "ilin", "dlin")
+#'           or SCAM bases ("micv", "mdcx", "cv", "cx", "micx", "mdcv")
+#' @param family Character; either "nb" (negative binomial) or "gaussian"
+#' @param gam_method Character; fitting method for GAM, defaults to "REML"
+#' @param gam_optimizer Character; optimization method, defaults to "efs"
+#' @param fixed_effects Character; additional fixed effects to include in model formula
+#' @param sp Numeric; smoothing parameter(s)
+#' @param k_mult Numeric; multiplier for basis dimension k
+#' @param n_try Integer; number of fitting attempts
+#' @param not_exp Logical; passed to scam::scam
+#' @param silent Logical; whether to suppress warnings
+#'
+#' @return A fitted GAM or SCAM model object with additional components:
+#' \itemize{
+#'   \item f: model formula
+#'   \item cp: changepoint time
+#'   \item bs: basis type used
+#'   \item data: input data
+#'   \item model_type: type of model fitted
+#'   \item se_ratio: ratio of maximum standard error to maximum counts
+#' }
+#' Returns NA if model fitting fails.
+#'
+#' @keywords internal
+#'
 cpgam <- function(data,
                   cp,
                   regularize,
@@ -19,6 +54,7 @@ cpgam <- function(data,
   bs_gam <- c("tp","null","lin","ilin","dlin")
   bs <- match.arg(bs,c(bs_gam,bs_scam))
   use_scam <-  !bs %in% bs_gam
+  if(is.null(data[["time"]])) stop("data must contain a 'time' column")
 
   if (family == "nb") {
     if (!regularize) {

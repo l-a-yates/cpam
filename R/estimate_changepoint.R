@@ -213,7 +213,15 @@ estimate_changepoint <- function(cpo,
     cpo
 }
 
-
+#' Apply the one-standard-error rule for model selection
+#'
+#' @param tab A table containing model scores
+#' @param nse Number of standard errors to use (default: 1)
+#' @return The selected model that is most parsimonious within nse standard errors of the best model
+#' @details
+#' Implements the one-standard-error rule which selects the most parsimonious model
+#' within a specified number of standard errors of the best-scoring model.
+#' @keywords internal
 ose_rule <- function(tab, nse=1){
   m.min <- tab %>% colSums %>% which.min %>% names
 
@@ -234,7 +242,16 @@ ose_rule <- function(tab, nse=1){
 
 }
 
-
+#' Simulate p-values using multivariate normal distribution
+#'
+#' @param score_table Table of model scores
+#' @param nsim Number of simulations (default: 1e4)
+#' @param reg Regularization parameter for covariance matrix (default: 1e-3)
+#' @return Probability that the null model is the best scoring model
+#' @details
+#' Uses Monte Carlo simulation to compute the probability that the null model
+#' is the best scoring model under multivariate normal assumptions.
+#' @keywords internal
 simulate_p_mvn <- function(score_table, nsim = 1e4, reg = 1e-3){
   mvnfast::rmvn(nsim,
                 mu = score_table %>% colSums,
@@ -247,7 +264,21 @@ simulate_p_mvn <- function(score_table, nsim = 1e4, reg = 1e-3){
     unname
 }
 
-
+#' Calculate model selection scores for candidate changepoints
+#'
+#' @param data Input data frame
+#' @param cps Vector of candidate changepoints
+#' @param sp Smoothing parameter
+#' @param bs Basis function type
+#' @param family Model family ("nb" or "gaussian")
+#' @param score Score type to compute
+#' @param model_type Type of model to fit
+#' @param regularize Regularization parameter
+#' @return Table of scores for each candidate changepoint
+#' @details
+#' Fits models for each candidate changepoint and computes specified
+#' model selection scores (AIC or GCV).
+#' @keywords internal
 calc_score_table <- function(data,
                              cps,
                              sp,
@@ -291,6 +322,14 @@ calc_score_table <- function(data,
 
 }
 
+#' Calculate AIC for fitted models
+#'
+#' @param fit A fitted model object (GAM or SCAM)
+#' @return AIC value
+#' @details
+#' Computes AIC for both Gaussian and negative binomial models,
+#' handling different parameter estimation approaches for each family.
+#' @keywords internal
 aic <- function(fit){
   if(fit$family$family == "gaussian"){
     if(fit$scale.estimated){
@@ -314,6 +353,14 @@ aic <- function(fit){
   as.numeric(-2*ll + 2*attributes(stats::logLik(fit))$df/length(ll))
 }
 
+#' Calculate AIC specifically for negative binomial models
+#'
+#' @param fit A fitted negative binomial model
+#' @return AIC value
+#' @details
+#' Implements AIC calculation for negative binomial distribution,
+#' accounting for dispersion parameter estimation.
+#' @keywords internal
 aic_negbin <- function(fit){
   y <- fit$y
   #if("gam" %in% class(fit)) Theta <- fit$family$getTheta(T)
@@ -329,12 +376,26 @@ aic_negbin <- function(fit){
 
 }
 
-
+#' Calculate pointwise GCV for GAM models
+#'
+#' @param fit A fitted GAM object
+#' @return Vector of pointwise GCV scores
+#' @details
+#' Implements the standard GCV calculation for GAM models on a pointwise basis.
 # computes pointwise generalised cross validation (gcv) for a mgcv::gam fit
+#' @keywords internal
 gcv.gam <- function(fit){
     gcvi = (length(fit$residuals)*((sqrt(fit$weights)*fit$residuals)^2))/(length(fit$residuals)-sum(fit$hat))^2
 }
 
+#' Calculate GCV score for fitted models
+#'
+#' @param fit A fitted model object (GAM or SCAM)
+#' @return GCV score
+#' @details
+#' Computes GCV score handling both GAM and SCAM models with appropriate
+#' effective degrees of freedom calculations.
+#' @keywords internal
 gcv <- function(fit){
   dev = stats::residuals(fit, "deviance")^2
   nobs = length(fit$y)
@@ -351,7 +412,16 @@ gcv <- function(fit){
   as.numeric(dev * nobs/(nobs - gamma * trA)^2)
 }
 
-# log probability density for negative binomial with continuous positive response values
+#' Calculate log probability density for negative binomial distribution
+#'
+#' @param x Response values
+#' @param theta Dispersion parameter
+#' @param mu Mean parameter
+#' @return Log probability density values
+#' @details
+#' Computes the log probability density for a negative binomial distribution
+#' adapted for continuous positive response values.
+#' @keywords internal
 dnbl <- function(x,theta,mu){
   lgamma(x + theta) -
     lgamma(theta) -

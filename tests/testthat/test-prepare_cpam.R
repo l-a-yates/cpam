@@ -71,14 +71,6 @@ test_that("prepare_cpam validation functions work correctly", {
 test_that("prepare_cpam helper functions process data correctly", {
   test_data <- generate_test_data()
 
-  # Test prepare_case_control
-  exp_design_with_condition <- test_data$exp_design %>%
-    dplyr::mutate(condition = rep(c("treatment", "control"), length.out = dplyr::n()))
-
-  result <- prepare_case_control(exp_design_with_condition, "condition", "treatment")
-  expect_true("case" %in% names(result))
-  expect_equal(sum(result$case), sum(exp_design_with_condition$condition == "treatment"))
-
   # Test convert_to_long_format
   long_data <- convert_to_long_format(test_data$count_matrix, test_data$exp_design)
   expect_equal(nrow(long_data), nrow(test_data$count_matrix) * ncol(test_data$count_matrix))
