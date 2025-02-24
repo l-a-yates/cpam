@@ -120,7 +120,7 @@ test_that("compute_p_values handles subset parameter correctly", {
 
 # Test p-value adjustment methods
 test_that("compute_p_values handles different p-value adjustment methods", {
-  cpo <- create_mock_cpam()
+  cpo <- create_mock_cpam(n_targets = 30)
 
   # Test different adjustment methods
   result_bh <- compute_p_values(cpo, p_adj_method = "BH")
