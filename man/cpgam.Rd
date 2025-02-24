@@ -18,7 +18,8 @@ cpgam(
   k_mult = 1.2,
   n_try = 1,
   not_exp = F,
-  silent = T
+  silent = T,
+  debug = F
 )
 }
 \arguments{
@@ -50,6 +51,8 @@ or SCAM bases ("micv", "mdcx", "cv", "cx", "micx", "mdcv")}
 \item{not_exp}{Logical; passed to scam::scam}
 
 \item{silent}{Logical; whether to suppress warnings}
+
+\item{debug}{Logical; whether to print debug messages}
 }
 \value{
 A fitted GAM or SCAM model object with additional components:

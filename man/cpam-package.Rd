@@ -6,7 +6,7 @@
 \alias{cpam-package}
 \title{cpam: Changepoint additive models for time series omics data}
 \description{
-What the package does (one paragraph).
+cpam provides a comprehensive framework for time series omics analysis, integrating changepoint detection, smooth and shape-constrained trends, and uncertainty quantification. It supports gene- and transcript-level inferences, p-value aggregation for improved power, and both case-only and case-control designs. It includes an interactive Shiny interface.
 }
 \seealso{
 Useful links:

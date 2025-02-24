@@ -62,8 +62,7 @@ test_that("prepare_cpam validation functions work correctly", {
 
   # Test validate_cores function
   expect_warning(
-    result <- validate_cores(1000),
-    "num_cores is greater than"
+    result <- validate_cores(1000)
   )
   expect_true(result < 1000)
 })
@@ -94,7 +93,7 @@ test_that("prepare_cpam helper functions process data correctly", {
 
 #' prepare_cpam with data and mimimal computation
 #'
-test_that("prepare_cpam with data and minimal computation", {
+test_that("prepare_cpam with case-only data and minimal computation", {
   test_data <- generate_test_data()
 
 

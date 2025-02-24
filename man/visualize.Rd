@@ -2,6 +2,7 @@
 % Please edit documentation in R/app.R
 \name{visualize}
 \alias{visualize}
+\alias{visualise}
 \title{Launches a Shiny app to visualise the data and fitted models of a cpam object}
 \usage{
 visualize(
@@ -44,12 +45,12 @@ Launches a Shiny app to visualise the data and fitted models of a cpam object
 \dontrun{
 
 # Launch visualization with all genes
-visualize(cpo, degs_only = FALSE)
+visualise(cpo, degs_only = FALSE)
 
 # Launch with only significant genes
-visualize(cpo, deg_threshold = 0.05)
+visualise(cpo, deg_threshold = 0.05)
 
 # Launch with specific genes
-visualize(cpo, subset = c("transcript_1", "transcript_2"))
+visualise(cpo, subset = c("transcript_1", "transcript_2"))
 }
 }

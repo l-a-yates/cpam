@@ -32,13 +32,12 @@ treated with excess-light.
   interface.
 
 Our new package **cpam** provides a comprehensive framework for
-analysing time series omics data that combines statistical rigour with
-practical utility. The method leverages modern statistical approaches
-while remaining user-friendly, through sensible defaults and an
-interactive interface. Researchers can directly address key questions in
-time series analysis—when changes occur, what patterns they follow, and
-how responses are related. While we have focused on transcriptomics, the
-framework is applicable to other high-dimensional time series
+analysing time series omics data. The method uses modern statistical
+approaches while remaining user-friendly, through sensible defaults and
+an interactive interface. Researchers can directly address key questions
+in time series analysis—when changes occur, what patterns they follow,
+and how responses are related. While we have focused on transcriptomics,
+the framework is applicable to other high-dimensional time series
 measurements, making it a valuable addition to the omics analysis
 toolkit.
 
@@ -180,7 +179,7 @@ changes and counts with many optimal filters (see tutorials):
 ### Tutorials
 
 For a quick-to-run introductory example, we have provided a small
-simulated data set as part of the
+simulated data set as part of the package.
 
 - [Introductory
   Example](https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/example.html)

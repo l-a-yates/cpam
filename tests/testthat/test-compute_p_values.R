@@ -17,6 +17,7 @@ create_mock_cpam <- function(model_type = "case-only", n_times = 5, n_reps = 2, 
     case = as.numeric(condition=="treatment")
   )
 
+
   # Create mock count data
   target_ids <- paste0("target", 1:n_targets)
   count_matrix <- matrix(
@@ -38,7 +39,7 @@ create_mock_cpam <- function(model_type = "case-only", n_times = 5, n_reps = 2, 
     time = rep(exp_design$time, n_targets),
     condition = rep(exp_design$condition, n_targets),
     case = rep(exp_design$case, n_targets),
-    counts = as.vector(count_matrix),
+    counts = as.vector(count_matrix) + time * 10,
     norm_factor = 1,
     disp = 0.1
   )
@@ -192,3 +193,4 @@ test_that("compute_p_values handles fixed effects correctly", {
   result <- compute_p_values(cpo)
   expect_true(!is.null(result$p_table))
 })
+

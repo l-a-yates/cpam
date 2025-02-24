@@ -48,7 +48,7 @@ Application of **cpam** to RNA-seq time series of *Arabidopsis* plants treated w
  - **Case-only or case-control time series**: Analyse time series data with or without controls.
  - **User-friendly**: Sensible defaults and an interactive *shiny* interface.
 
-Our new package **cpam** provides a comprehensive framework for analysing time series omics data that combines statistical rigour with practical utility. The method leverages modern statistical approaches while remaining user-friendly, through sensible defaults and an interactive interface. Researchers can directly address key questions in time series analysis---when changes occur, what patterns they follow, and how responses are related. While we have focused on transcriptomics, the framework is applicable to other high-dimensional time series measurements, making it a valuable addition to the omics analysis toolkit.
+Our new package **cpam** provides a comprehensive framework for analysing time series omics data. The method uses modern statistical approaches while remaining user-friendly, through sensible defaults and an interactive interface. Researchers can directly address key questions in time series analysis---when changes occur, what patterns they follow, and how responses are related. While we have focused on transcriptomics, the framework is applicable to other high-dimensional time series measurements, making it a valuable addition to the omics analysis toolkit.
 
 
 This is the initial development version of **cpam** and we are actively seeking community feedback. If you encounter issues or have suggestions for improvements, please open an [issue](https://github.com/l-a-yates/cpam/issues). We welcome questions and discussion about using **cpam** for your research through [Discussions](https://github.com/l-a-yates/cpam/discussions/). Our goal is to work with users to make **cpam** a robust and valuable tool for time series omics analysis. We can also be contacted via the email addresses listed in our paper [here](https://doi.org/10.1101/2024.12.22.630003). 
@@ -132,7 +132,7 @@ and counts with many optimal filters (see tutorials):
 ### Tutorials
 
 For a quick-to-run introductory example, we have provided a small simulated data 
-set as part of the 
+set as part of the package. 
 
  - [Introductory Example](https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/example.html)
  

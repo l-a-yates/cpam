@@ -19,6 +19,7 @@
 #' @param n_try Integer; number of fitting attempts
 #' @param not_exp Logical; passed to scam::scam
 #' @param silent Logical; whether to suppress warnings
+#' @param debug Logical; whether to print debug messages
 #'
 #' @return A fitted GAM or SCAM model object with additional components:
 #' \itemize{
@@ -46,7 +47,8 @@ cpgam <- function(data,
                   k_mult = 1.2,
                   n_try = 1,
                   not_exp = F,
-                  silent = T){
+                  silent = T,
+                  debug = F){
 
   family <- match.arg(family)
   model_type <- match.arg(model_type)
@@ -113,6 +115,8 @@ cpgam <- function(data,
 
   f <- stats::as.formula(f)
 
+  refit = F
+
   if(!use_scam){
     m = try(mgcv::gam(formula = f,
                       data = data,
@@ -122,6 +126,13 @@ cpgam <- function(data,
                       optimizer = gam_optimizer,
                       offset = log(data$norm_factor)) %>% suppressWarnings(),
             silent = silent)
+
+    if(inherits(m, "try-error") & gam_optimizer != "outer" & n_try < 3){
+      refit = T
+      n_try = 3
+      gam_optimizer = "outer"
+      if(debug) print("refit-C")
+    }
   } else {
     m = try(scam::scam(formula = f,
                        data = data,
@@ -137,34 +148,35 @@ cpgam <- function(data,
         k_mult = 1
         n_try = 2
         refit = T
-        #print("refit-A")
+        if(debug) print("refit-A")
       } else if(n_try <= 2){
         n_try = 3
         not_exp = T
         refit = T
-        #print("refit-B")
+        if(debug) print("refit-B")
       } else refit = F
+      }
+  }
 
-      if(refit){
-        m <- cpgam(
-          data = data,
-          cp = cp,
-          regularize = regularize,
-          model_type = model_type,
-          bs = bs,
-          family = family,
-          gam_method = gam_method,
-          gam_optimizer = gam_optimizer,
-          fixed_effects = fixed_effects,
-          sp = sp,
-          k_mult = k_mult,
-          n_try = n_try,
-          not_exp = not_exp,
-          silent = silent
-        )
-      }
-      }
-    }
+  if(refit){
+    m <- cpgam(
+      data = data,
+      cp = cp,
+      regularize = regularize,
+      model_type = model_type,
+      bs = bs,
+      family = family,
+      gam_method = gam_method,
+      gam_optimizer = gam_optimizer,
+      fixed_effects = fixed_effects,
+      sp = sp,
+      k_mult = k_mult,
+      n_try = n_try,
+      not_exp = not_exp,
+      silent = silent
+    )
+  }
+
   if(inherits(m, "try-error")){
     #warning(paste0("The changepoint additive model for gene_id ",data$gene_id[1], " with basis '",bs,"' failed to converged at t0 =",cp))
     return(NA)

@@ -349,7 +349,10 @@ validate_cores <- function(num_cores) {
   }
 
   if(.Platform$OS.type == "windows"){
-    warning("Parallel processing is not supported on Windows. Setting num_cores = 1")
+    if(num_cores > 1){
+      warning("Parallel processing is not supported on Windows. Setting num_cores = 1")
+    }
+
     return(1)
   }
 

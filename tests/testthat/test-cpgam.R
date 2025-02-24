@@ -164,8 +164,10 @@ test_that("cpgam works without regularize", {
   fit <- cpgam(
     data = data,
     cp = 0,
-    regularize = FALSE
-  )
+    gam_optimizer = "efs",
+    regularize = FALSE,
+  );fit
+
   expect_s3_class(fit, "gam")
 
   expect_warning(cpgam(
@@ -175,5 +177,7 @@ test_that("cpgam works without regularize", {
     regularize = FALSE
   ))
 })
+
+
 
 

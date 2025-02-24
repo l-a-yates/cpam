@@ -4,7 +4,11 @@ Version: 0.0.0.9000
 Authors@R: 
     person("Luke", "Yates", , "luke.yates@utas.edu.au", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+Description: cpam provides a comprehensive framework for time series omics analysis, 
+  integrating changepoint detection, smooth and shape-constrained trends, 
+  and uncertainty quantification. It supports gene- and transcript-level inferences, 
+  p-value aggregation for improved power, and both case-only and case-control designs. 
+  It includes an interactive Shiny interface. 
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
