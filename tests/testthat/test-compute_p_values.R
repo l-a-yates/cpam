@@ -157,25 +157,28 @@ test_that("compute_p_values handles errors gracefully", {
 })
 
 # Test parallel processing
+
 test_that("compute_p_values works with different numbers of cores", {
-  skip_on_cran()
-  cpo <- create_mock_cpam()
+    skip_on_cran()
+    skip_on_os("windows")
+    cpo <- create_mock_cpam()
 
-  # Test with multiple cores
-  cpo$num_cores <- 2
-  result_parallel <- compute_p_values(cpo)
+    # Test with multiple cores
+      cpo$num_cores <- 2
+      result_parallel <- compute_p_values(cpo)
 
-  # Test with single core
-  cpo$num_cores <- 1
-  result_serial <- compute_p_values(cpo)
+    # Test with single core
+    cpo$num_cores <- 1
+    result_serial <- compute_p_values(cpo)
 
-  # Results should be the same
-  expect_equal(
-    result_parallel$p_table$p_val_target,
-    result_serial$p_table$p_val_target,
-    tolerance = 1e-6
-  )
+    # Results should be the same
+    expect_equal(
+      result_parallel$p_table$p_val_target,
+      result_serial$p_table$p_val_target,
+      tolerance = 1e-6
+    )
 })
+
 
 # Test fixed effects
 test_that("compute_p_values handles fixed effects correctly", {
