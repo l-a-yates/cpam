@@ -11,8 +11,8 @@
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Changepoint additive models for time series omics data">
-<meta name="description" content="What the package does (one paragraph).">
-<meta property="og:description" content="What the package does (one paragraph).">
+<meta name="description" content="cpam provides a comprehensive framework for time series omics analysis, integrating changepoint detection, smooth and shape-constrained trends, and uncertainty quantification. It supports gene- and transcript-level inferences, p-value aggregation for improved power, and both case-only and case-control designs. It includes an interactive Shiny interface.">
+<meta property="og:description" content="cpam provides a comprehensive framework for time series omics analysis, integrating changepoint detection, smooth and shape-constrained trends, and uncertainty quantification. It supports gene- and transcript-level inferences, p-value aggregation for improved power, and both case-only and case-control designs. It includes an interactive Shiny interface.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -82,7 +82,7 @@
 <li>
 <strong>User-friendly</strong>: Sensible defaults and an interactive <em>shiny</em> interface.</li>
 </ul>
-<p>Our new package <strong>cpam</strong> provides a comprehensive framework for analysing time series omics data that combines statistical rigour with practical utility. The method leverages modern statistical approaches while remaining user-friendly, through sensible defaults and an interactive interface. Researchers can directly address key questions in time series analysis—when changes occur, what patterns they follow, and how responses are related. While we have focused on transcriptomics, the framework is applicable to other high-dimensional time series measurements, making it a valuable addition to the omics analysis toolkit.</p>
+<p>Our new package <strong>cpam</strong> provides a comprehensive framework for analysing time series omics data. The method uses modern statistical approaches while remaining user-friendly, through sensible defaults and an interactive interface. Researchers can directly address key questions in time series analysis—when changes occur, what patterns they follow, and how responses are related. While we have focused on transcriptomics, the framework is applicable to other high-dimensional time series measurements, making it a valuable addition to the omics analysis toolkit.</p>
 <p>This is the initial development version of <strong>cpam</strong> and we are actively seeking community feedback. If you encounter issues or have suggestions for improvements, please open an <a href="https://github.com/l-a-yates/cpam/issues" class="external-link">issue</a>. We welcome questions and discussion about using <strong>cpam</strong> for your research through <a href="https://github.com/l-a-yates/cpam/discussions/" class="external-link">Discussions</a>. Our goal is to work with users to make <strong>cpam</strong> a robust and valuable tool for time series omics analysis. We can also be contacted via the email addresses listed in our paper <a href="https://doi.org/10.1101/2024.12.22.630003" class="external-link">here</a>.</p>
 </div>
 <div class="section level2">
@@ -163,7 +163,7 @@
 </h3>
 <p>Load the shiny app for an interactive visualisation of the results:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span>  <span class="fu">visualise</span><span class="op">(</span><span class="va">cpo</span><span class="op">)</span> <span class="co"># not shown in vignette</span></span></code></pre></div>
+<code class="sourceCode R"><span>  <span class="fu"><a href="reference/visualize.html">visualise</a></span><span class="op">(</span><span class="va">cpo</span><span class="op">)</span> <span class="co"># not shown in vignette</span></span></code></pre></div>
 <p>Or plot one gene at a time:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span>  <span class="fu"><a href="reference/plot_cpam.html">plot_cpam</a></span><span class="op">(</span><span class="va">cpo</span>, gene_id <span class="op">=</span> <span class="st">"AT3G23280"</span><span class="op">)</span></span></code></pre></div>
@@ -194,7 +194,7 @@
 <div class="section level3">
 <h3 id="tutorials">Tutorials<a class="anchor" aria-label="anchor" href="#tutorials"></a>
 </h3>
-<p>For a quick-to-run introductory example, we have provided a small simulated data set as part of the</p>
+<p>For a quick-to-run introductory example, we have provided a small simulated data set as part of the package.</p>
 <ul>
 <li><a href="https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/example.html" class="external-link">Introductory Example</a></li>
 </ul>
