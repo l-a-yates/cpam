@@ -49,10 +49,20 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #'
 #' library(cpam)
 #' library(dplyr)
+#'
+#' # Using a small subset of the example data
+#' cpo <- prepare_cpam(exp_design = exp_design_example,
+#'                     count_matrix = count_matrix_example[1:20,],
+#'                     gene_level = TRUE,
+#'                     num_cores = 1)
+#' cpo <- compute_p_values(cpo)
+#' cpo <- estimate_changepoint(cpo)
+#' cpo$changepoints
+#'
+#' \dontrun{
 #'
 #' # Example Experimental Design
 #' exp_design <- tibble(sample = paste0("s",1:50),
@@ -62,22 +72,16 @@
 #' # Example Transcript-to-Gene Mapping
 #' t2g <- readr::read_csv("path/to/t2g.csv")
 #'
-#' # Prepare a cpam object
+#' # Fit model
 #' cpo <- prepare_cpam(
 #'  exp_design = exp_design,
 #'  t2g = t2g,
 #'  import_type = "kallisto",
 #'  num_cores = 5)
-#'
-#'  # compute p-values
-#'  cpo <- compute_p_values(cpo)
-#'
-#'  # estimate changepoints
-#'  cpo <- estimate_changepoint(cpo)
-#'
-#'  # Inspect the changepoints
-#'  cpo$changpoints
-#'  }
+#' cpo <- compute_p_values(cpo)
+#' cpo <- estimate_changepoint(cpo)
+#' cpo$changpoints
+#' }
 #'
 #' @references
 #' Yates, L. A., S. A. Richards, and B. W. Brook. 2021.

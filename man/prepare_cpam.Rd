@@ -79,10 +79,17 @@ rescale the counts which accouts for this uncertainty during the modelling steps
 The data within the cpam object are accessible via the slots.
 }
 \examples{
-\dontrun{
 
 library(cpam)
 library(dplyr)
+
+# gene-only example using example
+cpo <- prepare_cpam(exp_design = exp_design_example,
+                    count_matrix = count_matrix_example,
+                    gene_level = TRUE)
+
+\dontrun{
+# transcript-level analysis with kallisto counts
 
 # Example Experimental Design
 exp_design <- tibble(sample = paste0("s",1:50),

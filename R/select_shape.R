@@ -34,10 +34,21 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #'
 #' library(cpam)
 #' library(dplyr)
+#'
+#' # Using a small subset of the example data
+#' cpo <- prepare_cpam(exp_design = exp_design_example,
+#'                     count_matrix = count_matrix_example[1:20,],
+#'                     gene_level = TRUE,
+#'                     num_cores = 1)
+#' cpo <- compute_p_values(cpo)
+#' cpo <- estimate_changepoint(cpo)
+#' cpo <- select_shape(cpo)
+#' cpo$shapes
+#'
+#' \dontrun{
 #'
 #' # Example Experimental Design
 #' exp_design <- tibble(sample = paste0("s",1:50),
@@ -53,18 +64,12 @@
 #'  t2g = t2g,
 #'  import_type = "kallisto",
 #'  num_cores = 5)
+#' cpo <- compute_p_values(cpo)
+#' cpo <- estimate_changepoint(cpo)
+#' cpo <- select_shape(cpo)
 #'
-#'  # compute p-values
-#'  cpo <- compute_p_values(cpo)
-#'
-#'  # estimate changepoints
-#'  cpo <- estimate_changepoint(cpo)
-#'
-#'  # estimate shapes
-#'  cpo <- select_shape(cpo)
-#'
-#'  # Inspect the shapes
-#'  cpo$shapes
+#' # Inspect the shapes
+#' cpo$shapes
 #'  }
 
 select_shape <- function(cpo,
@@ -86,7 +91,7 @@ select_shape <- function(cpo,
                        dplyr::select(.data$target_id, cp = dplyr::all_of(cp_type)),
                      by = "target_id") %>%
     dplyr::mutate(cp = as.numeric(.data$cp)) %>%
-    tidyr::nest(.by = .data$target_id, .key = "data") %>%
+    tidyr::nest(.by = "target_id", .key = "data") %>%
     {
       if (is.null(subset))
         .
@@ -147,35 +152,35 @@ select_shape <- function(cpo,
                         }
 
                     }, mc.cores = cpo$num_cores)) %>%
-    dplyr::select(.data$target_id, .data$x) %>%
+    dplyr::select(dplyr::all_of(c("target_id","x"))) %>%
     dplyr::rowwise() %>%
     dplyr::mutate(shape1 = .data$x$shape1,
            shape2 = .data$x$shape2,
            lfc = .data$x$lfc,
            pred = .data$x$pred) %>%
-    dplyr::select(-.data$x) %>%
+    dplyr::select(-"x") %>%
     dplyr::ungroup()
 
   cpo$shapes <-
     data_nest %>%
-    dplyr::select(-.data$data) %>%
-    dplyr::left_join(dplyr::select(shapes, -.data$lfc, -.data$pred), by = "target_id") %>%
+    dplyr::select(-"data") %>%
+    dplyr::left_join(dplyr::select(shapes,-dplyr::all_of(c("lfc","pred"))), by = "target_id") %>%
     dplyr::mutate(k = NULL)
 
   cpo$changepoints <-
     cpo$changepoints %>%
-    dplyr::left_join(cpo$shapes %>% dplyr::select(.data$target_id,.data$shape1), by = "target_id") %>%
+    dplyr::left_join(cpo$shapes %>% dplyr::select(dplyr::all_of(c("target_id","shape1"))), by = "target_id") %>%
     dplyr::mutate(dplyr::across(dplyr::all_of(cp_type), ~ dplyr::if_else(.data$shape1 == "null", cp_max, .data[[cp_type]]))) %>%
-    dplyr::select(-.data$shape1)
+    dplyr::select(-"shape1")
 
   pivot_names <- c("time")
   if(model_type == "case-control") pivot_names <- c("time","case")
 
   cpo$lfc <-
     data_nest %>%
-    dplyr::select(-.data$data) %>%
-    dplyr::left_join(dplyr::select(shapes, .data$target_id,.data$lfc), by = "target_id") %>%
-    dplyr::select(-.data$cp,-.data$k) %>%
+    dplyr::select(-"data") %>%
+    dplyr::left_join(dplyr::select(shapes, dplyr::all_of(c("target_id","lfc"))), by = "target_id") %>%
+    dplyr::select(-dplyr::all_of(c("cp","k"))) %>%
     tidyr::unnest("lfc") %>%
     {
       if(model_type == "case-control"){
@@ -187,9 +192,9 @@ select_shape <- function(cpo,
 
   cpo$pred <-
     data_nest %>%
-    dplyr::select(-.data$data) %>%
-    dplyr::left_join(dplyr::select(shapes, .data$target_id,.data$pred), by = "target_id") %>%
-    dplyr::select(-.data$cp,-.data$k) %>%
+    dplyr::select(-"data") %>%
+    dplyr::left_join(dplyr::select(shapes, dplyr::all_of(c("target_id","pred"))), by = "target_id") %>%
+    dplyr::select(-dplyr::all_of(c("cp","k"))) %>%
     tidyr::unnest("pred") %>%
     {
       if(model_type == "case-control"){
@@ -307,7 +312,7 @@ extract_pred <- function(fit, scaled = F) {
   newdata = fit$data %>% dplyr::select(dplyr::all_of(svars)) %>% dplyr::distinct()
 
   od <- 1
-  if(!is.null(fit$data$overdispersions) & !scaled){
+  if(!is.null(fit$data[["overdispersions"]]) & !scaled){
     od <- as.numeric(fit$data$overdispersions[1])
   }
 

@@ -32,10 +32,15 @@
 #' Yi L, Pachter L (2018). aggregation: p-Value Aggregation Methods. R package version 1.0.1,
 #' https://CRAN.R-project.org/package=aggregation.
 #'
-#' @examples \dontrun{
-#'
+#' @examples
 #' library(cpam)
 #' library(dplyr)
+#'
+#' # run on a small subset of the example data
+#' cpo <- compute_p_values(cpo_example, subset = paste0("g00",1:9))
+#' cpo$p_table
+#'
+#' \dontrun{
 #'
 #' # Example Experimental Design
 #' exp_design <- tibble(sample = paste0("s",1:50),

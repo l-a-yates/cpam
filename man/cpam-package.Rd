@@ -16,7 +16,12 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Luke Yates \email{luke.yates@utas.edu.au} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
+\strong{Maintainer}: Luke Yates \email{luke.yates@utas.edu.au} (\href{https://orcid.org/0000-0002-1685-3169}{ORCID})
+
+Other contributors:
+\itemize{
+  \item Michael Charleston [contributor]
+}
 
 }
 \keyword{internal}

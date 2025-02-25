@@ -48,10 +48,14 @@ but any methods supported by the function \code{p.adjust} can be used.
 The adjusted p-values are stored in the columns \code{q_val_target} and \code{q_val_gene}.
 }
 \examples{
-\dontrun{
-
 library(cpam)
 library(dplyr)
+
+# run on a small subset of the example data
+cpo <- compute_p_values(cpo_example, subset = paste0("g00",1:9))
+cpo$p_table
+
+\dontrun{
 
 # Example Experimental Design
 exp_design <- tibble(sample = paste0("s",1:50),
