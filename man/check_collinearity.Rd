@@ -17,3 +17,4 @@ Logical indicating whether collinearity was detected
 \description{
 Check for collinearity between predictors and with time variable
 }
+\keyword{internal}

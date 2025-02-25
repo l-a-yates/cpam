@@ -22,13 +22,14 @@
 #' Two shape selections are generated. The first selecting among linear,
 #' convex and concave shape classes and their monotonic variants (or the shape
 #' set given by bss), and the second selecting among the first options plus an
-#' 'unconstrained' smooth. The inclusion of the `unconstrained' type provides
+#' 'unconstrained' smooth. The inclusion of the 'unconstrained' type provides
 #' the flexibility to detect targets beyond simpler trends.
 
 #' For computational reasons, as per the changepoint estimation,
 #' shapes are selected only for those genes, or their isoforms,
 #' identified as significant at the chosen FDR threshold. This is
-#' overridden by providing a subset of target names to the `subset` argument.
+#' overridden by providing a subset of target names to the `subset` argument,
+#' provided these targets have estimated changepoints.
 #'
 #' @return a cpam object with the selected shapes added to the slot "shapes"
 #' @export

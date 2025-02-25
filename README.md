@@ -76,7 +76,7 @@ kallisto output file (alternatively you can provide the counts directly
 as count matrix, or use other quantification software)
 
 ``` r
-exp_design
+exp_design_path
 #> # A tibble: 50 × 4
 #>    sample  time path                                condition
 #>    <chr>  <dbl> <chr>                               <chr>    
@@ -100,8 +100,8 @@ but transcript-level analysis with aggregation of $p$-values to the gene
 level is recommended. E.g., for *Arabidopsis thaliana*:
 
 ``` r
-t2g
-#> # A tibble: 54,013 × 2
+t2g_arabidopsis
+#> # A tibble: 50 × 2
 #>    target_id   gene_id  
 #>    <chr>       <chr>    
 #>  1 AT1G01010.1 AT1G01010
@@ -114,21 +114,21 @@ t2g
 #>  8 AT1G03987.1 AT1G03987
 #>  9 AT1G01030.2 AT1G01030
 #> 10 AT1G01030.1 AT1G01030
-#> # ℹ 54,003 more rows
+#> # ℹ 40 more rows
 ```
 
 ### Step 4: Run **cpam**
 
 ``` r
-  cpo <- prepare_cpam(exp_design = exp_design,
+  cpo <- prepare_cpam(exp_design = exp_design_path,
                       count_matrix = NULL,
-                      t2g = t2g,
+                      t2g = t2g_arabidopsis,
                       model = "case-only",
                       import_type = "kallisto",
-                      num_cores = 5) # about 1 min
-  cpo <- compute_p_values(cpo) # 30 secs to 5 min
-  cpo <- estimate_changepoint(cpo) # 1-10 min
-  cpo <- select_shape(cpo) # 1-20 min
+                      num_cores = 5)
+  cpo <- compute_p_values(cpo) 
+  cpo <- estimate_changepoint(cpo) 
+  cpo <- select_shape(cpo) 
 ```
 
 ### Step 5: Visualise the results

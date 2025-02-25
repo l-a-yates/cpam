@@ -3,7 +3,7 @@
 \docType{data}
 \name{cpo_example}
 \alias{cpo_example}
-\title{A fit CPAM object to run light-weight examples}
+\title{A fitted \code{cpam} object to run light-weight examples}
 \format{
 A cpam object with p-values, changpoints, and shapes estimated
 }
@@ -19,4 +19,5 @@ See \code{cpo_example} for fitted CPAM object.
 See \code{exp_design_example} for experimental design.
 #'
 }
+\concept{dataset}
 \keyword{datasets}

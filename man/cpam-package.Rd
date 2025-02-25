@@ -21,6 +21,8 @@ Useful links:
 Other contributors:
 \itemize{
   \item Michael Charleston [contributor]
+  \item Jazmine Humphreys [contributor]
+  \item Steven Smith [contributor]
 }
 
 }

@@ -22,4 +22,5 @@ See \code{cpo_example} for fitted CPAM object.
 See \code{exp_design_example} for experimental design.
 1000 genes x 6 time points x 5 reps
 }
+\concept{dataset}
 \keyword{datasets}

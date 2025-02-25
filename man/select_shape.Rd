@@ -49,13 +49,30 @@ been estimated using \code{\link[=estimate_changepoint]{estimate_changepoint()}}
 Two shape selections are generated. The first selecting among linear,
 convex and concave shape classes and their monotonic variants (or the shape
 set given by bss), and the second selecting among the first options plus an
-'unconstrained' smooth. The inclusion of the \verb{unconstrained' type provides the flexibility to detect targets beyond simpler trends. For computational reasons, as per the changepoint estimation, shapes are selected only for those genes, or their isoforms, identified as significant at the chosen FDR threshold. This is overridden by providing a subset of target names to the }subset` argument.
+'unconstrained' smooth. The inclusion of the 'unconstrained' type provides
+the flexibility to detect targets beyond simpler trends.
+For computational reasons, as per the changepoint estimation,
+shapes are selected only for those genes, or their isoforms,
+identified as significant at the chosen FDR threshold. This is
+overridden by providing a subset of target names to the \code{subset} argument,
+provided these targets have estimated changepoints.
 }
 \examples{
-\dontrun{
 
 library(cpam)
 library(dplyr)
+
+# Using a small subset of the example data
+cpo <- prepare_cpam(exp_design = exp_design_example,
+                    count_matrix = count_matrix_example[1:20,],
+                    gene_level = TRUE,
+                    num_cores = 1)
+cpo <- compute_p_values(cpo)
+cpo <- estimate_changepoint(cpo)
+cpo <- select_shape(cpo)
+cpo$shapes
+
+\dontrun{
 
 # Example Experimental Design
 exp_design <- tibble(sample = paste0("s",1:50),
@@ -71,17 +88,11 @@ cpo <- prepare_cpam(
  t2g = t2g,
  import_type = "kallisto",
  num_cores = 5)
+cpo <- compute_p_values(cpo)
+cpo <- estimate_changepoint(cpo)
+cpo <- select_shape(cpo)
 
- # compute p-values
- cpo <- compute_p_values(cpo)
-
- # estimate changepoints
- cpo <- estimate_changepoint(cpo)
-
- # estimate shapes
- cpo <- select_shape(cpo)
-
- # Inspect the shapes
- cpo$shapes
+# Inspect the shapes
+cpo$shapes
  }
 }

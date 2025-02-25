@@ -1,6 +1,6 @@
 #' Example Experimental Design
 #'
-#' A tibble representing an example experimental design for CPAM analysis.
+#' A tibble representing an example experimental design for cpam analysis.
 #'
 #' @format A tibble with columns:
 #' \describe{
@@ -10,11 +10,12 @@
 #'   ...
 #' }
 #' @source Simulated example.
-"exp_design"
+#' @concept dataset
+"exp_design_path"
 
 #' Transcript-to-Gene Mapping
 #'
-#' A tibble representing a mapping of transcript IDs to gene IDs.
+#' A example tibble representing a mapping of transcript IDs to gene IDs.
 #'
 #' @format A tibble with columns:
 #' \describe{
@@ -22,7 +23,8 @@
 #'   \item{gene}{Character vector of corresponding gene IDs.}
 #' }
 #' @source The TAIR database.
-"t2g"
+#' @concept dataset
+"t2g_arabidopsis"
 
 
 #' A small case-only count matrix to run light-weight examples
@@ -37,9 +39,10 @@
 #'   \item{colnames}{Samples}
 #' }
 #' @source Simulated data, see data-raw directory for details
+#' @concept dataset
 "count_matrix_example"
 
-#' An experimental design run light-weight examples
+#' An experimental design to run light-weight examples
 #'
 #' Six time points x 3 reps
 #' #' See `cpo_example` for fitted CPAM object.
@@ -52,10 +55,11 @@
 #'   ...
 #' }
 #' @source Simulated data, see data-raw directory for details
+#' @concept dataset
 "exp_design_example"
 
 
-#' A fit CPAM object to run light-weight examples
+#' A fitted `cpam` object to run light-weight examples
 #'
 #' Six time points x 3 reps
 #' See `cpo_example` for fitted CPAM object.
@@ -64,4 +68,5 @@
 #' @format A cpam object with p-values, changpoints, and shapes estimated
 #'
 #' @source Simulated data, see data-raw directory for details
+#' @concept dataset
 "cpo_example"

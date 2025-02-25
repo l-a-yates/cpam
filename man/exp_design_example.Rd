@@ -3,7 +3,7 @@
 \docType{data}
 \name{exp_design_example}
 \alias{exp_design_example}
-\title{An experimental design run light-weight examples}
+\title{An experimental design to run light-weight examples}
 \format{
 A tibble with columns:
 \describe{
@@ -25,4 +25,5 @@ Six time points x 3 reps
 \details{
 #'
 }
+\concept{dataset}
 \keyword{datasets}

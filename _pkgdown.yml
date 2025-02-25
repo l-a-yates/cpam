@@ -2,3 +2,10 @@ url: https://l-a-yates.github.io/cpam/
 template:
   bootstrap: 5
 
+reference:
+- title: Functions
+- contents:
+  - -has_keyword("datasets")
+- title: Data
+- contents:
+  - has_keyword("datasets")

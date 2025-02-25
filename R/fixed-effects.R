@@ -40,6 +40,7 @@ validate_fixed_effects <- function(fixed_effects, exp_design) {
 #' @param formula Model formula
 #' @param exp_design Experimental design data frame
 #' @return Logical indicating whether collinearity was detected
+#' @keywords internal
 check_collinearity <- function(exp_design, formula){
   design_matrix <- stats::model.matrix(formula, exp_design)
   design_matrix_time <- cbind(design_matrix, exp_design[["time"]])
