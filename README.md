@@ -70,10 +70,10 @@ library(cpam)
 ### Step 2: Create a tibble for the experimental design.
 
 In this *Arabidopsis thaliana* time series example, we used the software
-[kallisto]() to generate counts from RNA-seq data. To load the counts,
-we provide the file path for each kallisto output file (alternatively
-you can provide the counts directly as count matrix, or use other
-quantification software)
+[kallisto](https://doi.org/10.1038/nbt.3519) to generate counts from
+RNA-seq data. To load the counts, we provide the file path for each
+kallisto output file (alternatively you can provide the counts directly
+as count matrix, or use other quantification software)
 
 ``` r
 exp_design

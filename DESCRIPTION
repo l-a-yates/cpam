@@ -2,8 +2,11 @@ Package: cpam
 Title: Changepoint additive models for time series omics data
 Version: 0.0.0.9000
 Authors@R: 
-    person("Luke", "Yates", , "luke.yates@utas.edu.au", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+    c(person("Luke", "Yates", email = "luke.yates@utas.edu.au", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-1685-3169")),
+    person("Michael", "Charleston", role = "ctb"),
+    person("Jazmine", "Humphreys", role = "ctb"),
+    person("Steven", "Smith", role = "ctb"))
 Description: cpam provides a comprehensive framework for time series omics analysis, 
   integrating changepoint detection, smooth and shape-constrained trends, 
   and uncertainty quantification. It supports gene- and transcript-level inferences, 
