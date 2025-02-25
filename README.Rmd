@@ -144,3 +144,11 @@ accompanying the `cpam` package.
  - [Arabidopsis Case Study](https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/crisp.html)
  - [Human Embryo Case Study](https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/torre.html)
 
+## Acknowledgements
+
+This work was supported by the Australian Research Council, Centre of Excellence
+for Plant Success in Nature and Agriculture (CE200100015). 
+
+<img src="man/figures/plant_success_logo_horizontal.jpg" width="100%" height="auto" alt="Plant Success Logo">
+
+
