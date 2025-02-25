@@ -77,10 +77,10 @@ the minimum proportion (<code>min_prop</code>) at any timepoint in the experimen
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  target_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"t"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">6</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  time <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">4</span>, <span class="fl">8</span><span class="op">)</span>, <span class="fl">6</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  counts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">6</span>,<span class="fl">6</span>,<span class="fl">6</span>, <span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>, <span class="fl">6</span>,<span class="fl">0</span>,<span class="fl">6</span>, <span class="fl">0</span>,<span class="fl">6</span>,<span class="fl">0</span>, <span class="fl">6</span>,<span class="fl">6</span>,<span class="fl">6</span>, <span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  counts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">6</span>,<span class="fl">6</span>,<span class="fl">6</span>, <span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>, <span class="fl">6</span>,<span class="fl">0</span>,<span class="fl">6</span>, <span class="fl">0</span>,<span class="fl">6</span>,<span class="fl">6</span>, <span class="fl">6</span>,<span class="fl">6</span>,<span class="fl">6</span>, <span class="fl">6</span>,<span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">ts_filter</span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> character(0)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "t2" "t3"</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
@@ -89,7 +89,7 @@ the minimum proportion (<code>min_prop</code>) at any timepoint in the experimen
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Luke Yates.</p>
+  <p>Developed by Luke Yates, Michael Charleston, Jazmine Humphreys, Steven Smith.</p>
 </div>
 
 <div class="pkgdown-footer-right">

@@ -84,14 +84,15 @@ target's fitted trajectory, with transparency controlled by alpha.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://l-a-yates.github.io/cpam/">cpam</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Generate results table</span></span></span>
-<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="results.html">results</a></span><span class="op">(</span><span class="va">cpo</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Generate results table for small example</span></span></span>
+<span class="r-in"><span><span class="va">res_example</span> <span class="op">&lt;-</span> <span class="fu"><a href="results.html">results</a></span><span class="op">(</span><span class="va">cpo_example</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># plot all targets with changepoint at timepoint 20 and shape "micv" (monotonic increasing concave)</span></span></span>
-<span class="r-in"><span><span class="fu">plot_cluster</span><span class="op">(</span><span class="va">cpo</span>, <span class="va">res</span>, changepoints <span class="op">=</span> <span class="st">"20"</span>, shapes <span class="op">=</span> <span class="st">"micv"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="co"># plot all targets with changepoint at timepoint 0 and shape "ilin" (increasing linear)</span></span></span>
+<span class="r-in"><span><span class="fu">plot_cluster</span><span class="op">(</span><span class="va">cpo_example</span>, <span class="va">res_example</span>, changepoints <span class="op">=</span> <span class="fl">2</span>, shapes <span class="op">=</span> <span class="st">"ilin"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Plotting 4 targets</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in plot_cluster(cpo_example, res_example, changepoints = 2, shapes = "ilin"):</span> object 'plot_data' not found</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
@@ -100,7 +101,7 @@ target's fitted trajectory, with transparency controlled by alpha.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Luke Yates.</p>
+  <p>Developed by Luke Yates, Michael Charleston, Jazmine Humphreys, Steven Smith.</p>
 </div>
 
 <div class="pkgdown-footer-right">
