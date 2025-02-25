@@ -106,7 +106,7 @@
 </h3>
 <p>In this <em>Arabidopsis thaliana</em> time series example, we used the software <a href="https://doi.org/10.1038/nbt.3519" class="external-link">kallisto</a> to generate counts from RNA-seq data. To load the counts, we provide the file path for each kallisto output file (alternatively you can provide the counts directly as count matrix, or use other quantification software)</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">exp_design</span></span>
+<code class="sourceCode R"><span><span class="va">exp_design_path</span></span>
 <span><span class="co">#&gt; # A tibble: 50 × 4</span></span>
 <span><span class="co">#&gt;    sample  time path                                condition</span></span>
 <span><span class="co">#&gt;    &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;                               &lt;chr&gt;    </span></span>
@@ -127,8 +127,8 @@
 </h3>
 <p>N.B. This is not needed if your counts are aggregated at the gene level, but transcript-level analysis with aggregation of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>-values to the gene level is recommended. E.g., for <em>Arabidopsis thaliana</em>:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">t2g</span></span>
-<span><span class="co">#&gt; # A tibble: 54,013 × 2</span></span>
+<code class="sourceCode R"><span><span class="va">t2g_arabidopsis</span></span>
+<span><span class="co">#&gt; # A tibble: 50 × 2</span></span>
 <span><span class="co">#&gt;    target_id   gene_id  </span></span>
 <span><span class="co">#&gt;    &lt;chr&gt;       &lt;chr&gt;    </span></span>
 <span><span class="co">#&gt;  1 AT1G01010.1 AT1G01010</span></span>
@@ -141,22 +141,22 @@
 <span><span class="co">#&gt;  8 AT1G03987.1 AT1G03987</span></span>
 <span><span class="co">#&gt;  9 AT1G01030.2 AT1G01030</span></span>
 <span><span class="co">#&gt; 10 AT1G01030.1 AT1G01030</span></span>
-<span><span class="co">#&gt; # ℹ 54,003 more rows</span></span></code></pre></div>
+<span><span class="co">#&gt; # ℹ 40 more rows</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="step-4-run-cpam">Step 4: Run <strong>cpam</strong>
 <a class="anchor" aria-label="anchor" href="#step-4-run-cpam"></a>
 </h3>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span>  <span class="va">cpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/prepare_cpam.html">prepare_cpam</a></span><span class="op">(</span>exp_design <span class="op">=</span> <span class="va">exp_design</span>,</span>
+<code class="sourceCode R"><span>  <span class="va">cpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/prepare_cpam.html">prepare_cpam</a></span><span class="op">(</span>exp_design <span class="op">=</span> <span class="va">exp_design_path</span>,</span>
 <span>                      count_matrix <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>                      t2g <span class="op">=</span> <span class="va">t2g</span>,</span>
+<span>                      t2g <span class="op">=</span> <span class="va">t2g_arabidopsis</span>,</span>
 <span>                      model <span class="op">=</span> <span class="st">"case-only"</span>,</span>
 <span>                      import_type <span class="op">=</span> <span class="st">"kallisto"</span>,</span>
-<span>                      num_cores <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="co"># about 1 min</span></span>
-<span>  <span class="va">cpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/compute_p_values.html">compute_p_values</a></span><span class="op">(</span><span class="va">cpo</span><span class="op">)</span> <span class="co"># 30 secs to 5 min</span></span>
-<span>  <span class="va">cpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/estimate_changepoint.html">estimate_changepoint</a></span><span class="op">(</span><span class="va">cpo</span><span class="op">)</span> <span class="co"># 1-10 min</span></span>
-<span>  <span class="va">cpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/select_shape.html">select_shape</a></span><span class="op">(</span><span class="va">cpo</span><span class="op">)</span> <span class="co"># 1-20 min</span></span></code></pre></div>
+<span>                      num_cores <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span>  <span class="va">cpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/compute_p_values.html">compute_p_values</a></span><span class="op">(</span><span class="va">cpo</span><span class="op">)</span> </span>
+<span>  <span class="va">cpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/estimate_changepoint.html">estimate_changepoint</a></span><span class="op">(</span><span class="va">cpo</span><span class="op">)</span> </span>
+<span>  <span class="va">cpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/select_shape.html">select_shape</a></span><span class="op">(</span><span class="va">cpo</span><span class="op">)</span> </span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="step-5-visualise-the-results">Step 5: Visualise the results<a class="anchor" aria-label="anchor" href="#step-5-visualise-the-results"></a>
