@@ -21,14 +21,13 @@
 #'
 #' @seealso [`results()`], [`plot_cpam()`]
 #' @examples
-#' \dontrun{
+#' library(cpam)
 #'
-#' # Generate results table
-#' res <- results(cpo)
+#' # Generate results table for small example
+#' res_example <- results(cpo_example)
 #'
-#' # plot all targets with changepoint at timepoint 20 and shape "micv" (monotonic increasing concave)
-#' plot_cluster(cpo, res, changepoints = "20", shapes = "micv")
-#' }
+#' # plot all targets with changepoint at timepoint 0 and shape "ilin" (increasing linear)
+#' plot_cluster(cpo_example, res_example, changepoints = 2, shapes = "ilin")
 #'
 plot_cluster <- function(cpo, res, changepoints, shapes, alpha = 0.1){
   txs <-
@@ -40,7 +39,7 @@ plot_cluster <- function(cpo, res, changepoints, shapes, alpha = 0.1){
   if(length(txs) == 0) {warning("No targets found for the selected shapes and timepoints"); return(NULL)}
   message(paste0("Plotting ",length(txs)," targets"))
 
-  plot_data <-
+  # plot_data <-
     txs %>%
     purrr::set_names() %>%
     purrr::map(~ plot_cpam(cpo,target_id = .x,return_fits_only = T) %>%
@@ -114,38 +113,9 @@ predict_lfc <- function(fit, length.out = 200) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#'
 #' library(cpam)
-#' library(dplyr)
 #'
-#' # Example Experimental Design
-#' exp_design <- tibble(sample = paste0("s",1:50),
-#'                      time = rep(c(0:4,10),
-#'                      path = paste0("path/",sample,"/abundance.h5"))
-#'
-#' # Example Transcript-to-Gene Mapping
-#' t2g <- readr::read_csv("path/to/t2g.csv")
-#'
-#' # Prepare a cpam object
-#' cpo <- prepare_cpam(
-#'  exp_design = exp_design,
-#'  t2g = t2g,
-#'  import_type = "kallisto",
-#'  num_cores = 5)
-#'
-#'  # compute p-values
-#'  cpo <- compute_p_values(cpo)
-#'
-#'  # estimate changepoints
-#'  cpo <- estimate_changepoint(cpo)
-#'
-#'  # estimate shapes
-#'  cpo <- select_shape(cpo)
-#'
-#'  # Plot a fitted trend
-#'  plot_cpam(cpo, gene_id = "AT1G01520")
-#'  }
+#' plot_cpam(cpo_example, gene_id = "g003")
 #'
 plot_cpam <- function(cpo,
                          gene_id = NULL,

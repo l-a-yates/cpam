@@ -35,7 +35,6 @@
 #' @export
 #'
 #' @examples
-#'
 #' library(cpam)
 #' library(dplyr)
 #'
@@ -43,13 +42,14 @@
 #' cpo <- prepare_cpam(exp_design = exp_design_example,
 #'                     count_matrix = count_matrix_example,
 #'                     gene_level = TRUE)
+#' cpo
 #'
 #' \dontrun{
 #' # transcript-level analysis with kallisto counts
 #'
 #' # Example Experimental Design
 #' exp_design <- tibble(sample = paste0("s",1:50),
-#'                      time = rep(c(0:4,10),
+#'                      time = rep(c(0:4), each = 10),
 #'                      path = paste0("path/",sample,"/abundance.h5"))
 #'
 #' # Example Transcript-to-Gene Mapping
@@ -216,7 +216,7 @@ prepare_cpam <- function(exp_design,
 #' data <- dplyr::tibble(
 #'   target_id = rep(paste0("t", 1:3), each = 6),
 #'   time = rep(c(0, 4, 8), 6),
-#'   counts = c(6,6,6, 0,0,0, 6,0,6, 0,6,0, 6,6,6, 0,0,0)
+#'   counts = c(6,6,6, 0,0,0, 6,0,6, 0,6,6, 6,6,6, 6,0,0)
 #' )
 #' ts_filter(data)
 #'
@@ -234,6 +234,7 @@ ts_filter <- function(data, min_reads = 5, min_prop = 3/5) {
 #'
 #' @param txi A tximport object containing inferential replicates
 #' @return A tibble with bootstrap summary statistics
+#' @keywords internal
 summarise_bootstraps <- function(txi){
   message("Summarising bootstrap samples")
   txi$infReps %>%
@@ -253,6 +254,7 @@ summarise_bootstraps <- function(txi){
 #' @param exp_design Experimental design with time column
 #' @return Named vector of tagwise dispersion estimates
 #' @noRd
+#' @keywords internal
 estimate_dispersions <- function(counts, exp_design){
   # update for case-control series (i.e., use condition in the design matrix)
   message("Estimating dispersions using edgeR")

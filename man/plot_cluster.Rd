@@ -33,14 +33,13 @@ share specified changepoint times and shape patterns. Each line represents one
 target's fitted trajectory, with transparency controlled by alpha.
 }
 \examples{
-\dontrun{
+library(cpam)
 
-# Generate results table
-res <- results(cpo)
+# Generate results table for small example
+res_example <- results(cpo_example)
 
-# plot all targets with changepoint at timepoint 20 and shape "micv" (monotonic increasing concave)
-plot_cluster(cpo, res, changepoints = "20", shapes = "micv")
-}
+# plot all targets with changepoint at timepoint 0 and shape "ilin" (increasing linear)
+plot_cluster(cpo_example, res_example, changepoints = 2, shapes = "ilin")
 
 }
 \seealso{

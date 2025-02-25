@@ -15,3 +15,4 @@ A tibble with bootstrap summary statistics
 \description{
 Internal function to process inferential replicates from tximport objects.
 }
+\keyword{internal}

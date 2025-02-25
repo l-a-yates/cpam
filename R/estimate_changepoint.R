@@ -49,7 +49,6 @@
 #' @export
 #'
 #' @examples
-#'
 #' library(cpam)
 #' library(dplyr)
 #'
@@ -66,7 +65,7 @@
 #'
 #' # Example Experimental Design
 #' exp_design <- tibble(sample = paste0("s",1:50),
-#'                      time = rep(c(0:4,10),
+#'                      time = rep(c(0:4), each = 10),
 #'                      path = paste0("path/",sample,"/abundance.h5"))
 #'
 #' # Example Transcript-to-Gene Mapping
@@ -80,9 +79,8 @@
 #'  num_cores = 5)
 #' cpo <- compute_p_values(cpo)
 #' cpo <- estimate_changepoint(cpo)
-#' cpo$changpoints
+#' cpo$changepoints
 #' }
-#'
 #' @references
 #' Yates, L. A., S. A. Richards, and B. W. Brook. 2021.
 #' Parsimonious model selection using information theory:

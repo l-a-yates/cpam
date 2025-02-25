@@ -4,9 +4,9 @@
 \name{cpam-package}
 \alias{cpam}
 \alias{cpam-package}
-\title{cpam: Changepoint additive models for time series omics data}
+\title{cpam: Changepoint Additive Models for Time Series Omics Data}
 \description{
-cpam provides a comprehensive framework for time series omics analysis, integrating changepoint detection, smooth and shape-constrained trends, and uncertainty quantification. It supports gene- and transcript-level inferences, p-value aggregation for improved power, and both case-only and case-control designs. It includes an interactive Shiny interface.
+Provides a comprehensive framework for time series omics analysis, integrating changepoint detection, smooth and shape-constrained trends, and uncertainty quantification. It supports gene- and transcript-level inferences, p-value aggregation for improved power, and both case-only and case-control designs. It includes an interactive Shiny interface.
 }
 \seealso{
 Useful links:
@@ -16,13 +16,13 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Luke Yates \email{luke.yates@utas.edu.au} (\href{https://orcid.org/0000-0002-1685-3169}{ORCID})
+\strong{Maintainer}: Luke Yates \email{luke.yates@utas.edu.au} (\href{https://orcid.org/0000-0002-1685-3169}{ORCID}) [copyright holder]
 
-Other contributors:
+Authors:
 \itemize{
-  \item Michael Charleston [contributor]
-  \item Jazmine Humphreys [contributor]
-  \item Steven Smith [contributor]
+  \item Michael Charleston
+  \item Jazmine Humphreys
+  \item Steven Smith
 }
 
 }

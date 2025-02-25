@@ -78,7 +78,6 @@ changepoint, cpam only estimates changepoints for targets associated with
 'significant' genes at the chosen threshold \code{deg_threshold}.
 }
 \examples{
-
 library(cpam)
 library(dplyr)
 
@@ -95,7 +94,7 @@ cpo$changepoints
 
 # Example Experimental Design
 exp_design <- tibble(sample = paste0("s",1:50),
-                     time = rep(c(0:4,10),
+                     time = rep(c(0:4), each = 10),
                      path = paste0("path/",sample,"/abundance.h5"))
 
 # Example Transcript-to-Gene Mapping
@@ -109,9 +108,8 @@ cpo <- prepare_cpam(
  num_cores = 5)
 cpo <- compute_p_values(cpo)
 cpo <- estimate_changepoint(cpo)
-cpo$changpoints
+cpo$changepoints
 }
-
 }
 \references{
 Yates, L. A., S. A. Richards, and B. W. Brook. 2021.

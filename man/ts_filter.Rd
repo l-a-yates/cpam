@@ -35,7 +35,7 @@ the minimum proportion (\code{min_prop}) at any timepoint in the experiment.
 data <- dplyr::tibble(
   target_id = rep(paste0("t", 1:3), each = 6),
   time = rep(c(0, 4, 8), 6),
-  counts = c(6,6,6, 0,0,0, 6,0,6, 0,6,0, 6,6,6, 0,0,0)
+  counts = c(6,6,6, 0,0,0, 6,0,6, 0,6,6, 6,6,6, 6,0,0)
 )
 ts_filter(data)
 
