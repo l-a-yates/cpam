@@ -65,13 +65,10 @@ create_mock_cpam <- function(model_type = "case-only", n_times = 5, n_reps = 2, 
 
 # Test basic functionality
 test_that("compute_p_values works with basic case-only model", {
-  # Create mock data
-  cpo <- create_mock_cpam(model_type = "case-only")
 
-  # Run function
+  cpo <- create_mock_cpam(model_type = "case-only")
   result <- compute_p_values(cpo)
 
-  # Tests
   expect_s3_class(result, "cpam")
   expect_true(!is.null(result$p_table))
   expect_true(all(c("target_id", "gene_id", "counts_mean",

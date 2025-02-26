@@ -18,7 +18,7 @@
 #'
 #' @return None (launches Shiny app in browser)
 #' @export
-#' @aliases visualise
+#' @aliases visualize
 #'
 #' @examples
 #' \dontrun{
@@ -32,7 +32,7 @@
 #' # Launch with specific genes
 #' visualise(cpo, subset = c("transcript_1", "transcript_2"))
 #' }
-visualize <- function(cpo,
+visualise <- function(cpo,
                       subset = NULL,
                       degs_only = T,
                       deg_threshold = 0.05,
@@ -74,7 +74,7 @@ visualize <- function(cpo,
   app(cpo)
 } # end visualize
 
-visualise <- visualize
+visualize <- visualise
 
 
 #' Internal Shiny App for CPAM Visualization

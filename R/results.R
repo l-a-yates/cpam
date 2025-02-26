@@ -43,7 +43,7 @@
 #'
 #' # Example Experimental Design
 #' exp_design <- tibble(sample = paste0("s",1:50),
-#'                      time = rep(c(0:4,10),
+#'                      time = rep(c(0:4), each = 10),
 #'                      path = paste0("path/",sample,"/abundance.h5"))
 #'
 #' # Example Transcript-to-Gene Mapping
