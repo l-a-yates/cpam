@@ -31,10 +31,15 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#'
 #' library(cpam)
 #' library(dplyr)
+#'
+#' results(cpo_example)
+#'
+#' # Add filters
+#' results(cpo_example, p_threshold = 0.01, min_lfc = 1)
+#'
+#'\dontrun{
 #'
 #' # Example Experimental Design
 #' exp_design <- tibble(sample = paste0("s",1:50),
@@ -127,7 +132,7 @@ results <- function(cpo,
     if(is.null(cpo$lfc)) stop("Shapes must be selected before results can be filtered by log-fold change (lfc)")
     keep_min_lfc <-
       cpo$lfc %>%
-      {`rownames<-`(as.matrix(dplyr::select(.,-.data$target_id)),.$target_id)} %>%
+      {`rownames<-`(as.matrix(dplyr::select(.,-"target_id")),.$target_id)} %>%
       matrixStats::rowMaxs() %>%
       {.[abs(.)> min_lfc]} %>%
       names

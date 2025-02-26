@@ -35,7 +35,6 @@
 #' @export
 #'
 #' @examples
-#'
 #' library(cpam)
 #' library(dplyr)
 #'

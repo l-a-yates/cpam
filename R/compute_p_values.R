@@ -1,4 +1,4 @@
-#' Compute p-values for each target_id
+#' Compute p-values for each target ID
 #'
 #' @param cpo a cpam object
 #' @param subset a character vector of target_id names

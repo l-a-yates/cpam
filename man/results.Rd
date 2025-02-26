@@ -62,10 +62,15 @@ been run. The function has several useful filters such as adjusted p-value
 thresholds, minimum log-fold changes, and minimum counts.
 }
 \examples{
-\dontrun{
-
 library(cpam)
 library(dplyr)
+
+results(cpo_example)
+
+# Add filters
+results(cpo_example, p_threshold = 0.01, min_lfc = 1)
+
+\dontrun{
 
 # Example Experimental Design
 exp_design <- tibble(sample = paste0("s",1:50),

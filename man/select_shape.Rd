@@ -58,7 +58,6 @@ overridden by providing a subset of target names to the \code{subset} argument,
 provided these targets have estimated changepoints.
 }
 \examples{
-
 library(cpam)
 library(dplyr)
 

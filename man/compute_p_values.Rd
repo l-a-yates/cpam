@@ -2,7 +2,7 @@
 % Please edit documentation in R/compute_p_values.R
 \name{compute_p_values}
 \alias{compute_p_values}
-\title{Compute p-values for each target_id}
+\title{Compute p-values for each target ID}
 \usage{
 compute_p_values(
   cpo,
@@ -30,7 +30,7 @@ compute_p_values(
 an updated cpam object with raw, adjusted, and possibly aggregated p-values stored in the new slot "p_table"
 }
 \description{
-Compute p-values for each target_id
+Compute p-values for each target ID
 }
 \details{
 This function computes p-values for each target_id in the supplied cpam object.
