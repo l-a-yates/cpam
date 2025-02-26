@@ -25,7 +25,7 @@ knitr::opts_chunk$set(
 ## cpam <span style="font-weight: normal">(**c**hange**p**oint **a**dditive **m**odels)</span>
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/l-a-yates/cpam/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/l-a-yates/cpam/actions/workflows/R-CMD-check)
+[![R-CMD-check](https://github.com/l-a-yates/cpam/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/l-a-yates/cpam/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 ### An R package for omics time series analysis.
