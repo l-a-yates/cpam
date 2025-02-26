@@ -140,14 +140,14 @@ results <- function(cpo,
   if(!is.null(cpo$changepoints)){
     p_table <-
       p_table %>%
-      dplyr::left_join(cpo$changepoints %>% dplyr::select(.data$target_id, cp = {{cp_type}}),
+      dplyr::left_join(cpo$changepoints %>% dplyr::select("target_id", cp = {{cp_type}}),
                        by = "target_id")
   }
 
   if(!is.null(cpo$shapes)){
     p_table <-
       p_table %>%
-      dplyr::left_join(cpo$shapes %>% dplyr::select(.data$target_id, shape = {{shape_type}}),
+      dplyr::left_join(cpo$shapes %>% dplyr::select("target_id", shape = {{shape_type}}),
                        by = "target_id")
 
     if(!is.null(p_table$cp)){
@@ -162,7 +162,7 @@ results <- function(cpo,
     p_table <- p_table %>%
       dplyr::left_join(cpo$lfc %>%
                   dplyr::rename_with(~ paste0("lfc.", .x, recycle0 = TRUE),
-                              .cols = -.data$target_id),
+                              .cols = -"target_id"),
                   by = "target_id")
   }
 
@@ -173,7 +173,7 @@ results <- function(cpo,
       dplyr::left_join(counts_by_time %>%
                          dplyr::as_tibble(rownames = "target_id") %>%
                          dplyr::rename_with(~ paste0("counts.", .x, recycle0 = TRUE),
-                              .cols = -.data$target_id),
+                              .cols = -"target_id"),
                        by = "target_id")
   }
 

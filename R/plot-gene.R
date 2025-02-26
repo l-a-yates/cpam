@@ -30,16 +30,25 @@
 #' plot_cluster(cpo_example, res_example, changepoints = 2, shapes = "ilin")
 #'
 plot_cluster <- function(cpo, res, changepoints, shapes, alpha = 0.1){
+
+  if (alpha < 0 || alpha > 1) {
+    stop("alpha must be between 0 and 1")
+  }
+
   txs <-
     res %>%
     dplyr::filter(.data$cp %in% changepoints,
                   .data$shape %in% shapes) %>%
-    dplyr::pull(.data$target_id)
+    dplyr::pull("target_id")
 
-  if(length(txs) == 0) {warning("No targets found for the selected shapes and timepoints"); return(NULL)}
+  if(length(txs) == 0) {
+    warning("No targets found for the selected shapes and timepoints")
+    return(NULL)
+  }
+
   message(paste0("Plotting ",length(txs)," targets"))
 
-  # plot_data <-
+  plot_data <-
     txs %>%
     purrr::set_names() %>%
     purrr::map(~ plot_cpam(cpo,target_id = .x,return_fits_only = T) %>%
@@ -89,9 +98,9 @@ predict_lfc <- function(fit, length.out = 200) {
 #' @param show_data logical; show (possibly normalized and scaled) data points?
 #' @param show_fit_ci logical; show credible interval for the fitted trend?
 #' @param show_data_ci logical; show bootstrapped quantile for data points?
-#' @param ci_prob  "se" for standard error bands (see [mgcv::predict.gam()]), or numeric for simulation-based intervals
-#' if numerical, sets the probability for the simulation-based estimated of credible interval.
-#' @param remove_null logical; only plot differentially expressed transcripts
+#' @param ci_prob  "se" for standard error bands (see [mgcv::predict.gam()]), or numeric for simulation-based intervals.
+#' If numerical, sets the probability for the simulation-based estimates of credible interval.
+#' @param remove_null logical; only plot differentially expressed transcripts (not applicable for gene-only analyses)
 #' @param null_threshold numeric; P value threshold for filtering out NULL transcripts
 #' @param null_threshold_adj logical; use adjusted (default) or non-adjusted p-values for filtering targets
 #' @param k_mult numerical; multiplier for the number of knots in the spline. Not recommended to change this value.
@@ -153,7 +162,14 @@ plot_cpam <- function(cpo,
   bs <- match.arg(bs, c("auto","null","lin","ilin","dlin",cpo$bss))
   if(!is.numeric(cp_fix)) stop("The fixed changepoint must be numeric")
   if(!cpo$bootstrap) show_data_ci <- F
-
+  if(!identical(ci_prob,"se")){
+    if(is.numeric(ci_prob)){
+      if(ci_prob < 0 | ci_prob > 1) stop("ci_prob must be between 0 and 1")
+    } else {
+      stop("ci_prob must be 'se' or a numeric value")
+    }
+  }
+  if(cpo$gene_level) remove_null <- F
 
   if(is.null(gene_id)){
     if(is.null(target_id)) stop("gene_id and target_id cannot both be null")
@@ -177,20 +193,20 @@ plot_cpam <- function(cpo,
 
   if(!is.null(cpo$changepoints)){
     data <- data %>%
-      dplyr::left_join(cpo$changepoints %>% dplyr::select(.data$target_id, cp = dplyr::all_of(cp_type)), by = "target_id")
-    cp_estimated <- any(is.na(data$cp))
+      dplyr::left_join(cpo$changepoints %>% dplyr::select("target_id", cp = dplyr::all_of(cp_type)), by = "target_id")
+    #cp_estimated <- any(is.na(data$cp))
   } else {
     data <- data %>% dplyr::mutate(cp = 0)
-    cp_estimated <- F
+    #cp_estimated <- F
   }
 
   if(!is.null(cpo$shapes)){
     data <- data %>%
-      dplyr::left_join(cpo$shapes %>% dplyr::select(.data$target_id, shape = dplyr::all_of(shape_type)), by = "target_id")
-    shape_estimated <- any(is.na(data$shape))
+      dplyr::left_join(cpo$shapes %>% dplyr::select("target_id", shape = dplyr::all_of(shape_type)), by = "target_id")
+    #shape_estimated <- any(is.na(data$shape))
   } else {
     data <- data %>% dplyr::mutate(shape = "tp")
-    shape_estimated <- F
+    #shape_estimated <- F
   }
 
   if (remove_null) {
@@ -199,23 +215,21 @@ plot_cpam <- function(cpo,
       if(!null_threshold_adj) pval <- "p_val_target"
 
       data <- data %>%
-        dplyr::left_join(cpo$p_table %>% dplyr::select(.data$target_id, .data[[pval]]), by = "target_id") %>%
-        dplyr::filter(.data[[pval]] <= null_threshold,
+        dplyr::left_join(cpo$p_table %>% dplyr::select(dplyr::all_of(c("target_id",pval))), by = "target_id") %>%
+        dplyr::filter(.data[[pval]] <= null_threshold |
                       .data$shape != "null")
-    } #else{
-    #data <- data %>% dplyr::filter(.data$cp != 240)
-    #  }
+    }
   }
 
   n_target = nrow(data)
-  names_target = data %>% dplyr::pull(.data$target_id)
+  names_target = data %>% dplyr::pull("target_id")
 
   if(!is.null(target_id)){
     if(!target_id %in% names_target){
       target_id <- NULL
       stop("Invalid target_id supplied.")
     } else {
-      data <- data %>% dplyr::filter(target_id == {{target_id}})
+      data <- data %>% dplyr::filter(.data$target_id == {{target_id}})
       gene_id <- target_id
     }
   }
@@ -237,11 +251,11 @@ plot_cpam <- function(cpo,
   if(cpo$model_type == "case-control" & n_target != 1) facet <- T
 
   if(scaled){
-    obs <- data %>% dplyr::select(.data$target_id,.data$data) %>% tidyr::unnest(cols = "data") %>%
+    obs <- data %>% dplyr::select(dplyr::all_of(c("target_id","data"))) %>% tidyr::unnest(cols = "data") %>%
       dplyr::mutate(dplyr::across(dplyr::starts_with("q_"), ~ .x/(.data$overdispersions*.data$norm_factor)),
                     counts = .data$counts/.data$norm_factor)
   } else{
-    obs <- data %>% dplyr::select(.data$target_id,.data$data) %>% tidyr::unnest(cols = "data") %>%
+    obs <- data %>% dplyr::select(dplyr::all_of(c("target_id","data"))) %>% tidyr::unnest(cols = "data") %>%
       dplyr::mutate(dplyr::across(dplyr::starts_with("q_"), ~ .x/(.data$norm_factor)),
                     counts = .data$counts_raw/.data$norm_factor)
   }
@@ -269,9 +283,8 @@ plot_cpam <- function(cpo,
 
   preds <-
     fits %>%
-    dplyr::select(.data$target_id, .data$cp, .data$pred) %>%
+    dplyr::select(dplyr::all_of(c("target_id","cp","pred"))) %>%
     tidyr::unnest(cols = c("pred"))
-  #dplyr::mutate(bcp = time<cp)
 
   # facet labels
   bs_labels <- paste0("(",data$cp,", ",data$shape,")")

@@ -60,10 +60,10 @@ Use "auto" (default) to use estimated shapes as per \code{shape_type}.}
 
 \item{show_data_ci}{logical; show bootstrapped quantile for data points?}
 
-\item{ci_prob}{"se" for standard error bands (see \code{\link[mgcv:predict.gam]{mgcv::predict.gam()}}), or numeric for simulation-based intervals
-if numerical, sets the probability for the simulation-based estimated of credible interval.}
+\item{ci_prob}{"se" for standard error bands (see \code{\link[mgcv:predict.gam]{mgcv::predict.gam()}}), or numeric for simulation-based intervals.
+If numerical, sets the probability for the simulation-based estimates of credible interval.}
 
-\item{remove_null}{logical; only plot differentially expressed transcripts}
+\item{remove_null}{logical; only plot differentially expressed transcripts (not applicable for gene-only analyses)}
 
 \item{null_threshold}{numeric; P value threshold for filtering out NULL transcripts}
 
