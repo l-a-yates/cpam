@@ -33,6 +33,7 @@
 #' Returns NA if model fitting fails.
 #'
 #' @keywords internal
+#' @noRd
 #'
 cpgam <- function(data,
                   cp,

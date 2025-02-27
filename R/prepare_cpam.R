@@ -119,7 +119,7 @@ prepare_cpam <- function(exp_design,
 
   # Import data if needed, otherwise use provided count matrix
   if (import) {
-    message(paste0("Loading ", length(exp_design$path), " samples"))
+    cli::cli_text("{cli::symbol$bullet} Loading {length(exp_design$path)} samples")
     result <- import_count_data(exp_design, t2g, import_type, gene_level, bootstrap)
     counts_raw <- result$counts_raw
     bootstrap <- result$bootstrap
@@ -128,6 +128,7 @@ prepare_cpam <- function(exp_design,
     catch <- result$catch
     boot <- result$boot
   } else {
+    cli::cli_progress_step("Processing count matrix")
     counts_raw <- process_count_matrix(count_matrix, t2g, gene_level)
     overdispersion.prior <- nboot <- NULL
     bootstrap <- F
@@ -145,7 +146,7 @@ prepare_cpam <- function(exp_design,
   }
 
   # Filter low count genes
-  message("Filtering low count genes")
+  cli::cli_progress_step("Filtering low count genes")
   target_to_keep <- do.call(filter_fun, args = c(list(data = data_long), filter_fun_args))
   count_matrix_filtered <- counts_raw[target_to_keep, ]
 
@@ -236,7 +237,7 @@ ts_filter <- function(data, min_reads = 5, min_prop = 3/5) {
 #' @return A tibble with bootstrap summary statistics
 #' @keywords internal
 summarise_bootstraps <- function(txi){
-  message("Summarising bootstrap samples")
+  cli::cli_progress_step("Summarising bootstrap samples")
   txi$infReps %>%
     purrr::set_names(colnames(txi$counts)) %>%
     purrr::map(`rownames<-`, rownames(txi$counts)) %>%
@@ -257,7 +258,7 @@ summarise_bootstraps <- function(txi){
 #' @keywords internal
 estimate_dispersions <- function(counts, exp_design){
   # update for case-control series (i.e., use condition in the design matrix)
-  message("Estimating dispersions using edgeR")
+  cli::cli_progress_step("Estimating dispersions using {.pkg edgeR}")
   if(length(unique(exp_design$time)) > 3){
     design <- stats::model.matrix(~poly(time,2), data = exp_design)
   } else design <- stats::model.matrix(~1, data = exp_design)
@@ -294,54 +295,55 @@ validate_inputs <- function(exp_design, count_matrix, t2g, import_type, model_ty
                             aggregate_to_gene, gene_level, import) {
   # Check time column exists with sufficient distinct values
   if (is.null(exp_design[["time"]])) {
-    stop("'exp_design' must include a 'time' column")
+    cli::cli_abort("{.var exp_design} must include a 'time' column")
   }
   if (length(unique(exp_design$time)) < 3) {
-    stop("The experimental design must have at least three distinct time points")
+    cli::cli_abort("The experimental design must have at least three distinct time points")
   }
 
   # Check t2g requirement
   if (is.null(t2g) & aggregate_to_gene) {
-    stop("'t2g' must be supplied if 'aggregate_to_gene' is true")
+    cli::cli_abort("{.code t2g} must be supplied if 'aggregate_to_gene' is true")
   }
 
   # Import-specific validations
   if (import) {
     if (is.null(import_type)) {
-      stop("'import_type' must be given if count matrix is not supplied")
+      cli::cli_abort("'import_type' must be given if count matrix is not supplied")
     }
     if (is.null(exp_design["path"])) {
-      stop("'exp_design' must contain a 'path' column if count matrix is not supplied")
+      cli::cli_abort("{.code exp_design} must contain a 'path' column if count matrix is not supplied")
     }
     if (is.null(t2g) & !gene_level) {
-      stop("'t2g' must be supplied if 'gene_level' is false")
+      cli::cli_abort(c("'t2g' must be supplied if 'gene_level' is false.",
+                     "i" = "Set {.code gene_level = TRUE} or provide a {.code 't2g'} file."))
     }
   } else {
     if (!is.null(import_type)) {
-      message("'import_type' is being ignored since a count matrix has been supplied")
+      cli::cli_alert_info("'import_type' is being ignored since a count matrix has been supplied")
     }
     if (is.null(colnames(count_matrix)) | sum(!colnames(count_matrix) %in% exp_design$sample) > 0) {
-      stop("Column names of 'count_matrix' must match samples in 'exp_design'")
+      cli::cli_abort("Column names of 'count_matrix' must match samples in 'exp_design'")
     }
   }
 
   # Case-control specific validations
   if (model_type == "case-control") {
     if (is.null(exp_design[[condition_var]])) {
-      stop(paste("type = 'case-control', but the column", condition_var, "does not exist in 'exp_design'"))
+      cli::cli_abort("{.code type = 'case-control'}, but the column {condition_var} does not exist in 'exp_design'")
     }
     if (!is.null(exp_design[["case"]])) {
-      stop("The column name 'case' is reserved and cannot be used in 'exp_design'")
+      cli::cli_abort("The column name 'case' is reserved and cannot be used in 'exp_design'")
     }
     if(all(exp_design[[condition_var]]!=case_value)){
-      stop("type = 'case-control', but there are no case samples")
+      cli::cli_abort("type = 'case-control', but there are no case samples")
     }
     if(all(exp_design[[condition_var]]==case_value)){
-      stop("type = 'case-control', but there are no control samples")
+      cli::cli_abort("type = 'case-control', but there are no control samples")
     }
     df <- exp_design %>% dplyr::select(tidyr::all_of(c("time",condition_var))) %>% dplyr::distinct()
     if(sum(exp_design[[condition_var]]==case_value) != sum(exp_design[[condition_var]]==case_value)){
-      stop("The observed time points for case and control samples must be equal")
+      cli::cli_abort("The observed time points for case and control samples must be equal")
     }
   }
 }
@@ -354,12 +356,12 @@ validate_inputs <- function(exp_design, count_matrix, t2g, import_type, model_ty
 #' @keywords internal
 validate_cores <- function(num_cores) {
   if (!num_cores %% 1 == 0) {
-    stop("num_cores must be integer values")
+    cli::cli_abort("{.code num_cores} must be integer values")
   }
 
   if(.Platform$OS.type == "windows"){
     if(num_cores > 1){
-      warning("Parallel processing is not supported on Windows. Setting num_cores = 1")
+      cli::cli_alert_warning("Parallel processing is not supported on Windows. Setting {.code num_cores = 1}")
     }
 
     return(1)
@@ -368,10 +370,9 @@ validate_cores <- function(num_cores) {
   available_cores <- parallel::detectCores()
   if (num_cores > available_cores) {
     suggested_cores <- floor(available_cores / 4)
-    warning(paste0("num_cores is greater than ", available_cores,
-                   ", the available number of cores. Setting num_cores = ",
-                   suggested_cores, " (1/4 x number cores)"),
-            call. = FALSE)
+    cli::cli_alert_warning(c("num_cores is greater than {available_cores}, ",
+                           "the available number of cores."))
+    cli::cli_alert_warning("Setting num_cores = {suggested_cores} (1/4 x number cores)")
     num_cores <- suggested_cores
   }
 
@@ -390,7 +391,7 @@ validate_cores <- function(num_cores) {
 #' @keywords internal
 import_count_data <- function(exp_design, t2g, import_type, gene_level, bootstrap) {
   if (gene_level) {
-    message("Summarizing to gene level")
+    cli::cli_progress_step("Summarizing to gene level")
     bootstrap <- FALSE
   }
 
@@ -411,7 +412,7 @@ import_count_data <- function(exp_design, t2g, import_type, gene_level, bootstra
   # Handle bootstrap samples
   catch <- boot <- nboot <- overdispersion.prior <- NULL
   if (bootstrap && is.null(txi$infReps)) {
-    message("No inferential replicates found, setting bootstrap = FALSE")
+    cli::cli_alert_info("No inferential replicates found, setting bootstrap = FALSE")
     bootstrap <- FALSE
   }
 

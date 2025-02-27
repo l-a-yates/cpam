@@ -1,12 +1,13 @@
 #' @export
 print.cpam <- function(x, ...){
-  cat("cpam object\n-----------\n")
-  cat(paste0(x$model_type, " time series\n"))
-  cat(paste0(length(x$exp_design$sample), " samples\n"))
-  cat(paste0(length(unique(x$exp_design$time)), " time points\n"))
-  if(x$gene_level) cat("Counts aggregated for gene-level inference\n")
+  cli::cli_h1("cpam object")
+  cli::cli_ul()
+  cli::cli_li(cli::style_dim("{x$model_type} time series"))
+  cli::cli_li(cli::style_dim("{length(x$exp_design$sample)} samples"))
+  cli::cli_li(cli::style_dim("{length(unique(x$exp_design$time))} time points"))
+  if(x$gene_level) cli::cli_li(cli::style_dim("Counts aggregated for gene-level inference"))
   if(x$bootstrap){
-    cat(paste0("Overdispersion estimated using ",x$nboot, " inferential replicates\n"))
-    cat(paste0("Counts rescaled by estimated overdispersion"))
+    cli::cli_li(cli::style_dim("Overdispersion estimated using {x$nboot} inferential replicates"))
+    cli::cli_li(cli::style_dim("Counts rescaled by estimated overdispersion"))
   }
 }

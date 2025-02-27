@@ -4,6 +4,7 @@
 #' @param exp_design A data frame containing the experimental design
 #' @return The validated and processed fixed effects as character, or NULL
 #' @keywords internal
+#' @noRd
 validate_fixed_effects <- function(fixed_effects, exp_design) {
   if (is.null(fixed_effects)) {
     return(NULL)
@@ -41,6 +42,7 @@ validate_fixed_effects <- function(fixed_effects, exp_design) {
 #' @param exp_design Experimental design data frame
 #' @return Logical indicating whether collinearity was detected
 #' @keywords internal
+#' @noRd
 check_collinearity <- function(exp_design, formula){
   design_matrix <- stats::model.matrix(formula, exp_design)
   design_matrix_time <- cbind(design_matrix, exp_design[["time"]])
@@ -54,6 +56,7 @@ check_collinearity <- function(exp_design, formula){
 #' @param fe_terms Fixed effects terms to check
 #' @return NULL, issues warning if perfect separation detected
 #' @keywords internal
+#' @noRd
 check_perfect_separation <- function(exp_design, fe_terms) {
   categorical_terms <- fe_terms[sapply(exp_design[fe_terms], function(x) {
     is.factor(x) || is.character(x)

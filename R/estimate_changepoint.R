@@ -281,6 +281,7 @@ simulate_p_mvn <- function(score_table, nsim = 1e4, reg = 1e-3){
 #' Fits models for each candidate changepoint and computes specified
 #' model selection scores (AIC or GCV).
 #' @keywords internal
+#' @noRd
 calc_score_table <- function(data,
                              cps,
                              sp,
@@ -332,6 +333,7 @@ calc_score_table <- function(data,
 #' Computes AIC for both Gaussian and negative binomial models,
 #' handling different parameter estimation approaches for each family.
 #' @keywords internal
+#' @noRd
 aic <- function(fit){
   if(fit$family$family == "gaussian"){
     if(fit$scale.estimated){
@@ -363,6 +365,7 @@ aic <- function(fit){
 #' Implements AIC calculation for negative binomial distribution,
 #' accounting for dispersion parameter estimation.
 #' @keywords internal
+#' @noRd
 aic_negbin <- function(fit){
   y <- fit$y
   #if("gam" %in% class(fit)) Theta <- fit$family$getTheta(T)
@@ -386,6 +389,7 @@ aic_negbin <- function(fit){
 #' Implements the standard GCV calculation for GAM models on a pointwise basis.
 # computes pointwise generalised cross validation (gcv) for a mgcv::gam fit
 #' @keywords internal
+#' @noRd
 gcv.gam <- function(fit){
     gcvi = (length(fit$residuals)*((sqrt(fit$weights)*fit$residuals)^2))/(length(fit$residuals)-sum(fit$hat))^2
 }
@@ -398,6 +402,7 @@ gcv.gam <- function(fit){
 #' Computes GCV score handling both GAM and SCAM models with appropriate
 #' effective degrees of freedom calculations.
 #' @keywords internal
+#' @noRd
 gcv <- function(fit){
   dev = stats::residuals(fit, "deviance")^2
   nobs = length(fit$y)
@@ -424,6 +429,7 @@ gcv <- function(fit){
 #' Computes the log probability density for a negative binomial distribution
 #' adapted for continuous positive response values.
 #' @keywords internal
+#' @noRd
 dnbl <- function(x,theta,mu){
   lgamma(x + theta) -
     lgamma(theta) -
