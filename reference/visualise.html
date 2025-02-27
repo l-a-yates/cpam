@@ -19,6 +19,7 @@
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/l-a-yates/cpam/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -28,7 +29,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Launches a Shiny app to visualise the data and fitted models of a cpam object</h1>
-
+      <small class="dont-index">Source: <a href="https://github.com/l-a-yates/cpam/blob/main/R/app.R" class="external-link"><code>R/app.R</code></a></small>
       <div class="d-none name"><code>visualise.Rd</code></div>
     </div>
 
@@ -91,7 +92,10 @@ Here, conservatively, we remove these null-shaped genes from the DEG list.</p></
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># A simple gene-level example</span></span></span>
+<span class="r-in"><span><span class="va">cpo</span> <span class="op">&lt;-</span> <span class="va">cpo_example</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Launch visualization with all genes</span></span></span>
 <span class="r-in"><span><span class="fu">visualise</span><span class="op">(</span><span class="va">cpo</span>, degs_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
@@ -100,8 +104,8 @@ Here, conservatively, we remove these null-shaped genes from the DEG list.</p></
 <span class="r-in"><span><span class="fu">visualise</span><span class="op">(</span><span class="va">cpo</span>, deg_threshold <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Launch with specific genes</span></span></span>
-<span class="r-in"><span><span class="fu">visualise</span><span class="op">(</span><span class="va">cpo</span>, subset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"transcript_1"</span>, <span class="st">"transcript_2"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="fu">visualise</span><span class="op">(</span><span class="va">cpo</span>, subset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"g001"</span>,<span class="st">"g002"</span>,<span class="st">"g003"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
