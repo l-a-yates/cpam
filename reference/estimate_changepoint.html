@@ -154,21 +154,22 @@ Ecology 102(10):e03475. 10.1002/ecy.3475</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Filtering low count genes</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Estimating dispersions using <span style="color: #0000BB;">edgeR</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Estimating dispersions using <span style="color: #0000BB;">edgeR</span> <span style="color: #B2B2B2;">[56ms]</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Estimating dispersions using <span style="color: #0000BB;">edgeR</span> <span style="color: #B2B2B2;">[55ms]</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Filtering low count genes</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Filtering low count genes <span style="color: #B2B2B2;">[259ms]</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Filtering low count genes <span style="color: #B2B2B2;">[250ms]</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="va">cpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="compute_p_values.html">compute_p_values</a></span><span class="op">(</span><span class="va">cpo</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">cpo</span> <span class="op">&lt;-</span> <span class="fu">estimate_changepoint</span><span class="op">(</span><span class="va">cpo</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Estimating changepoints for <span style="color: #0000BB;">3</span> targets</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Candidate changepoints are t = 1, 2, 3, 4, 5, and 6</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in dplyr::mutate(., q_mvn_target = stats::p.adjust(.data$p_mvn_target,     method = p_adj_method)):</span> <span style="color: #00BBBB;">ℹ</span> In argument: `q_mvn_target = stats::p.adjust(.data$p_mvn_target,</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span>   method = p_adj_method)`.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error:</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> object 'p_adj_method' not found</span>
 <span class="r-in"><span><span class="va">cpo</span><span class="op">$</span><span class="va">changepoints</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 7</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   target_id cp_min cp_1se  p_mvn bs    family score_table      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>           </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> g003           1      1 0      tp    nb     <span style="color: #949494;">&lt;tibble [30 × 6]&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> g013           2      3 0      tp    nb     <span style="color: #949494;">&lt;tibble [30 × 6]&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> g014           1      2 0.030<span style="text-decoration: underline;">7</span> tp    nb     <span style="color: #949494;">&lt;tibble [30 × 6]&gt;</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span></span></span>
