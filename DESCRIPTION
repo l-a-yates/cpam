@@ -11,7 +11,8 @@ Description: Provides a comprehensive framework for time series omics analysis,
   integrating changepoint detection, smooth and shape-constrained trends, 
   and uncertainty quantification. It supports gene- and transcript-level inferences, 
   p-value aggregation for improved power, and both case-only and case-control designs. 
-  It includes an interactive Shiny interface. 
+  It includes an interactive Shiny interface. The methods are described in Yates et al
+  <doi:10.1101/2024.12.22.630003>.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -19,6 +20,7 @@ RoxygenNote: 7.3.2
 Imports: 
     aggregation,
     bslib,
+    cli,
     DESeq2,
     dplyr,
     edgeR,
@@ -43,7 +45,8 @@ Imports:
 Depends: 
     R (>= 3.5)
 LazyData: true
-URL: https://l-a-yates.github.io/cpam/
+URL: https://l-a-yates.github.io/cpam/, https://github.com/l-a-yates/cpam
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+BugReports: https://github.com/l-a-yates/cpam/issues
