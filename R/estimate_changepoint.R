@@ -197,7 +197,12 @@ estimate_changepoint <- function(cpo,
 
   if(compute_mvn){
 
-    if(is.null(cpo[["p_adj_method"]])) p_adj_method <- "BH"
+
+    if(!is.null(cpo[["p_adj_method"]])){
+      p_adj_method <- cpo[["p_adj_method"]]
+    } else {
+      p_adj_method <- "BH"
+    }
 
       cpo$p_mvn <-
       cpo$changepoints %>%
