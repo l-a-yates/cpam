@@ -124,18 +124,20 @@ estimate_changepoint <- function(cpo,
     }
 
   if(nrow(data_nest) == 0) {
-    message("No targets selected. Please review subset and/or p-value thresholds.")
+    cli::cli_abort("No targets selected. Please review subset and/or p-value thresholds.")
     return(cpo)
   }
 
-  message(paste0("Estimating changepoints for ", nrow(data_nest), " targets"))
+  cli::cli_text("Estimating changepoints for {.val {nrow(data_nest)}} targets")
   if(is.null(cps)) cps <- cpo$times
-  message(paste0("Candidate changepoints are t = ", paste0(cps, collapse = ", "),"."))
+  cli::cli_text("Candidate changepoints are t = {cps}")
   if(nrow(data_nest)>3000){
-    message("Warning: model fitting may take several minutes for this many targets.")
-    message("Fitting time can be reduced by setting a lower threshold for DEGs ",
-    "(using `deg_threshold`) and/or reducing the ",
-    "number of candidate time points (set using `cps`)")
+    cli::cli_alert_warning("Warning: model fitting may take several minutes for this many targets.")
+    cli::cli_alert_info("Fitting time can be reduced by:")
+    cli::cli_ul()
+    cli::cli_li("setting a lower threshold for DEGs (using `deg_threshold`)")
+    cli::cli_li("subsetting the list of targets (using `subset`)")
+    cli::cli_li("reducing the number of candidate time points (using `cps`)")
   }
 
   regularize <- cpo$regularize
@@ -187,20 +189,23 @@ estimate_changepoint <- function(cpo,
   cpo[["problematic_targets"]] <-
     cpo$changepoints %>%
     dplyr::filter(is.na(.data$cp_min)) %>%
-    dplyr::pull(.data$target_id)
+    dplyr::pull("target_id")
 
   cpo$changepoints <-
     cpo$changepoints %>%
     dplyr::filter(!is.na(.data$cp_min))
 
   if(compute_mvn){
+
+    if(is.null(cpo[["p_adj_method"]])) p_adj_method <- "BH"
+
       cpo$p_mvn <-
       cpo$changepoints %>%
       dplyr::select(.data$target_id,p_mvn_target = .data$p_mvn) %>%
       dplyr::left_join(cpo$p_table %>% dplyr::select(tidyr::any_of(c("target_id","gene_id","counts_mean"))),
                        by = "target_id") %>%
       dplyr::relocate(tidyr::any_of(c("target_id","gene_id","counts_mean"))) %>%
-      dplyr::mutate(q_mvn_target = stats::p.adjust(.data$p_mvn_target, method = "BH"))
+      dplyr::mutate(q_mvn_target = stats::p.adjust(.data$p_mvn_target, method = p_adj_method))
 
     if(cpo$aggregate_to_gene){
       cpo$p_mvn <-
@@ -208,7 +213,7 @@ estimate_changepoint <- function(cpo,
         dplyr::group_by(.data$gene_id) %>%
         dplyr::mutate(p_mvn_gene = lancaster(pmax(.data$p_mvn_target,10e-320),.data$counts_mean/sum(.data$counts_mean))) %>%
         dplyr::ungroup() %>%
-        dplyr::mutate(q_mvn_gene = stats::p.adjust(.data$p_mvn_gene, method = "BH"))
+        dplyr::mutate(q_mvn_gene = stats::p.adjust(.data$p_mvn_gene, method = p_adj_method))
     }
   }
 

@@ -219,7 +219,7 @@ compute_p_values <- function(cpo,
   }
 
   cpo$p_table <- p_table
-
+  cpo$p_adj_method <- p_adj_method
   cpo
 
 }

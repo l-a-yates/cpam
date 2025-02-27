@@ -105,8 +105,8 @@ select_shape <- function(cpo,
     dplyr::filter(!is.na(.data$cp))
 
   if(nrow(data_nest) == 0) stop("No targets to estimate shapes for")
-  message(paste0("Estimating shapes for ", nrow(data_nest), " targets"))
-  message(paste0("Candidate shapes are bs = ", paste0(bss, collapse = ", "),"."))
+  cli::cli_text("Estimating shapes for {.val {nrow(data_nest)}} targets")
+  cli::cli_text("Candidate changepoints are bs =  {.val {bss}}")
 
   regularize <- cpo$regularize
   fixed_effects <- cpo$fixed_effects
