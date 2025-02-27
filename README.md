@@ -54,9 +54,11 @@ addresses listed in our paper
 
 ## Installation
 
+The package is available on CRAN and can be installed using the
+following command:
+
 ``` r
-# Installation code here
-remotes::install_github("l-a-yates/cpam")
+install.packages("cpam")
 ```
 
 ## Usage
