@@ -42,7 +42,10 @@ None (launches Shiny app in browser)
 Launches a Shiny app to visualise the data and fitted models of a cpam object
 }
 \examples{
-\dontrun{
+if (interactive()){
+
+# A simple gene-level example
+cpo <- cpo_example
 
 # Launch visualization with all genes
 visualise(cpo, degs_only = FALSE)
@@ -51,6 +54,6 @@ visualise(cpo, degs_only = FALSE)
 visualise(cpo, deg_threshold = 0.05)
 
 # Launch with specific genes
-visualise(cpo, subset = c("transcript_1", "transcript_2"))
+visualise(cpo, subset = c("g001","g002","g003"))
 }
 }

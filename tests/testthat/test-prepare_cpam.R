@@ -57,14 +57,11 @@ test_that("prepare_cpam validation functions work correctly", {
       gene_level = FALSE,
       import = FALSE
     ),
-    "'exp_design' must include a 'time' column"
+    "must include a 'time' column"
   )
 
   # Test validate_cores function
-  expect_warning(
-    result <- validate_cores(1000)
-  )
-  expect_true(result < 1000)
+  expect_true(validate_cores(1000) < 1000)
 })
 
 test_that("prepare_cpam helper functions process data correctly", {

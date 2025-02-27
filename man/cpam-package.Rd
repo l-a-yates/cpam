@@ -6,12 +6,14 @@
 \alias{cpam-package}
 \title{cpam: Changepoint Additive Models for Time Series Omics Data}
 \description{
-Provides a comprehensive framework for time series omics analysis, integrating changepoint detection, smooth and shape-constrained trends, and uncertainty quantification. It supports gene- and transcript-level inferences, p-value aggregation for improved power, and both case-only and case-control designs. It includes an interactive Shiny interface.
+Provides a comprehensive framework for time series omics analysis, integrating changepoint detection, smooth and shape-constrained trends, and uncertainty quantification. It supports gene- and transcript-level inferences, p-value aggregation for improved power, and both case-only and case-control designs. It includes an interactive Shiny interface. The methods are described in Yates et al \doi{10.1101/2024.12.22.630003}.
 }
 \seealso{
 Useful links:
 \itemize{
   \item \url{https://l-a-yates.github.io/cpam/}
+  \item \url{https://github.com/l-a-yates/cpam}
+  \item Report bugs at \url{https://github.com/l-a-yates/cpam/issues}
 }
 
 }
