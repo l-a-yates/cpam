@@ -190,9 +190,21 @@ cpgam <- function(data,
     m$data <- data
     m$model_type <- model_type
     if(inherits(m,"scam")){
-      m$se_ratio <- max(scam::predict.scam(m,se = T)$se.fit)/max(data$counts)
+      ses = scam::predict.scam(m,se = T)$se.fit
+      if(any(!is.finite(ses))){
+        #warning("Non-finite standard errors detected. Setting se_ratio to 999")
+        m$se_ratio <- 999
+      } else {
+        m$se_ratio <- max(ses)/max(data$counts)
+      }
     } else {
-      m$se_ratio <- max(mgcv::predict.gam(m,se = T)$se.fit)/max(data$counts)
+      ses = mgcv::predict.gam(m,se = T)$se.fit
+      if(any(!is.finite(ses))){
+        #warning("Non-finite standard errors detected. Setting se_ratio to 999")
+        m$se_ratio <- 999
+      } else {
+        m$se_ratio <- max(ses)/max(data$counts)
+      }
     }
 
   }

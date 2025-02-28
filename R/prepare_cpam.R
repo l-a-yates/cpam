@@ -512,7 +512,7 @@ process_bootstrap_data <- function(data_long, catch, boot) {
 #' @keywords internal
 compute_normalization_factors <- function(count_matrix_filtered, normalize) {
   if (normalize) {
-    edgeR::normLibSizes(count_matrix_filtered, method = "RLE")
+    estimateSizeFactorsForMatrix(count_matrix_filtered)
   } else {
     rep(1, ncol(count_matrix_filtered)) %>%
       `names<-`(colnames(count_matrix_filtered))

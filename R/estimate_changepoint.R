@@ -133,7 +133,7 @@ estimate_changepoint <- function(cpo,
   cli::cli_text("Candidate changepoints are t = {cps}")
   if(nrow(data_nest)>3000){
     cli::cli_alert_warning("Warning: model fitting may take several minutes for this many targets.")
-    cli::cli_alert_info("Fitting time can be reduced by:")
+    cli::cli_text("Fitting time can be reduced by:")
     cli::cli_ul()
     cli::cli_li("setting a lower threshold for DEGs (using `deg_threshold`)")
     cli::cli_li("subsetting the list of targets (using `subset`)")

@@ -45,6 +45,9 @@ Depends:
 LazyData: true
 URL: https://l-a-yates.github.io/cpam/, https://github.com/l-a-yates/cpam
 Suggests: 
+    knitr,
+    rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 BugReports: https://github.com/l-a-yates/cpam/issues
+VignetteBuilder: knitr
