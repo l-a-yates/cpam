@@ -1,0 +1,222 @@
+---
+title: "cpam"
+bibliography: references.bib
+output:
+  html_document:
+    theme:
+      version: 5
+      bootswatch: flatly
+    toc: true
+    toc_float: true
+    toc_depth: 3
+    highlight: tango
+    df_print: paged
+    self_contained: true
+vignette: >
+  %\VignetteIndexEntry{cpam}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  fig.width = 8,
+  fig.height = 6,
+  out.width = "100%",
+  dpi = 300,
+  collapse = TRUE,
+  comment = "#>"
+)
+
+options(
+  width = 120,
+  pillar.min_chars = 15,
+  pillar.min_title_chars = Inf,
+  tibble.print_max = 10
+)
+
+# Load required packages
+library(cpam)  
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(ggplot2)
+
+#"cpam: <u>c</u>hange<u>p</u>oint <u>a</u>dditive <u>m</u>odels"
+
+```
+
+## About
+
+This tutorial demonstrates the R package [`cpam`](https://l-a-yates.github.io/cpam/) for the analysis of time series omics data. It serves as a basic introduction to the package. There are also 
+two detailed case studies using real world data:
+
+ - [Arabidopsis Case Study](https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/torre.html)
+ - [Human embryo Case Study](https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/crisp.html)
+
+
+These case studies and several simulation studies are presented in the accompanying 
+[manuscript](https://doi.org/10.1101/2024.12.22.630003) by @Yates2024. See also, the package [website](https://l-a-yates.github.io/cpam/).
+
+## Data
+
+The data for the following examples have been simulated based on empirical RNA-seq data. 
+These data are gene-level counts from a case-only experiment with 6 time points and 5 replicates per time point. Code to reproduce the data is available in this [repository](https://github.com/l-a-yates/cpam_manuscript). 
+
+## Installation
+
+You can install [`cpam`](https://l-a-yates.github.io/cpam/) from GitHub using:
+
+```{r installation, eval=FALSE}
+install.packages("cpam")
+```
+
+# Getting started
+
+## Load packages 
+
+```{r loading, eval=FALSE}
+library(cpam)  
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(ggplot2)
+
+```
+
+## Experimental design
+An example experimental design is included in the `cpam` package. It is 
+case-only data so there are no experimental conditions beyond time.
+
+```{r experimental-design}
+exp_design_example
+```
+
+
+## Count matrix
+The example count data for are provided as a matrix. Let's take a look at the first few rows.
+```{r count-matrix}
+as.data.frame(count_matrix_example) %>% head 
+```
+
+## Fitting `cpam`
+
+To fit the models, we first prepare the `cpam` object, then compute p-values, 
+estimate changepoints, and select the shape for each gene. In this simple example, 
+simulated data are gene-level, that is we do not 
+have isoform-level counts. As such, we leave ```r NULL``` the transcript-to-gene mapping
+(`t2g`) and we set `gene_level = T`.
+
+```{r fitting-the-model, eval = T}
+  cpo <- prepare_cpam(exp_design = exp_design_example,
+                      count_matrix = count_matrix_example,
+                      model_type = "case-only",
+                      t2g = NULL,
+                      gene_level = T,
+                      num_cores = 1) # just for the example
+  cpo <- compute_p_values(cpo) # 6 seconds
+  cpo <- estimate_changepoint(cpo) # 4 seconds
+  cpo <- select_shape(cpo) # 5 seconds
+```
+We can look at a summary of the fitted cpam object 
+```{r print-cpo}
+cpo
+```
+If you run the code on your own computer, you can launch the Shiny app to visualise the results interactively using `visualise(cpo)`.
+
+## Result tables
+The results of the analysis are summarised using the `results` function.
+```{r results-1}
+results(cpo)
+```
+The generated results can be filtered by specifying minimum counts, minimum
+log-fold changes, and maximum p-values. For example, to return only the transcripts
+with a log-fold change greater than 1, at least 10 counts, and a $p$-value less than 0.01, we can run
+```{r filtered-results}
+results(cpo, min_count = 10, min_lfc = 1, p_threshold = 0.01)
+```
+
+
+## Plotting genes and transcripts
+A single gene can be plotted using the `plot_cpam` function. Here we plot the gene g063
+```{r plot-g063}
+plot_cpam(cpo, gene_id = "g063")
+```
+The subtitle shows `(1,cv)` indicating a changepoint at first time point (i.e., the gene responds immediately) and a convex (`'cv'`) shaped trend. 
+
+Let's look for a gene that has a more complex trend. Unconstrained shapes in `cpam` are denoted by `'tp'`.<sup><a href="#fn1">1</a></sup> We can filter the results for genes with unconstrained shapes and plot one of them.
+```{r find-tp-gene}
+results(cpo) %>% 
+  filter(shape == "tp")
+```
+We plot the first gene in the list. 
+```{r plot-g210}
+plot_cpam(cpo, gene_id = "g210")
+```
+This selection of `'tp'` suggests that the trend for this gene does not conform to one of the simpler shape types that `cpam` uses. We can exclude `'tp'` as an option and force `cpam` to choose among the simpler forms by setting `shape_type = "shape2"` in the `plot_cpam` function (`"shape1"`, the default, allows the `'tp'`). This choice can be useful for analysis such as clustering. For example:
+```{r plot-g210-shape2}
+plot_cpam(cpo, gene_id = "g210",shape_type = "shape2")
+```
+Here a monotonic increasing concave shape ('micv') is chosen, and we can see this trend deviates from the 
+data substantially more that the unconstrained shape. See the [manuscript](https://doi.org/10.1101/2024.12.22.630003) for more details on the shape types available in `cpam`.
+
+Next we look for a gene with a changepoint by filtering for genes with changepoints at the third time point.
+```{r results-cp3}}
+results(cpo) %>% 
+  filter(cp == 3)
+```
+Again, we plot the first gene in the list.
+```{r plot-g013}
+plot_cpam(cpo, gene_id = "g013")
+```
+
+
+## Clusters
+The results function can be used to generate clusters according to selected filters. 
+The `plot_cluster` function can then be used to visualise the clusters. 
+With such a small simulated data set, we don't
+have many genes in each cluster, but we can try a few different clustering options to 
+get an idea of how the function works.
+
+```{r clusters-1, cache=TRUE}
+res <- results(cpo)
+plot_cluster(cpo, res, changepoints = 1, shapes = c("cv"))
+```
+There are 19 genes with a concave shape and a changepoint at the first time point. 
+
+More than one shape or changepoint can be provided. For example:
+```{r clusters-2, cache=TRUE}
+plot_cluster(cpo, res, changepoints = 2, shapes = c("dlin","mdcx"))
+```
+There are just four genes with decreasing linear or monotonic decreasing convex shapes
+which have a changepoint at the second time point.
+
+Clustering can be further refined based on, for example, the rate at which the above transcripts
+attain their maximum values. We illustrate advanced refinements such as this [case study](https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/torre.html).
+
+## Many more options
+
+This is just a simple example to get you started. The package has many more features and options. 
+Check out the two case studies to see how `cpam` can be used to analyse real-world data:
+
+ - [Arabidopsis Case Study](https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/torre.html)
+ - [Human Embryo Case Study](https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/crisp.html)
+
+# Session Info
+<details>
+  <summary>Click to expand</summary>
+```{r session-info}
+sessionInfo()
+```
+</details>
+<br>
+<div id="fn1">
+<p><sup>1</sup> `tp` stands for *thinplate* which is the type of spline used for
+the 'unconstrained' curves as defined in the `mgcv` package. The curves are 
+still penalised to be smooth, but the shape type is not fixed.</p>
+</div>
+
+# References
