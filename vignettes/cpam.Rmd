@@ -64,11 +64,11 @@ These case studies and several simulation studies are presented in the accompany
 ## Data
 
 The data for the following examples have been simulated based on empirical RNA-seq data. 
-These data are gene-level counts from a case-only experiment with 6 time points and 5 replicates per time point. Code to reproduce the data is available in this [repository](https://github.com/l-a-yates/cpam_manuscript). 
+These data are gene-level counts from a case-only design with 6 time points and 5 replicates per time point. Code to reproduce the data is available in this [repository](https://github.com/l-a-yates/cpam_manuscript). 
 
 ## Installation
 
-You can install [`cpam`](https://l-a-yates.github.io/cpam/) from GitHub using:
+You can install [`cpam`](https://l-a-yates.github.io/cpam/) using:
 
 ```{r installation, eval=FALSE}
 install.packages("cpam")
@@ -88,8 +88,8 @@ library(ggplot2)
 ```
 
 ## Experimental design
-An example experimental design is included in the `cpam` package. It is 
-case-only data so there are no experimental conditions beyond time.
+An example experimental design is included in the `cpam` package. Since it is 
+case-only design, there are no experimental conditions beyond time.
 
 ```{r experimental-design}
 exp_design_example
@@ -133,7 +133,7 @@ The results of the analysis are summarised using the `results` function.
 results(cpo)
 ```
 The generated results can be filtered by specifying minimum counts, minimum
-log-fold changes, and maximum p-values. For example, to return only the transcripts
+log-fold changes, and maximum $p$-values. For example, to return only the transcripts
 with a log-fold change greater than 1, at least 10 counts, and a $p$-value less than 0.01, we can run
 ```{r filtered-results}
 results(cpo, min_count = 10, min_lfc = 1, p_threshold = 0.01)
