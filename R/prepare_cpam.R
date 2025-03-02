@@ -27,11 +27,11 @@
 #'  When bootstrap samples (inferential replicates) are available, it loads and
 #'  summarises these using means, standard errors, and estimated overdispersions.
 #'  The latter are a measure of quantification uncertainty and they are used to
-#'  rescale the counts which accouts for this uncertainty during the modelling steps.
+#'  rescale the counts which accounts for this uncertainty during the modelling steps.
 #'
-#'  The data within the cpam object are accessible via the slots.
-#'
-#' @return an object of class cpam
+#' @return an object of class \code{\link{cpam-class}}. The returned object has
+#' methods \code{print} and \code{summary} for displaying information.
+#' See \code{\link{cpam-class}} for details on the structure of the returned object.
 #' @export
 #'
 #' @examples

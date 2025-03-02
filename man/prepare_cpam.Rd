@@ -60,7 +60,9 @@ prepare_cpam(
 \item{intercept_cc}{string; intercept for case-control model: "1" (default) for common intercept  or "condition"}
 }
 \value{
-an object of class cpam
+an object of class \code{\link{cpam-class}}. The returned object has
+methods \code{print} and \code{summary} for displaying information.
+See \code{\link{cpam-class}} for details on the structure of the returned object.
 }
 \description{
 Prepare a cpam object
@@ -74,9 +76,7 @@ and estimates dispersions. Many of these steps can be customised or turned off.
 When bootstrap samples (inferential replicates) are available, it loads and
 summarises these using means, standard errors, and estimated overdispersions.
 The latter are a measure of quantification uncertainty and they are used to
-rescale the counts which accouts for this uncertainty during the modelling steps.
-
-The data within the cpam object are accessible via the slots.
+rescale the counts which accounts for this uncertainty during the modelling steps.
 }
 \examples{
 library(cpam)
