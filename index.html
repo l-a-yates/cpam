@@ -85,8 +85,8 @@
 <li>
 <strong>User-friendly</strong>: Sensible defaults and an interactive <em>shiny</em> interface.</li>
 </ul>
-<p>Our new package <strong>cpam</strong> provides a comprehensive framework for analysing time series omics data. The method uses modern statistical approaches while remaining user-friendly, through sensible defaults and an interactive interface. Researchers can directly address key questions in time series analysis—when changes occur, what patterns they follow, and how responses are related. While we have focused on transcriptomics, the framework is applicable to other high-dimensional time series measurements, making it a valuable addition to the omics analysis toolkit.</p>
-<p>This is the initial development version of <strong>cpam</strong> and we are actively seeking community feedback. If you encounter issues or have suggestions for improvements, please open an <a href="https://github.com/l-a-yates/cpam/issues" class="external-link">issue</a>. We welcome questions and discussion about using <strong>cpam</strong> for your research through <a href="https://github.com/l-a-yates/cpam/discussions/" class="external-link">Discussions</a>. Our goal is to work with users to make <strong>cpam</strong> a robust and valuable tool for time series omics analysis. We can also be contacted via the email addresses listed in our paper <a href="https://doi.org/10.1101/2024.12.22.630003" class="external-link">here</a>.</p>
+<p>Our new package <strong>cpam</strong> provides a comprehensive framework for analysing time series omics data. The method uses modern statistical approaches while remaining user-friendly, through sensible defaults and an interactive interface. Researchers can directly address key questions in time series analysis—when changes occur, what patterns they follow, and how responses are related. While we have focused on transcriptomics, the framework is applicable to other high-dimensional time series measurements.</p>
+<p>If you encounter issues or have suggestions for improvements, please open an <a href="https://github.com/l-a-yates/cpam/issues" class="external-link">issue</a>. We welcome questions and discussion about using <strong>cpam</strong> for your research through <a href="https://github.com/l-a-yates/cpam/discussions/" class="external-link">Discussions</a>. Our goal is to work with users to make <strong>cpam</strong> a robust and valuable tool for time series omics analysis. We can also be contacted via the email addresses listed in our paper <a href="https://doi.org/10.1101/2024.12.22.630003" class="external-link">here</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -110,20 +110,57 @@
 <p>In this <em>Arabidopsis thaliana</em> time series example, we used the software <a href="https://doi.org/10.1038/nbt.3519" class="external-link">kallisto</a> to generate counts from RNA-seq data. To load the counts, we provide the file path for each kallisto output file (alternatively you can provide the counts directly as count matrix, or use other quantification software)</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">exp_design_path</span></span>
-<span><span class="co">#&gt; # A tibble: 50 × 4</span></span>
-<span><span class="co">#&gt;    sample  time path                                condition</span></span>
-<span><span class="co">#&gt;    &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;                               &lt;chr&gt;    </span></span>
-<span><span class="co">#&gt;  1 JHSS01     0 output/kallisto/JHSS01/abundance.h5 treatment</span></span>
-<span><span class="co">#&gt;  2 JHSS02     0 output/kallisto/JHSS02/abundance.h5 treatment</span></span>
-<span><span class="co">#&gt;  3 JHSS03     0 output/kallisto/JHSS03/abundance.h5 treatment</span></span>
-<span><span class="co">#&gt;  4 JHSS04     0 output/kallisto/JHSS04/abundance.h5 treatment</span></span>
-<span><span class="co">#&gt;  5 JHSS05     0 output/kallisto/JHSS05/abundance.h5 treatment</span></span>
-<span><span class="co">#&gt;  6 JHSS06     5 output/kallisto/JHSS06/abundance.h5 treatment</span></span>
-<span><span class="co">#&gt;  7 JHSS07     5 output/kallisto/JHSS07/abundance.h5 treatment</span></span>
-<span><span class="co">#&gt;  8 JHSS08     5 output/kallisto/JHSS08/abundance.h5 treatment</span></span>
-<span><span class="co">#&gt;  9 JHSS09     5 output/kallisto/JHSS09/abundance.h5 treatment</span></span>
-<span><span class="co">#&gt; 10 JHSS10     5 output/kallisto/JHSS10/abundance.h5 treatment</span></span>
-<span><span class="co">#&gt; # ℹ 40 more rows</span></span></code></pre></div>
+<span><span class="co">#&gt;    sample time                                path condition</span></span>
+<span><span class="co">#&gt; 1  JHSS01    0 output/kallisto/JHSS01/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 2  JHSS02    0 output/kallisto/JHSS02/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 3  JHSS03    0 output/kallisto/JHSS03/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 4  JHSS04    0 output/kallisto/JHSS04/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 5  JHSS05    0 output/kallisto/JHSS05/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 6  JHSS06    5 output/kallisto/JHSS06/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 7  JHSS07    5 output/kallisto/JHSS07/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 8  JHSS08    5 output/kallisto/JHSS08/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 9  JHSS09    5 output/kallisto/JHSS09/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 10 JHSS10    5 output/kallisto/JHSS10/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 11 JHSS16   10 output/kallisto/JHSS16/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 12 JHSS17   10 output/kallisto/JHSS17/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 13 JHSS18   10 output/kallisto/JHSS18/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 14 JHSS19   10 output/kallisto/JHSS19/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 15 JHSS20   10 output/kallisto/JHSS20/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 16 JHSS26   20 output/kallisto/JHSS26/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 17 JHSS27   20 output/kallisto/JHSS27/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 18 JHSS28   20 output/kallisto/JHSS28/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 19 JHSS29   20 output/kallisto/JHSS29/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 20 JHSS30   20 output/kallisto/JHSS30/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 21 JHSS36   30 output/kallisto/JHSS36/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 22 JHSS37   30 output/kallisto/JHSS37/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 23 JHSS38   30 output/kallisto/JHSS38/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 24 JHSS39   30 output/kallisto/JHSS39/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 25 JHSS40   30 output/kallisto/JHSS40/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 26 JHSS46   45 output/kallisto/JHSS46/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 27 JHSS47   45 output/kallisto/JHSS47/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 28 JHSS48   45 output/kallisto/JHSS48/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 29 JHSS49   45 output/kallisto/JHSS49/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 30 JHSS50   45 output/kallisto/JHSS50/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 31 JHSS56   60 output/kallisto/JHSS56/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 32 JHSS57   60 output/kallisto/JHSS57/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 33 JHSS58   60 output/kallisto/JHSS58/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 34 JHSS59   60 output/kallisto/JHSS59/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 35 JHSS60   60 output/kallisto/JHSS60/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 36 JHSS66   90 output/kallisto/JHSS66/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 37 JHSS67   90 output/kallisto/JHSS67/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 38 JHSS68   90 output/kallisto/JHSS68/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 39 JHSS69   90 output/kallisto/JHSS69/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 40 JHSS70   90 output/kallisto/JHSS70/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 41 JHSS76  180 output/kallisto/JHSS76/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 42 JHSS77  180 output/kallisto/JHSS77/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 43 JHSS78  180 output/kallisto/JHSS78/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 44 JHSS79  180 output/kallisto/JHSS79/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 45 JHSS80  180 output/kallisto/JHSS80/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 46 JHSS86  240 output/kallisto/JHSS86/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 47 JHSS87  240 output/kallisto/JHSS87/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 48 JHSS88  240 output/kallisto/JHSS88/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 49 JHSS89  240 output/kallisto/JHSS89/abundance.h5 treatment</span></span>
+<span><span class="co">#&gt; 50 JHSS90  240 output/kallisto/JHSS90/abundance.h5 treatment</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="step-3-obtain-a-table-with-the-transcript-to-gene-mapping">Step 3: Obtain a table with the transcript-to-gene mapping<a class="anchor" aria-label="anchor" href="#step-3-obtain-a-table-with-the-transcript-to-gene-mapping"></a>
@@ -131,20 +168,57 @@
 <p>N.B. This is not needed if your counts are aggregated at the gene level, but transcript-level analysis with aggregation of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>-values to the gene level is recommended. E.g., for <em>Arabidopsis thaliana</em>:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">t2g_arabidopsis</span></span>
-<span><span class="co">#&gt; # A tibble: 50 × 2</span></span>
-<span><span class="co">#&gt;    target_id   gene_id  </span></span>
-<span><span class="co">#&gt;    &lt;chr&gt;       &lt;chr&gt;    </span></span>
-<span><span class="co">#&gt;  1 AT1G01010.1 AT1G01010</span></span>
-<span><span class="co">#&gt;  2 AT1G01020.2 AT1G01020</span></span>
-<span><span class="co">#&gt;  3 AT1G01020.6 AT1G01020</span></span>
-<span><span class="co">#&gt;  4 AT1G01020.1 AT1G01020</span></span>
-<span><span class="co">#&gt;  5 AT1G01020.4 AT1G01020</span></span>
-<span><span class="co">#&gt;  6 AT1G01020.5 AT1G01020</span></span>
-<span><span class="co">#&gt;  7 AT1G01020.3 AT1G01020</span></span>
-<span><span class="co">#&gt;  8 AT1G03987.1 AT1G03987</span></span>
-<span><span class="co">#&gt;  9 AT1G01030.2 AT1G01030</span></span>
+<span><span class="co">#&gt;      target_id   gene_id</span></span>
+<span><span class="co">#&gt; 1  AT1G01010.1 AT1G01010</span></span>
+<span><span class="co">#&gt; 2  AT1G01020.2 AT1G01020</span></span>
+<span><span class="co">#&gt; 3  AT1G01020.6 AT1G01020</span></span>
+<span><span class="co">#&gt; 4  AT1G01020.1 AT1G01020</span></span>
+<span><span class="co">#&gt; 5  AT1G01020.4 AT1G01020</span></span>
+<span><span class="co">#&gt; 6  AT1G01020.5 AT1G01020</span></span>
+<span><span class="co">#&gt; 7  AT1G01020.3 AT1G01020</span></span>
+<span><span class="co">#&gt; 8  AT1G03987.1 AT1G03987</span></span>
+<span><span class="co">#&gt; 9  AT1G01030.2 AT1G01030</span></span>
 <span><span class="co">#&gt; 10 AT1G01030.1 AT1G01030</span></span>
-<span><span class="co">#&gt; # ℹ 40 more rows</span></span></code></pre></div>
+<span><span class="co">#&gt; 11 AT1G01040.1 AT1G01040</span></span>
+<span><span class="co">#&gt; 12 AT1G01040.2 AT1G01040</span></span>
+<span><span class="co">#&gt; 13 AT1G03993.1 AT1G03993</span></span>
+<span><span class="co">#&gt; 14   at1g01046 AT1G01046</span></span>
+<span><span class="co">#&gt; 15 AT1G01050.1 AT1G01050</span></span>
+<span><span class="co">#&gt; 16 AT1G01050.2 AT1G01050</span></span>
+<span><span class="co">#&gt; 17 AT1G03997.1 AT1G03997</span></span>
+<span><span class="co">#&gt; 18 AT1G01060.6 AT1G01060</span></span>
+<span><span class="co">#&gt; 19 AT1G01060.3 AT1G01060</span></span>
+<span><span class="co">#&gt; 20 AT1G01060.1 AT1G01060</span></span>
+<span><span class="co">#&gt; 21 AT1G01060.7 AT1G01060</span></span>
+<span><span class="co">#&gt; 22 AT1G01060.2 AT1G01060</span></span>
+<span><span class="co">#&gt; 23 AT1G01060.4 AT1G01060</span></span>
+<span><span class="co">#&gt; 24 AT1G01060.8 AT1G01060</span></span>
+<span><span class="co">#&gt; 25 AT1G01060.5 AT1G01060</span></span>
+<span><span class="co">#&gt; 26 AT1G01070.1 AT1G01070</span></span>
+<span><span class="co">#&gt; 27 AT1G01070.2 AT1G01070</span></span>
+<span><span class="co">#&gt; 28 AT1G04003.1 AT1G04003</span></span>
+<span><span class="co">#&gt; 29 AT1G01080.1 AT1G01080</span></span>
+<span><span class="co">#&gt; 30 AT1G01080.3 AT1G01080</span></span>
+<span><span class="co">#&gt; 31 AT1G01080.2 AT1G01080</span></span>
+<span><span class="co">#&gt; 32 AT1G01090.1 AT1G01090</span></span>
+<span><span class="co">#&gt; 33 AT1G01100.2 AT1G01100</span></span>
+<span><span class="co">#&gt; 34 AT1G01100.1 AT1G01100</span></span>
+<span><span class="co">#&gt; 35 AT1G01100.4 AT1G01100</span></span>
+<span><span class="co">#&gt; 36 AT1G01100.3 AT1G01100</span></span>
+<span><span class="co">#&gt; 37 AT1G01110.2 AT1G01110</span></span>
+<span><span class="co">#&gt; 38 AT1G01110.1 AT1G01110</span></span>
+<span><span class="co">#&gt; 39 AT1G01120.1 AT1G01120</span></span>
+<span><span class="co">#&gt; 40 AT1G01130.1 AT1G01130</span></span>
+<span><span class="co">#&gt; 41 AT1G01140.1 AT1G01140</span></span>
+<span><span class="co">#&gt; 42 AT1G01140.2 AT1G01140</span></span>
+<span><span class="co">#&gt; 43 AT1G01140.3 AT1G01140</span></span>
+<span><span class="co">#&gt; 44 AT1G01150.1 AT1G01150</span></span>
+<span><span class="co">#&gt; 45 AT1G01150.2 AT1G01150</span></span>
+<span><span class="co">#&gt; 46 AT1G01150.3 AT1G01150</span></span>
+<span><span class="co">#&gt; 47 AT1G01160.1 AT1G01160</span></span>
+<span><span class="co">#&gt; 48 AT1G01160.2 AT1G01160</span></span>
+<span><span class="co">#&gt; 49 AT1G04007.1 AT1G04007</span></span>
+<span><span class="co">#&gt; 50 AT1G01170.2 AT1G01170</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="step-4-run-cpam">Step 4: Run <strong>cpam</strong>
@@ -201,7 +275,7 @@
 <ul>
 <li><a href="https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/example.html" class="external-link">Introductory Example</a></li>
 </ul>
-<p>The following two tutorials use real-world data to demonstrate the capabilities of the <code>cpam</code> package. In addition, they provide code to reproduce the results for the case studies presented in the <a href="https://doi.org/10.1101/2024.12.22.630003" class="external-link">manuscript</a> accompanying the <code>cpam</code> package.</p>
+<p>The following two tutorials use real-world data to demonstrate the capabilities of the <strong>cpam</strong> package. In addition, they provide code to reproduce the results for the case studies presented in the <a href="https://doi.org/10.1101/2024.12.22.630003" class="external-link">manuscript</a> accompanying the <strong>cpam</strong> package.</p>
 <ul>
 <li><a href="https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/crisp.html" class="external-link">Arabidopsis Case Study</a></li>
 <li><a href="https://raw.githack.com/l-a-yates/cpam_manuscript/main/R/torre.html" class="external-link">Human Embryo Case Study</a></li>
@@ -212,7 +286,7 @@
 <h2 id="acknowledgements">Acknowledgements<a class="anchor" aria-label="anchor" href="#acknowledgements"></a>
 </h2>
 <p>This work was supported by the Australian Research Council, Centre of Excellence for Plant Success in Nature and Agriculture (CE200100015).</p>
-<p><img src="reference/figures/plant_success_logo_horizontal.jpg" width="100%" height="auto" alt="Plant Success Logo"></p>
+<p><img src="reference/figures/plant_success_logo_horizontal.jpg" width="90%" height="auto" alt="Plant Success Logo"></p>
 </div>
 
   </main><aside class="col-md-3"><div class="links">
