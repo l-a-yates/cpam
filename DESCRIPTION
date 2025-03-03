@@ -1,6 +1,6 @@
 Package: cpam
 Title: Changepoint Additive Models for Time Series 'Omics' Data
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: 
     c(person("Luke", "Yates", email = "luke.yates@utas.edu.au", role = c("aut", "cre","cph"),
            comment = c(ORCID = "0000-0002-1685-3169")),
