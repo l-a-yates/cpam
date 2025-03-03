@@ -448,7 +448,7 @@ process_count_matrix <- function(count_matrix, t2g, gene_level) {
       dplyr::left_join(t2g, by = "target_id") %>%
       dplyr::group_by(.data[["gene_id"]]) %>%
       dplyr::summarise(dplyr::across(-.data[["target_id"]], sum)) %>%
-      (\(x) {
+      (function(x) {
         as.matrix(x[, -1]) %>% `rownames<-`(dplyr::pull(x, "gene_id"))
       })
   } else {

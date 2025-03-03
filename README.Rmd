@@ -66,13 +66,13 @@ library(cpam)
 ```
 ### Step 2: Create a tibble for the experimental design. 
 In this *Arabidopsis thaliana* time series example, we used the software [kallisto](https://doi.org/10.1038/nbt.3519) to generate counts from RNA-seq data. To load the counts, we provide the file path for each kallisto output file (alternatively you can provide the counts directly as count matrix, or use other quantification software)
-```{r, echo = TRUE}
-exp_design_path
+```{r, echo = TRUE, tibble.print_max = 10}
+head(exp_design_path)
 ```
 ### Step 3: Obtain a table with the transcript-to-gene mapping
 N.B. This is not needed if your counts are aggregated at the gene level, but transcript-level analysis with aggregation of $p$-values to the gene level is recommended. E.g., for *Arabidopsis thaliana*:
-```{r}
-t2g_arabidopsis
+```{r, tibble.print_max = 10}
+head(t2g_arabidopsis)
 ```
 ### Step 4: Run **cpam** 
 ```{r, eval = FALSE}
