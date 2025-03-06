@@ -1,4 +1,7 @@
 test_that("results() returns expected basic output", {
+
+  load(system.file("extdata", "cpo_example.rda", package = "cpam"))
+
   # Basic call without filters
   res <- results(cpo_example)
 
@@ -10,6 +13,9 @@ test_that("results() returns expected basic output", {
 })
 
 test_that("results() handles p-value threshold filtering", {
+
+  load(system.file("extdata", "cpo_example.rda", package = "cpam"))
+
   # Test different p-value thresholds
   res_default <- results(cpo_example)
   res_strict <- results(cpo_example, p_threshold = 0.01)
@@ -19,6 +25,9 @@ test_that("results() handles p-value threshold filtering", {
 })
 
 test_that("results() handles p-value type selection", {
+
+  load(system.file("extdata", "cpo_example.rda", package = "cpam"))
+
   # Test both p-value types
   res_gam <- results(cpo_example, p_type = "p_gam")
   res_mvn <- results(cpo_example, p_type = "p_mvn")
@@ -29,6 +38,9 @@ test_that("results() handles p-value type selection", {
 })
 
 test_that("results() handles minimum log fold change filtering", {
+
+  load(system.file("extdata", "cpo_example.rda", package = "cpam"))
+
   # Test minimum log fold change filter
   res_default <- results(cpo_example)
   res_lfc <- results(cpo_example, min_lfc = 1)
@@ -38,6 +50,9 @@ test_that("results() handles minimum log fold change filtering", {
 })
 
 test_that("results() handles minimum count filtering", {
+
+  load(system.file("extdata", "cpo_example.rda", package = "cpam"))
+
   # Assuming the example object has pred slot filled
   res_default <- results(cpo_example)
   res_count <- results(cpo_example, min_count = 10)
@@ -47,6 +62,9 @@ test_that("results() handles minimum count filtering", {
 })
 
 test_that("results() handles additional column addition", {
+
+  load(system.file("extdata", "cpo_example.rda", package = "cpam"))
+
   # Test adding log fold changes
   res_lfc <- results(cpo_example, add_lfc = TRUE)
   expect_true(any(grepl("^lfc\\.", names(res_lfc))))
@@ -58,6 +76,9 @@ test_that("results() handles additional column addition", {
 
 
 test_that("results() handles shape type selection", {
+
+  load(system.file("extdata", "cpo_example.rda", package = "cpam"))
+
   # Test different shape types
   res_shape1 <- results(cpo_example, shape_type = "shape1")
   res_shape2 <- results(cpo_example, shape_type = "shape2")
@@ -68,6 +89,9 @@ test_that("results() handles shape type selection", {
 })
 
 test_that("results() handles null target removal", {
+
+  load(system.file("extdata", "cpo_example.rda", package = "cpam"))
+
   # Test removing null targets
   res_with_null <- results(cpo_example, remove_null_targets = FALSE)
   res_without_null <- results(cpo_example, remove_null_targets = TRUE)

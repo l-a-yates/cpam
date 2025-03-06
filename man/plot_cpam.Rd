@@ -14,19 +14,19 @@ plot_cpam(
   cp_fix = -1,
   facet = F,
   sp = NULL,
-  show_fit = T,
-  show_data = T,
-  show_fit_ci = T,
-  show_data_ci = T,
+  show_fit = TRUE,
+  show_data = TRUE,
+  show_fit_ci = TRUE,
+  show_data_ci = TRUE,
   ci_prob = "se",
-  remove_null = F,
+  remove_null = FALSE,
   null_threshold = 0.05,
-  null_threshold_adj = T,
+  null_threshold_adj = TRUE,
   k_mult = 1.2,
-  return_fits_only = F,
+  return_fits_only = FALSE,
   family = "nb",
-  common_y_scale = T,
-  scaled = F,
+  common_y_scale = TRUE,
+  scaled = FALSE,
   base_size = 12
 )
 }
@@ -97,6 +97,16 @@ The function can also be used to return the model fit(s) only, which are
 \examples{
 library(cpam)
 
+# load gene-only example cpam object
+load(system.file("extdata", "cpo_example.rda", package = "cpam"))
+
+# example gene
 plot_cpam(cpo_example, gene_id = "g003")
+
+# gene with estimated changepoint at timepoint 3
+plot_cpam(cpo_example, gene_id = "g013")
+
+# manually set the changepoint
+plot_cpam(cpo_example, gene_id = "g013", cp_fix = 2)
 
 }

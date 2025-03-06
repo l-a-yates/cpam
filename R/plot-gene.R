@@ -23,7 +23,10 @@
 #' @examples
 #' library(cpam)
 #'
-#' # Generate results table for small example
+#' # load gene-only example cpam object
+#' load(system.file("extdata", "cpo_example.rda", package = "cpam"))
+#'
+#' # Generate results table
 #' res_example <- results(cpo_example)
 #'
 #' # plot all targets with changepoint at timepoint 0 and shape "ilin" (increasing linear)
@@ -51,7 +54,7 @@ plot_cluster <- function(cpo, res, changepoints, shapes, alpha = 0.1){
   plot_data <-
     txs %>%
     purrr::set_names() %>%
-    purrr::map(~ plot_cpam(cpo,target_id = .x,return_fits_only = T) %>%
+    purrr::map(~ plot_cpam(cpo,target_id = .x,return_fits_only = TRUE) %>%
                      {if(rlang::is_na(.)) NULL else predict_lfc(.)}) %>%
     purrr::compact() %>%
     purrr::list_rbind(names_to = "target_id")
@@ -124,7 +127,17 @@ predict_lfc <- function(fit, length.out = 200) {
 #' @examples
 #' library(cpam)
 #'
+#' # load gene-only example cpam object
+#' load(system.file("extdata", "cpo_example.rda", package = "cpam"))
+#'
+#' # example gene
 #' plot_cpam(cpo_example, gene_id = "g003")
+#'
+#' # gene with estimated changepoint at timepoint 3
+#' plot_cpam(cpo_example, gene_id = "g013")
+#'
+#' # manually set the changepoint
+#' plot_cpam(cpo_example, gene_id = "g013", cp_fix = 2)
 #'
 plot_cpam <- function(cpo,
                          gene_id = NULL,
@@ -135,21 +148,21 @@ plot_cpam <- function(cpo,
                          cp_fix = -1,
                          facet = F,
                          sp = NULL,
-                         show_fit = T,
-                         show_data = T,
-                         show_fit_ci = T,
-                         show_data_ci = T,
+                         show_fit = TRUE,
+                         show_data = TRUE,
+                         show_fit_ci = TRUE,
+                         show_data_ci = TRUE,
                          ci_prob = "se",
-                         remove_null = F,
+                         remove_null = FALSE,
                          null_threshold =  0.05,
-                         null_threshold_adj = T,
+                         null_threshold_adj = TRUE,
                          k_mult = 1.2,
                          #logged = F,
                          #gene_level_plot = F,
-                         return_fits_only = F,
+                         return_fits_only = FALSE,
                          family = "nb",
-                         common_y_scale = T,
-                         scaled = F,
+                         common_y_scale = TRUE,
+                         scaled = FALSE,
                          base_size = 12){
 
   if(family != "nb"){
@@ -161,7 +174,7 @@ plot_cpam <- function(cpo,
   shape_type <- match.arg(shape_type, c("shape1","shape2"))
   bs <- match.arg(bs, c("auto","null","lin","ilin","dlin",cpo$bss))
   if(!is.numeric(cp_fix)) stop("The fixed changepoint must be numeric")
-  if(!cpo$bootstrap) show_data_ci <- F
+  if(!cpo$bootstrap) show_data_ci <- FALSE
   if(!identical(ci_prob,"se")){
     if(is.numeric(ci_prob)){
       if(ci_prob < 0 | ci_prob > 1) stop("ci_prob must be between 0 and 1")
@@ -169,7 +182,7 @@ plot_cpam <- function(cpo,
       stop("ci_prob must be 'se' or a numeric value")
     }
   }
-  if(cpo$gene_level) remove_null <- F
+  if(cpo$gene_level) remove_null <- FALSE
 
   if(is.null(gene_id)){
     if(is.null(target_id)) stop("gene_id and target_id cannot both be null")
@@ -247,8 +260,8 @@ plot_cpam <- function(cpo,
   }
 
 
-  if(n_target == 1) facet <- F
-  if(cpo$model_type == "case-control" & n_target != 1) facet <- T
+  if(n_target == 1) facet <- FALSE
+  if(cpo$model_type == "case-control" & n_target != 1) facet <- TRUE
 
   if(scaled){
     obs <- data %>% dplyr::select(dplyr::all_of(c("target_id","data"))) %>% tidyr::unnest(cols = "data") %>%

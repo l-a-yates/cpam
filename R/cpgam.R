@@ -47,9 +47,9 @@ cpgam <- function(data,
                   sp = NULL,
                   k_mult = 1.2,
                   n_try = 1,
-                  not_exp = F,
-                  silent = T,
-                  debug = F){
+                  not_exp = FALSE,
+                  silent = TRUE,
+                  debug = FALSE){
 
   family <- match.arg(family)
   model_type <- match.arg(model_type)
@@ -68,7 +68,7 @@ cpgam <- function(data,
             "Shape-constrained splines are unavilable for negative-binomial models when the dipsersion must be estimated. The basis has been to set
               to bs = 'tp' instead of the supplied value bs = ",bs))
         bs <- "tp"
-        use_scam <- T
+        use_scam <- TRUE
       }
     } else {
       gam_family <- mgcv::negbin(theta = as.numeric(1/data$disp[1]))
@@ -89,14 +89,14 @@ cpgam <- function(data,
     f <- paste0(resp," ~ 1")
     sp <- NULL
     bs <- "null"
-    use_scam <- F
+    use_scam <- FALSE
     cp <- 0
     #gam_optimizer <- "outer"
   } else if (k == 2 | bs %in% c("lin","ilin","dlin")){
     f <- paste0(resp," ~ 1 + td")
     if(!bs %in% c("lin","ilin","dlin")) bs <- "lin"
     sp <- NULL
-    use_scam <- F
+    use_scam <- FALSE
     #gam_optimizer <- if(use_scam) "bfgs" else "outer"
   } else {
     if(bs != "tp") k <- k_mult*k
@@ -116,7 +116,7 @@ cpgam <- function(data,
 
   f <- stats::as.formula(f)
 
-  refit = F
+  refit = FALSE
 
   if(!use_scam){
     m = try(mgcv::gam(formula = f,
@@ -129,7 +129,7 @@ cpgam <- function(data,
             silent = silent)
 
     if(inherits(m, "try-error") & gam_optimizer != "outer" & n_try < 3){
-      refit = T
+      refit = TRUE
       n_try = 3
       gam_optimizer = "outer"
       if(debug) print("refit-C")
@@ -148,14 +148,14 @@ cpgam <- function(data,
       if(stringr::str_detect(m,"Error in Rrank") & k_mult != 1 & n_try == 1){
         k_mult = 1
         n_try = 2
-        refit = T
+        refit = TRUE
         if(debug) print("refit-A")
       } else if(n_try <= 2){
         n_try = 3
-        not_exp = T
-        refit = T
+        not_exp = TRUE
+        refit = TRUE
         if(debug) print("refit-B")
-      } else refit = F
+      } else refit = FALSE
       }
   }
 
@@ -190,7 +190,7 @@ cpgam <- function(data,
     m$data <- data
     m$model_type <- model_type
     if(inherits(m,"scam")){
-      ses = scam::predict.scam(m,se = T)$se.fit
+      ses = scam::predict.scam(m,se = TRUE)$se.fit
       if(any(!is.finite(ses))){
         #warning("Non-finite standard errors detected. Setting se_ratio to 999")
         m$se_ratio <- 999

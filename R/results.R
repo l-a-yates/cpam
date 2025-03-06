@@ -32,41 +32,14 @@
 #'
 #' @examples
 #' library(cpam)
-#' library(dplyr)
+#'
+#' # load gene-only example cpam object
+#' load(system.file("extdata", "cpo_example.rda", package = "cpam"))
 #'
 #' results(cpo_example)
 #'
 #' # Add filters
 #' results(cpo_example, p_threshold = 0.01, min_lfc = 1)
-#'
-#'\dontrun{
-#'
-#' # Example Experimental Design
-#' exp_design <- tibble(sample = paste0("s",1:50),
-#'                      time = rep(c(0:4), each = 10),
-#'                      path = paste0("path/",sample,"/abundance.h5"))
-#'
-#' # Example Transcript-to-Gene Mapping
-#' t2g <- readr::read_csv("path/to/t2g.csv")
-#'
-#' # Prepare a cpam object
-#' cpo <- prepare_cpam(
-#'  exp_design = exp_design,
-#'  t2g = t2g,
-#'  import_type = "kallisto",
-#'  num_cores = 5)
-#'
-#'  # compute p-values
-#'  cpo <- compute_p_values(cpo)
-#'
-#'  # estimate changepoints
-#'  cpo <- estimate_changepoint(cpo)
-#'
-#'  # estimate shapes
-#'  cpo <- select_shape(cpo)
-#'
-#'  result(cpo)
-#'  }
 #'
 results <- function(cpo,
                     p_threshold = 0.05,
@@ -74,26 +47,26 @@ results <- function(cpo,
                     min_lfc = 0,
                     min_count = 0,
                     aggregate_to_gene = cpo$aggregate_to_gene,
-                    add_lfc = T,
-                    add_counts = T,
+                    add_lfc = TRUE,
+                    add_counts = TRUE,
                     cp_type = c("cp_1se","cp_min"),
                     shape_type = c("shape1","shape2"),
-                    summarise_to_gene = F,
-                    remove_null_targets = T){
+                    summarise_to_gene = FALSE,
+                    remove_null_targets = TRUE){
 
   p_type <- match.arg(p_type)
   cp_type <- match.arg(cp_type)
   shape_type <- match.arg(shape_type)
 
   if(aggregate_to_gene){
-    if(!cpo$aggregate_to_gene) stop("The cpam object must be prepared with `aggregate_to_gene = T' to use this option")
+    if(!cpo$aggregate_to_gene) stop("The cpam object must be prepared with `aggregate_to_gene = TRUE' to use this option")
     level <- "gene"
   } else level <- "target"
 
   if(summarise_to_gene & !cpo$gene_level){
-    if(add_lfc | add_counts) message("add_lfc and add_counts are not available for summarise_to_gene = T")
-    add_lfc <- F
-    add_counts <- F
+    if(add_lfc | add_counts) message("add_lfc and add_counts are not available for summarise_to_gene = TRUE")
+    add_lfc <- FALSE
+    add_counts <- FALSE
   }
 
   if(p_type == "p_gam"){

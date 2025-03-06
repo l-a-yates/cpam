@@ -52,7 +52,10 @@
 #' library(cpam)
 #' library(dplyr)
 #'
-#' # Using a small subset of the example data
+#' # load example data
+#' load(system.file("extdata", "exp_design_example.rda", package = "cpam"))
+#' load(system.file("extdata", "count_matrix_example.rda", package = "cpam"))
+#'
 #' cpo <- prepare_cpam(exp_design = exp_design_example,
 #'                     count_matrix = count_matrix_example[1:20,],
 #'                     gene_level = TRUE,
@@ -61,26 +64,6 @@
 #' cpo <- estimate_changepoint(cpo)
 #' cpo$changepoints
 #'
-#' \dontrun{
-#'
-#' # Example Experimental Design
-#' exp_design <- tibble(sample = paste0("s",1:50),
-#'                      time = rep(c(0:4), each = 10),
-#'                      path = paste0("path/",sample,"/abundance.h5"))
-#'
-#' # Example Transcript-to-Gene Mapping
-#' t2g <- readr::read_csv("path/to/t2g.csv")
-#'
-#' # Fit model
-#' cpo <- prepare_cpam(
-#'  exp_design = exp_design,
-#'  t2g = t2g,
-#'  import_type = "kallisto",
-#'  num_cores = 5)
-#' cpo <- compute_p_values(cpo)
-#' cpo <- estimate_changepoint(cpo)
-#' cpo$changepoints
-#' }
 #' @references
 #' Yates, L. A., S. A. Richards, and B. W. Brook. 2021.
 #' Parsimonious model selection using information theory:
@@ -89,14 +72,14 @@
 #'
 estimate_changepoint <- function(cpo,
                         cps = NULL,
-                        degs_only = T,
+                        degs_only = TRUE,
                         deg_threshold = 0.05,
                         subset = NULL,
                         sp = NULL,
                         bss = "tp",
                         family = c("nb","gaussian"),
                         score = "aic",
-                        compute_mvn = T) {
+                        compute_mvn = TRUE) {
 
   family <- match.arg(family)
 
@@ -115,7 +98,7 @@ estimate_changepoint <- function(cpo,
   }
 
   data_nest <- cpo$data_long %>%
-    tidyr::nest(.by = .data$target_id, .key = "data") %>%
+    tidyr::nest(.by = "target_id", .key = "data") %>%
     {
       if (is.null(subset))
         .
@@ -145,7 +128,7 @@ estimate_changepoint <- function(cpo,
 
   cpo$changepoints <-
     data_nest %>%
-    dplyr::select(.data$target_id) %>%
+    dplyr::select("target_id") %>%
     dplyr::mutate(x =
                     data_nest$data %>%
                     pbmcapply::pbmclapply(function(d) {
@@ -206,7 +189,7 @@ estimate_changepoint <- function(cpo,
 
       cpo$p_mvn <-
       cpo$changepoints %>%
-      dplyr::select(.data$target_id,p_mvn_target = .data$p_mvn) %>%
+      dplyr::select("target_id",p_mvn_target = "p_mvn") %>%
       dplyr::left_join(cpo$p_table %>% dplyr::select(tidyr::any_of(c("target_id","gene_id","counts_mean"))),
                        by = "target_id") %>%
       dplyr::relocate(tidyr::any_of(c("target_id","gene_id","counts_mean"))) %>%
@@ -354,7 +337,7 @@ aic <- function(fit){
     ll <- stats::dnorm(stats::residuals(fit, type = "response"),
                 0,
                 sd,
-                log = T)*(fit$weights)
+                log = TRUE)*(fit$weights)
   }
 
   if(fit$family$family %>% stringr::str_starts("Negative")){

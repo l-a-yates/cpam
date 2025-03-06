@@ -37,6 +37,11 @@
 #' @seealso \code{\link{prepare_cpam}} for creating a cpam object.
 #'
 #' @examples
+#'
+#' # load gene-only example data
+#' load(system.file("extdata", "exp_design_example.rda", package = "cpam"))
+#' load(system.file("extdata", "count_matrix_example.rda", package = "cpam"))
+#'
 #' # Create a cpam object with the example data
 #' cpo <- prepare_cpam(exp_design = exp_design_example,
 #'                     count_matrix = count_matrix_example,

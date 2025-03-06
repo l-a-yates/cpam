@@ -37,7 +37,7 @@
 #' }
 visualise <- function(cpo,
                       subset = NULL,
-                      degs_only = T,
+                      degs_only = TRUE,
                       deg_threshold = 0.05,
                       p_type = c("p_gam","p_mvn"),
                       shape_type = c("shape1","shape2")){

@@ -59,7 +59,10 @@ provided these targets have estimated changepoints.
 }
 \examples{
 library(cpam)
-library(dplyr)
+
+# load example data
+load(system.file("extdata", "exp_design_example.rda", package = "cpam"))
+load(system.file("extdata", "count_matrix_example.rda", package = "cpam"))
 
 # Using a small subset of the example data
 cpo <- prepare_cpam(exp_design = exp_design_example,
@@ -71,27 +74,5 @@ cpo <- estimate_changepoint(cpo)
 cpo <- select_shape(cpo)
 cpo$shapes
 
-\dontrun{
 
-# Example Experimental Design
-exp_design <- tibble(sample = paste0("s",1:50),
-                     time = rep(c(0:4), each = 10),
-                     path = paste0("path/",sample,"/abundance.h5"))
-
-# Example Transcript-to-Gene Mapping
-t2g <- readr::read_csv("path/to/t2g.csv")
-
-# Prepare a cpam object
-cpo <- prepare_cpam(
- exp_design = exp_design,
- t2g = t2g,
- import_type = "kallisto",
- num_cores = 5)
-cpo <- compute_p_values(cpo)
-cpo <- estimate_changepoint(cpo)
-cpo <- select_shape(cpo)
-
-# Inspect the shapes
-cpo$shapes
- }
 }

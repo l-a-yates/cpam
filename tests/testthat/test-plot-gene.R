@@ -1,6 +1,9 @@
-res_example <- results(cpo_example)
+
 
 test_that("plot_cluster() handles various input scenarios", {
+
+  load(system.file("extdata", "cpo_example.rda", package = "cpam"))
+  res_example <- results(cpo_example)
 
   plot_result <- plot_cluster(cpo_example, res_example, changepoints = 2, shapes = "ilin")
   expect_s3_class(plot_result, "ggplot")
@@ -30,6 +33,11 @@ test_that("plot_cluster() handles various input scenarios", {
 })
 
 test_that("plot_cluster() handles edge cases", {
+
+
+  load(system.file("extdata", "cpo_example.rda", package = "cpam"))
+  res_example <- results(cpo_example)
+
   # Test invalid alpha values
   expect_error(
     plot_cluster(cpo_example, res_example,
@@ -56,6 +64,10 @@ test_that("plot_cluster() handles edge cases", {
 
 
 test_that("plot_cluster() provides informative feedback", {
+
+  load(system.file("extdata", "cpo_example.rda", package = "cpam"))
+  res_example <- results(cpo_example)
+
   # Test message when targets are found
   expect_message(
     plot_cluster(cpo_example, res_example,
@@ -66,6 +78,9 @@ test_that("plot_cluster() provides informative feedback", {
 })
 
 test_that("plot_cpam() works with gene_id", {
+
+  load(system.file("extdata", "cpo_example.rda", package = "cpam"))
+
   expect_s3_class(
     plot_cpam(cpo_example, gene_id = "g003"),
     "ggplot"
@@ -73,6 +88,9 @@ test_that("plot_cpam() works with gene_id", {
 })
 
 test_that("plot_cpam() works with target_id", {
+
+  load(system.file("extdata", "cpo_example.rda", package = "cpam"))
+
   expect_s3_class(
     plot_cpam(cpo_example, target_id = "g003"),
     "ggplot"
@@ -80,6 +98,9 @@ test_that("plot_cpam() works with target_id", {
 })
 
 test_that("plot_cpam() handles invalid inputs", {
+
+  load(system.file("extdata", "cpo_example.rda", package = "cpam"))
+
   expect_error(
     plot_cpam(cpo_example),
     "gene_id and target_id cannot both be null"
@@ -98,6 +119,9 @@ test_that("plot_cpam() handles invalid inputs", {
 
 
 test_that("plot_cpam() handles various parameters", {
+
+  load(system.file("extdata", "cpo_example.rda", package = "cpam"))
+
   expect_s3_class(
     plot_cpam(cpo_example,
               gene_id = "g003",
@@ -125,6 +149,9 @@ test_that("plot_cpam() handles various parameters", {
 })
 
 test_that("return_fits_only returns model fits", {
+
+  load(system.file("extdata", "cpo_example.rda", package = "cpam"))
+
   # Should return a single gam object or named list of gam objects
   fits <- plot_cpam(cpo_example,
                     gene_id = "g003",
@@ -135,6 +162,9 @@ test_that("return_fits_only returns model fits", {
 })
 
 test_that("plot_cpam() visualization options work", {
+
+  load(system.file("extdata", "cpo_example.rda", package = "cpam"))
+
   p1 <- plot_cpam(cpo_example,
                   gene_id = "g003",
                   show_fit = FALSE,
@@ -151,6 +181,9 @@ test_that("plot_cpam() visualization options work", {
 })
 
 test_that("Additional parameter edge cases", {
+
+  load(system.file("extdata", "cpo_example.rda", package = "cpam"))
+
   expect_error(
     plot_cpam(cpo_example,
               gene_id = "g003",

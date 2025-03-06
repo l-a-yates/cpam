@@ -3,8 +3,8 @@ predict_cpgam <- function(fit,
                           length.out = 500,
                           lim_factor = 2,
                           nsim = 2e3,
-                          scaled = F,
-                          logged = F){
+                          scaled = FALSE,
+                          logged = FALSE){
 
 
   newdata <- dplyr::tibble(time = seq(min(fit$data$time), max(fit$data$time),
@@ -25,7 +25,7 @@ predict_cpgam <- function(fit,
 
     if(logged){
 
-      pred = stats::predict(fit, newdata = newdata, se.fit = T, type = "link")
+      pred = stats::predict(fit, newdata = newdata, se.fit = TRUE, type = "link")
 
       newdata %>%
         dplyr::mutate(counts = pred$fit + log(od),
@@ -33,7 +33,7 @@ predict_cpgam <- function(fit,
                       q_hi =  pred$fit + log(od) + pred$se.fit
         ) %>% return()
     } else{
-    pred = stats::predict(fit, newdata = newdata, se.fit = T, type = "response")
+    pred = stats::predict(fit, newdata = newdata, se.fit = TRUE, type = "response")
 
     newdata %>%
       dplyr::mutate(counts = pred$fit*od,

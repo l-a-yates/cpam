@@ -75,6 +75,9 @@ kallisto output file (alternatively you can provide the counts directly
 as count matrix, or use other quantification software)
 
 ``` r
+
+# load example data
+load(system.file("extdata", "exp_design_path.rda", package = "cpam"))
 head(exp_design_path)
 #>   sample time                                path condition
 #> 1 JHSS01    0 output/kallisto/JHSS01/abundance.h5 treatment
@@ -92,6 +95,10 @@ but transcript-level analysis with aggregation of $p$-values to the gene
 level is recommended. E.g., for *Arabidopsis thaliana*:
 
 ``` r
+
+# load example data
+load(system.file("extdata", "t2g_arabidopsis.rda", package = "cpam"))
+
 head(t2g_arabidopsis)
 #>     target_id   gene_id
 #> 1 AT1G01010.1 AT1G01010

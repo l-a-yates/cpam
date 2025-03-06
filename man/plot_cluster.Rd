@@ -35,7 +35,10 @@ target's fitted trajectory, with transparency controlled by alpha.
 \examples{
 library(cpam)
 
-# Generate results table for small example
+# load gene-only example cpam object
+load(system.file("extdata", "cpo_example.rda", package = "cpam"))
+
+# Generate results table
 res_example <- results(cpo_example)
 
 # plot all targets with changepoint at timepoint 0 and shape "ilin" (increasing linear)

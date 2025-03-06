@@ -92,6 +92,9 @@ An example experimental design is included in the `cpam` package. Since it is
 case-only design, there are no experimental conditions beyond time.
 
 ```{r experimental-design}
+
+# load example data
+load(system.file("extdata", "exp_design_example.rda", package = "cpam"))
 exp_design_example
 ```
 
@@ -99,6 +102,8 @@ exp_design_example
 ## Count matrix
 The example count data for are provided as a matrix. Let's take a look at the first few rows.
 ```{r count-matrix}
+# load example data
+load(system.file("extdata", "count_matrix_example.rda", package = "cpam"))
 as.data.frame(count_matrix_example) %>% head 
 ```
 

@@ -80,35 +80,15 @@ rescale the counts which accounts for this uncertainty during the modelling step
 }
 \examples{
 library(cpam)
-library(dplyr)
 
-# gene-only example using example
+# load gene-only example data
+load(system.file("extdata", "exp_design_example.rda", package = "cpam"))
+load(system.file("extdata", "count_matrix_example.rda", package = "cpam"))
+
 cpo <- prepare_cpam(exp_design = exp_design_example,
                     count_matrix = count_matrix_example,
                     gene_level = TRUE)
 cpo
-
-\dontrun{
-# transcript-level analysis with kallisto counts
-
-# Example Experimental Design
-exp_design <- tibble(sample = paste0("s",1:50),
-                     time = rep(c(0:4), each = 10),
-                     path = paste0("path/",sample,"/abundance.h5"))
-
-# Example Transcript-to-Gene Mapping
-t2g <- readr::read_csv("path/to/t2g.csv")
-
-# Prepare a cpam object
-cpo <- prepare_cpam(
- exp_design = exp_design,
- t2g = t2g,
- import_type = "kallisto",
- num_cores = 5)
-
-# Print the object
-cpo
-}
 
 }
 \references{
