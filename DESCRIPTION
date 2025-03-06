@@ -1,5 +1,5 @@
 Package: cpam
-Title: Changepoint Additive Models for Time Series 'Omics' Data
+Title: Changepoint Additive Models for Time Series Omics Data
 Version: 0.1.1
 Authors@R: 
     c(person("Luke", "Yates", email = "luke.yates@utas.edu.au", role = c("aut", "cre","cph"),
@@ -7,12 +7,12 @@ Authors@R:
     person("Michael", "Charleston", role = "aut"),
     person("Jazmine", "Humphreys", role = "aut"),
     person("Steven", "Smith", role = "aut"))
-Description: Provides a comprehensive framework for time series 'omics' analysis, 
+Description: Provides a comprehensive framework for time series omics analysis, 
   integrating changepoint detection, smooth and shape-constrained trends, 
   and uncertainty quantification. It supports gene- and transcript-level inferences, 
   p-value aggregation for improved power, and both case-only and case-control designs. 
-  It includes an interactive Shiny interface. The methods are described in 
-  <doi:10.1101/2024.12.22.630003>.
+  It includes an interactive Shiny interface. The methods are described in Yates et al.
+  (2024) <doi:10.1101/2024.12.22.630003>.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
