@@ -1,3 +1,11 @@
+## Resubmission 3
+
+This is a resubmission. In this version I have:
+
+* Added single quotes and used all lower case to reference the package 'shiny' in the description. 
+* Removed trailing spaces for lines in the description.
+* Replaced F with FALSE in the function plot_cpam
+
 ## Resubmission 2
 
 This is a resubmission. In response to CRAN requests I have:
