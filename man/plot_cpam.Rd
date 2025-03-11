@@ -12,7 +12,7 @@ plot_cpam(
   shape_type = "shape1",
   bs = "auto",
   cp_fix = -1,
-  facet = F,
+  facet = FALSE,
   sp = NULL,
   show_fit = TRUE,
   show_data = TRUE,
