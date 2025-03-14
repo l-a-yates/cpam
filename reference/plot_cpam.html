@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">cpam</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.3.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,21 +48,21 @@
 <span>  shape_type <span class="op">=</span> <span class="st">"shape1"</span>,</span>
 <span>  bs <span class="op">=</span> <span class="st">"auto"</span>,</span>
 <span>  cp_fix <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>,</span>
-<span>  facet <span class="op">=</span> <span class="cn">F</span>,</span>
+<span>  facet <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  sp <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  show_fit <span class="op">=</span> <span class="cn">T</span>,</span>
-<span>  show_data <span class="op">=</span> <span class="cn">T</span>,</span>
-<span>  show_fit_ci <span class="op">=</span> <span class="cn">T</span>,</span>
-<span>  show_data_ci <span class="op">=</span> <span class="cn">T</span>,</span>
+<span>  show_fit <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  show_data <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  show_fit_ci <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  show_data_ci <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  ci_prob <span class="op">=</span> <span class="st">"se"</span>,</span>
-<span>  remove_null <span class="op">=</span> <span class="cn">F</span>,</span>
+<span>  remove_null <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  null_threshold <span class="op">=</span> <span class="fl">0.05</span>,</span>
-<span>  null_threshold_adj <span class="op">=</span> <span class="cn">T</span>,</span>
+<span>  null_threshold_adj <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  k_mult <span class="op">=</span> <span class="fl">1.2</span>,</span>
-<span>  return_fits_only <span class="op">=</span> <span class="cn">F</span>,</span>
+<span>  return_fits_only <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  family <span class="op">=</span> <span class="st">"nb"</span>,</span>
-<span>  common_y_scale <span class="op">=</span> <span class="cn">T</span>,</span>
-<span>  scaled <span class="op">=</span> <span class="cn">F</span>,</span>
+<span>  common_y_scale <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  scaled <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  base_size <span class="op">=</span> <span class="fl">12</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -184,8 +184,20 @@ The function can also be used to return the model fit(s) only, which are
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://l-a-yates.github.io/cpam/">cpam</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># load gene-only example cpam object</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"cpo_example.rda"</span>, package <span class="op">=</span> <span class="st">"cpam"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># example gene</span></span></span>
 <span class="r-in"><span><span class="fu">plot_cpam</span><span class="op">(</span><span class="va">cpo_example</span>, gene_id <span class="op">=</span> <span class="st">"g003"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot_cpam-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># gene with estimated changepoint at timepoint 3</span></span></span>
+<span class="r-in"><span><span class="fu">plot_cpam</span><span class="op">(</span><span class="va">cpo_example</span>, gene_id <span class="op">=</span> <span class="st">"g013"</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot_cpam-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># manually set the changepoint</span></span></span>
+<span class="r-in"><span><span class="fu">plot_cpam</span><span class="op">(</span><span class="va">cpo_example</span>, gene_id <span class="op">=</span> <span class="st">"g013"</span>, cp_fix <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot_cpam-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

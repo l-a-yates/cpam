@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">cpam</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.3.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -89,7 +89,10 @@ target's fitted trajectory, with transparency controlled by alpha.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://l-a-yates.github.io/cpam/">cpam</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Generate results table for small example</span></span></span>
+<span class="r-in"><span><span class="co"># load gene-only example cpam object</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"cpo_example.rda"</span>, package <span class="op">=</span> <span class="st">"cpam"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Generate results table</span></span></span>
 <span class="r-in"><span><span class="va">res_example</span> <span class="op">&lt;-</span> <span class="fu"><a href="results.html">results</a></span><span class="op">(</span><span class="va">cpo_example</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># plot all targets with changepoint at timepoint 0 and shape "ilin" (increasing linear)</span></span></span>

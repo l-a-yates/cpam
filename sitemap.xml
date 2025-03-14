@@ -9,14 +9,10 @@
 <url><loc>https://l-a-yates.github.io/cpam/reference/compute_normalization_factors.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/compute_p_values.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/convert_to_long_format.html</loc></url>
-<url><loc>https://l-a-yates.github.io/cpam/reference/count_matrix_example.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/cpam-class.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/cpam-package.html</loc></url>
-<url><loc>https://l-a-yates.github.io/cpam/reference/cpo_example.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/estimate_changepoint.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/estimate_dispersions_wrapper.html</loc></url>
-<url><loc>https://l-a-yates.github.io/cpam/reference/exp_design_example.html</loc></url>
-<url><loc>https://l-a-yates.github.io/cpam/reference/exp_design_path.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/handle_gene_aggregation.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/import_count_data.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/index.html</loc></url>
@@ -31,7 +27,6 @@
 <url><loc>https://l-a-yates.github.io/cpam/reference/select_shape.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/simulate_p_mvn.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/summarise_bootstraps.html</loc></url>
-<url><loc>https://l-a-yates.github.io/cpam/reference/t2g_arabidopsis.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/ts_filter.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/validate_cores.html</loc></url>
 <url><loc>https://l-a-yates.github.io/cpam/reference/validate_inputs.html</loc></url>

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">cpam</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.3.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -168,21 +168,23 @@ and larger datasets, Nucleic Acids Research, Volume 53, Issue 2,
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://l-a-yates.github.io/cpam/">cpam</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># gene-only example using example</span></span></span>
+<span class="r-in"><span><span class="co"># load gene-only example data</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"exp_design_example.rda"</span>, package <span class="op">=</span> <span class="st">"cpam"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"count_matrix_example.rda"</span>, package <span class="op">=</span> <span class="st">"cpam"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">cpo</span> <span class="op">&lt;-</span> <span class="fu">prepare_cpam</span><span class="op">(</span>exp_design <span class="op">=</span> <span class="va">exp_design_example</span>,</span></span>
 <span class="r-in"><span>                    count_matrix <span class="op">=</span> <span class="va">count_matrix_example</span>,</span></span>
 <span class="r-in"><span>                    gene_level <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Processing count matrix</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Processing count matrix <span style="color: #B2B2B2;">[18ms]</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Processing count matrix <span style="color: #B2B2B2;">[19ms]</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Filtering low count genes</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Estimating dispersions using <span style="color: #0000BB;">edgeR</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Estimating dispersions using <span style="color: #0000BB;">edgeR</span> <span style="color: #B2B2B2;">[309ms]</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Filtering low count genes</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Filtering low count genes <span style="color: #B2B2B2;">[457ms]</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Filtering low count genes <span style="color: #B2B2B2;">[460ms]</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="va">cpo</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
@@ -191,28 +193,6 @@ and larger datasets, Nucleic Acids Research, Volume 53, Issue 2,
 <span class="r-msg co"><span class="r-pr">#&gt;</span> • <span style="font-weight: 100;">30 samples</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> • <span style="font-weight: 100;">6 time points</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> • <span style="font-weight: 100;">Counts aggregated for gene-level inference</span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="co"># transcript-level analysis with kallisto counts</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Example Experimental Design</span></span></span>
-<span class="r-in"><span><span class="va">exp_design</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>sample <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"s"</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">50</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                     time <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                     path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"path/"</span>,<span class="va">sample</span>,<span class="st">"/abundance.h5"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Example Transcript-to-Gene Mapping</span></span></span>
-<span class="r-in"><span><span class="va">t2g</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu">read_csv</span><span class="op">(</span><span class="st">"path/to/t2g.csv"</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Prepare a cpam object</span></span></span>
-<span class="r-in"><span><span class="va">cpo</span> <span class="op">&lt;-</span> <span class="fu">prepare_cpam</span><span class="op">(</span></span></span>
-<span class="r-in"><span> exp_design <span class="op">=</span> <span class="va">exp_design</span>,</span></span>
-<span class="r-in"><span> t2g <span class="op">=</span> <span class="va">t2g</span>,</span></span>
-<span class="r-in"><span> import_type <span class="op">=</span> <span class="st">"kallisto"</span>,</span></span>
-<span class="r-in"><span> num_cores <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Print the object</span></span></span>
-<span class="r-in"><span><span class="va">cpo</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

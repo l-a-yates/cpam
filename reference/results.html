@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">cpam</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.3.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,12 +47,12 @@
 <span>  min_lfc <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  min_count <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  aggregate_to_gene <span class="op">=</span> <span class="va">cpo</span><span class="op">$</span><span class="va">aggregate_to_gene</span>,</span>
-<span>  add_lfc <span class="op">=</span> <span class="cn">T</span>,</span>
-<span>  add_counts <span class="op">=</span> <span class="cn">T</span>,</span>
+<span>  add_lfc <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  add_counts <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  cp_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cp_1se"</span>, <span class="st">"cp_min"</span><span class="op">)</span>,</span>
 <span>  shape_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"shape1"</span>, <span class="st">"shape2"</span><span class="op">)</span>,</span>
-<span>  summarise_to_gene <span class="op">=</span> <span class="cn">F</span>,</span>
-<span>  remove_null_targets <span class="op">=</span> <span class="cn">T</span></span>
+<span>  summarise_to_gene <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  remove_null_targets <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -128,7 +128,9 @@ thresholds, minimum log-fold changes, and minimum counts.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://l-a-yates.github.io/cpam/">cpam</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># load gene-only example cpam object</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"cpo_example.rda"</span>, package <span class="op">=</span> <span class="st">"cpam"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">results</span><span class="op">(</span><span class="va">cpo_example</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 104 × 16</span></span>
@@ -166,35 +168,6 @@ thresholds, minimum log-fold changes, and minimum counts.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 12 more rows</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 6 more variables: counts.1 &lt;dbl&gt;, counts.2 &lt;dbl&gt;, counts.3 &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   counts.4 &lt;dbl&gt;, counts.5 &lt;dbl&gt;, counts.6 &lt;dbl&gt;</span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Example Experimental Design</span></span></span>
-<span class="r-in"><span><span class="va">exp_design</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>sample <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"s"</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">50</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                     time <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                     path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"path/"</span>,<span class="va">sample</span>,<span class="st">"/abundance.h5"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Example Transcript-to-Gene Mapping</span></span></span>
-<span class="r-in"><span><span class="va">t2g</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu">read_csv</span><span class="op">(</span><span class="st">"path/to/t2g.csv"</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Prepare a cpam object</span></span></span>
-<span class="r-in"><span><span class="va">cpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="prepare_cpam.html">prepare_cpam</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span> exp_design <span class="op">=</span> <span class="va">exp_design</span>,</span></span>
-<span class="r-in"><span> t2g <span class="op">=</span> <span class="va">t2g</span>,</span></span>
-<span class="r-in"><span> import_type <span class="op">=</span> <span class="st">"kallisto"</span>,</span></span>
-<span class="r-in"><span> num_cores <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span> <span class="co"># compute p-values</span></span></span>
-<span class="r-in"><span> <span class="va">cpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="compute_p_values.html">compute_p_values</a></span><span class="op">(</span><span class="va">cpo</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span> <span class="co"># estimate changepoints</span></span></span>
-<span class="r-in"><span> <span class="va">cpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="estimate_changepoint.html">estimate_changepoint</a></span><span class="op">(</span><span class="va">cpo</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span> <span class="co"># estimate shapes</span></span></span>
-<span class="r-in"><span> <span class="va">cpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="select_shape.html">select_shape</a></span><span class="op">(</span><span class="va">cpo</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span> <span class="fu">result</span><span class="op">(</span><span class="va">cpo</span><span class="op">)</span></span></span>
-<span class="r-in"><span> <span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
