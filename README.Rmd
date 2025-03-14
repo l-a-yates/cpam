@@ -26,6 +26,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/l-a-yates/cpam/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/l-a-yates/cpam/actions/workflows/R-CMD-check.yaml)
+[![CRAN status](https://www.r-pkg.org/badges/version/cpam)](https://CRAN.R-project.org/package=cpam)
 <!-- badges: end -->
 
 ### An R package for omics time series analysis.
