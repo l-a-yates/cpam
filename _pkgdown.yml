@@ -3,9 +3,4 @@ template:
   bootstrap: 5
 
 reference:
-- title: Functions
-- contents:
-  - -has_keyword("datasets")
-- title: Data
-- contents:
-  - has_keyword("datasets")
+
