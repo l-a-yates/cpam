@@ -94,6 +94,9 @@
 <p>The package is available on CRAN and can be installed using the following command:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"cpam"</span><span class="op">)</span></span></code></pre></div>
+<p>For the development version, you can install it from GitHub using the <code>remotes</code> package:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"l-a-yates/cpam"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
@@ -101,14 +104,14 @@
 <div class="section level3">
 <h3 id="step-1-load-the-package">Step 1: Load the package<a class="anchor" aria-label="anchor" href="#step-1-load-the-package"></a>
 </h3>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://l-a-yates.github.io/cpam/">cpam</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="step-2-create-a-tibble-for-the-experimental-design">Step 2: Create a tibble for the experimental design.<a class="anchor" aria-label="anchor" href="#step-2-create-a-tibble-for-the-experimental-design"></a>
 </h3>
 <p>In this <em>Arabidopsis thaliana</em> time series example, we used the software <a href="https://doi.org/10.1038/nbt.3519" class="external-link">kallisto</a> to generate counts from RNA-seq data. To load the counts, we provide the file path for each kallisto output file (alternatively you can provide the counts directly as count matrix, or use other quantification software)</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># load example data</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"exp_design_path.rda"</span>, package <span class="op">=</span> <span class="st">"cpam"</span><span class="op">)</span><span class="op">)</span></span>
@@ -125,7 +128,7 @@
 <h3 id="step-3-obtain-a-table-with-the-transcript-to-gene-mapping">Step 3: Obtain a table with the transcript-to-gene mapping<a class="anchor" aria-label="anchor" href="#step-3-obtain-a-table-with-the-transcript-to-gene-mapping"></a>
 </h3>
 <p>N.B. This is not needed if your counts are aggregated at the gene level, but transcript-level analysis with aggregation of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>-values to the gene level is recommended. E.g., for <em>Arabidopsis thaliana</em>:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># load example data</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"t2g_arabidopsis.rda"</span>, package <span class="op">=</span> <span class="st">"cpam"</span><span class="op">)</span><span class="op">)</span></span>
@@ -143,7 +146,7 @@
 <h3 id="step-4-run-cpam">Step 4: Run <strong>cpam</strong>
 <a class="anchor" aria-label="anchor" href="#step-4-run-cpam"></a>
 </h3>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span>  <span class="va">cpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/prepare_cpam.html">prepare_cpam</a></span><span class="op">(</span>exp_design <span class="op">=</span> <span class="va">exp_design_path</span>,</span>
 <span>                      count_matrix <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>                      t2g <span class="op">=</span> <span class="va">t2g_arabidopsis</span>,</span>
@@ -158,15 +161,15 @@
 <h3 id="step-5-visualise-the-results">Step 5: Visualise the results<a class="anchor" aria-label="anchor" href="#step-5-visualise-the-results"></a>
 </h3>
 <p>Load the shiny app for an interactive visualisation of the results:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span>  <span class="fu"><a href="reference/visualise.html">visualise</a></span><span class="op">(</span><span class="va">cpo</span><span class="op">)</span> <span class="co"># not shown in vignette</span></span></code></pre></div>
 <p>Or plot one gene at a time:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span>  <span class="fu"><a href="reference/plot_cpam.html">plot_cpam</a></span><span class="op">(</span><span class="va">cpo</span>, gene_id <span class="op">=</span> <span class="st">"AT3G23280"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/example_gene_plot.png" width="650" height="550"></p>
 <p>Isoform 1 (AT3G23280.1) has a changepoint at 67.5 min and has a monotonic increasing concave (micv) shape. Isoform 2 (AT3G23280.2) has no changepoint and has an unconstrained thin-plate (tp) shape. <br><br></p>
 <p>We can generate a results table which has <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>-values, shapes, log-fold changes and counts with many optimal filters (see tutorials):</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span>  <span class="fu"><a href="reference/results.html">results</a></span><span class="op">(</span><span class="va">cpo</span><span class="op">)</span></span>
 <span><span class="co">#&gt; # A tibble: 15,279 × 25</span></span>
 <span><span class="co">#&gt;    target_id   gene_id     p    cp shape lfc.0 lfc.5 lfc.10 lfc.20 lfc.30 lfc.45</span></span>
@@ -236,10 +239,10 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Luke Yates <br><small class="roles"> Author, maintainer, copyright holder </small> <a href="https://orcid.org/0000-0002-1685-3169" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Michael Charleston <br><small class="roles"> Author </small>  </li>
-<li>Jazmine Humphreys <br><small class="roles"> Author </small>  </li>
-<li>Steven Smith <br><small class="roles"> Author </small>  </li>
+<li>Luke Yates <br><small class="roles"> Author, maintainer, copyright holder </small> <a href="https://orcid.org/0000-0002-1685-3169" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
+<li>Michael Charleston <br><small class="roles"> Author </small>   </li>
+<li>Jazmine Humphreys <br><small class="roles"> Author </small>   </li>
+<li>Steven Smith <br><small class="roles"> Author </small>   </li>
 </ul>
 </div>
 
@@ -260,7 +263,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
