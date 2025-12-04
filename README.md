@@ -60,6 +60,13 @@ following command:
 install.packages("cpam")
 ```
 
+For the development version, you can install it from GitHub using the
+`remotes` package:
+
+``` r
+remotes::install_github("l-a-yates/cpam")
+```
+
 ## Usage
 
 ### Step 1: Load the package

@@ -59,6 +59,10 @@ The package is available on CRAN and can be installed using the following comman
 ```{r, eval = FALSE}
 install.packages("cpam")
 ```
+For the development version, you can install it from GitHub using the `remotes` package:
+```{r, eval = FALSE}
+remotes::install_github("l-a-yates/cpam")
+```
 ## Usage
 
 ### Step 1: Load the package

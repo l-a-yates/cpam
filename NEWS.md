@@ -1,5 +1,8 @@
 # cpam (development version)
 
+* Added `acat()` function for p-value aggregation
+* Added `aggregation_method` parameter to `compute_p_values()` to allow users to choose between "lancaster" (default) and "acat" methods
+
 # cpam 0.1.3
 
 * First release of cpam on CRAN.

@@ -8,6 +8,7 @@ compute_p_values(
   cpo,
   subset = NULL,
   p_adj_method = "BH",
+  aggregation_method = "lancaster",
   gam_method = "REML",
   gam_optimizer = "efs",
   silent = TRUE
@@ -19,6 +20,9 @@ compute_p_values(
 \item{subset}{a character vector of target_id names}
 
 \item{p_adj_method}{method for p-value adjustment}
+
+\item{aggregation_method}{method for aggregating target-level p-values to gene-level;
+either "lancaster" (default) or "acat"}
 
 \item{gam_method}{fitting method for \code{mgcv::gam} (default is "REML")}
 

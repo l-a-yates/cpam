@@ -3,6 +3,8 @@
 #' @param cpo a cpam object
 #' @param subset a character vector of target_id names
 #' @param p_adj_method method for p-value adjustment
+#' @param aggregation_method method for aggregating target-level p-values to gene-level;
+#'   either "lancaster" (default) or "acat"
 #' @param gam_method fitting method for `mgcv::gam` (default is "REML")
 #' @param gam_optimizer optimization method for `mgcv::gam` (default is "efs")
 #' @param silent logical; silences warnings from model fitting (default is TRUE)
@@ -46,6 +48,7 @@
 compute_p_values <- function(cpo,
                              subset = NULL,
                              p_adj_method = "BH",
+                             aggregation_method = "lancaster",
                              gam_method = "REML",
                              gam_optimizer = "efs",
                              silent = TRUE){
@@ -61,6 +64,8 @@ compute_p_values <- function(cpo,
       }
     }
   }
+
+  aggregation_method <- match.arg(aggregation_method, choices = c("lancaster", "acat"))
 
   regularize <- cpo$regularize
 
@@ -186,11 +191,14 @@ compute_p_values <- function(cpo,
 
 
   if(cpo$aggregate_to_gene){
+
+    aggregation_fn <- match.fun(aggregation_method)
+
     p_table <-
       p_table %>%
       dplyr::left_join(cpo$t2g, by = c("target_id")) %>%
       dplyr::group_by(.data$gene_id) %>%
-      dplyr::mutate(p_val_gene = lancaster(pmax(.data$p_val_target,10e-320),.data$counts_mean/sum(.data$counts_mean))) %>%
+      dplyr::mutate(p_val_gene = aggregation_fn(pmax(.data$p_val_target,10e-320),.data$counts_mean/sum(.data$counts_mean))) %>%
       dplyr::ungroup() %>%
       dplyr::mutate(q_val_gene = stats::p.adjust(.data$p_val_gene, method = p_adj_method)) %>%
       dplyr::relocate("target_id", "gene_id", "counts_mean")
