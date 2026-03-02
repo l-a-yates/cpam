@@ -334,19 +334,20 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] ggplot2_4.0.1   stringr_1.6.0   tidyr_1.3.1     dplyr_1.1.4     cpam_0.1.3.9000
+#> [1] ggplot2_4.0.2   stringr_1.6.0   tidyr_1.3.2     dplyr_1.2.0     cpam_0.1.3.9000
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] sass_0.4.10        utf8_1.2.6         generics_0.1.4     stringi_1.8.7      lattice_0.22-7     digest_0.6.39     
 #>  [7] magrittr_2.0.4     evaluate_1.0.5     grid_4.5.2         RColorBrewer_1.1-3 fastmap_1.2.0      Matrix_1.7-4      
-#> [13] jsonlite_2.0.0     limma_3.66.0       mgcv_1.9-3         purrr_1.2.0        scales_1.4.0       codetools_0.2-20  
-#> [19] textshaping_1.0.4  jquerylib_0.1.4    cli_3.6.5          rlang_1.1.6        pbmcapply_1.5.1    splines_4.5.2     
-#> [25] scam_1.2-20        withr_3.0.2        cachem_1.1.0       yaml_2.3.11        tools_4.5.2        parallel_4.5.2    
-#> [31] locfit_1.5-9.12    vctrs_0.6.5        R6_2.6.1           matrixStats_1.5.0  lifecycle_1.0.4    edgeR_4.8.0       
-#> [37] fs_1.6.6           ragg_1.5.0         pkgconfig_2.0.3    desc_1.4.3         pkgdown_2.2.0      pillar_1.11.1     
-#> [43] bslib_0.9.0        gtable_0.3.6       Rcpp_1.1.0         glue_1.8.0         statmod_1.5.1      systemfonts_1.3.1 
-#> [49] xfun_0.54          tibble_3.3.0       tidyselect_1.2.1   knitr_1.50         farver_2.1.2       nlme_3.1-168      
-#> [55] htmltools_0.5.8.1  labeling_0.4.3     rmarkdown_2.30     compiler_4.5.2     S7_0.2.1           mvnfast_0.2.8
+#> [13] jsonlite_2.0.0     limma_3.66.0       mgcv_1.9-3         purrr_1.2.1        scales_1.4.0       codetools_0.2-20  
+#> [19] textshaping_1.0.4  jquerylib_0.1.4    cli_3.6.5          pbmcapply_1.5.1    rlang_1.1.7        splines_4.5.2     
+#> [25] scam_1.2-21        withr_3.0.2        cachem_1.1.0       yaml_2.3.12        otel_0.2.0         tools_4.5.2       
+#> [31] parallel_4.5.2     locfit_1.5-9.12    vctrs_0.7.1        R6_2.6.1           matrixStats_1.5.0  lifecycle_1.0.5   
+#> [37] edgeR_4.8.2        fs_1.6.6           ragg_1.5.0         pkgconfig_2.0.3    desc_1.4.3         pkgdown_2.2.0     
+#> [43] pillar_1.11.1      bslib_0.10.0       gtable_0.3.6       Rcpp_1.1.1         glue_1.8.0         statmod_1.5.1     
+#> [49] systemfonts_1.3.1  xfun_0.56          tibble_3.3.1       tidyselect_1.2.1   knitr_1.51         farver_2.1.2      
+#> [55] nlme_3.1-168       htmltools_0.5.9    labeling_0.4.3     rmarkdown_2.30     compiler_4.5.2     S7_0.2.1          
+#> [61] mvnfast_0.2.8
 ```
 
   

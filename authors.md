@@ -16,14 +16,14 @@
 Source:
 [`DESCRIPTION`](https://github.com/l-a-yates/cpam/blob/main/DESCRIPTION)
 
-Yates L, Charleston M, Humphreys J, Smith S (2025). *cpam: Changepoint
+Yates L, Charleston M, Humphreys J, Smith S (2026). *cpam: Changepoint
 Additive Models for Time Series Omics Data*. R package version
 0.1.3.9000, <https://l-a-yates.github.io/cpam/>.
 
     @Manual{,
       title = {cpam: Changepoint Additive Models for Time Series Omics Data},
       author = {Luke Yates and Michael Charleston and Jazmine Humphreys and Steven Smith},
-      year = {2025},
+      year = {2026},
       note = {R package version 0.1.3.9000},
       url = {https://l-a-yates.github.io/cpam/},
     }

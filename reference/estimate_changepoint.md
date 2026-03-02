@@ -135,14 +135,14 @@ cpo <- prepare_cpam(exp_design = exp_design_example,
                     gene_level = TRUE,
                     num_cores = 1)
 #> ℹ Processing count matrix
-#> ✔ Processing count matrix [17ms]
+#> ✔ Processing count matrix [16ms]
 #> 
 #> ℹ Filtering low count genes
 #> ℹ Estimating dispersions using edgeR
-#> ✔ Estimating dispersions using edgeR [48ms]
+#> ✔ Estimating dispersions using edgeR [46ms]
 #> 
 #> ℹ Filtering low count genes
-#> ✔ Filtering low count genes [90ms]
+#> ✔ Filtering low count genes [79ms]
 #> 
 cpo <- compute_p_values(cpo)
 cpo <- estimate_changepoint(cpo)
