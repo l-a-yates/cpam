@@ -99,6 +99,24 @@ compute_p_values <- function(cpo,
 
 
   if(cpo$model_type == "case-only"){
+
+  # Pre-compute GAM setup (design matrix, penalties) once — shared across all targets
+  # Use dummy response for template; actual y is swapped per-target
+  template_data <- data_nest$data[[1]]
+  template_data$counts <- rep(1, nrow(template_data))
+  G_template <- mgcv::gam(
+    stats::as.formula(f_string),
+    data = template_data,
+    method = gam_method,
+    optimizer = gam_optimizer,
+    offset = log(template_data$norm_factor),
+    family = mgcv::nb(theta = if (regularize)
+      as.numeric(1/template_data$disp[1])
+      else
+        NULL),
+    fit = FALSE
+  )
+
   p_table =
     data_nest %>%
     dplyr::rowwise() %>%
@@ -107,17 +125,13 @@ compute_p_values <- function(cpo,
     dplyr::mutate(
       p_val_target = data_nest$data %>%
         pbmcapply::pbmclapply(function(d) {
-          p.val = try(mgcv::gam(
-            stats::as.formula(f_string),
-            data = d,
-            method = gam_method,
-            optimizer = gam_optimizer,
-            offset = log(d$norm_factor),
-            family = mgcv::nb(theta = if (regularize)
-              as.numeric(1/d$disp[1])
-              else
-                NULL)
-          ) %>%
+          G <- G_template
+          G$y <- d$counts
+          if (regularize) {
+            G$family <- mgcv::nb(theta = as.numeric(1/d$disp[1]))
+          }
+          p.val = try(
+            mgcv::gam(G = G, method = gam_method, optimizer = gam_optimizer) %>%
             summary %>%
             {
               .$s.table["s(time)", "p-value"]
@@ -144,6 +158,34 @@ compute_p_values <- function(cpo,
                           ") + s(td, bs = 'tp', k = ",
                           length(unique(cpo$exp_design$time)),
                           ")")
+
+    # Pre-compute GAM setup for both full and reduced models once
+    # Use dummy response for template; actual y is swapped per-target
+    template_data <- data_nest$data[[1]]
+    template_data$counts <- rep(1, nrow(template_data))
+    nb_family <- mgcv::nb(theta = if (regularize)
+      as.numeric(1/template_data$disp[1]) else NULL)
+
+    G_full_template <- mgcv::gam(
+      formula = stats::as.formula(f_string_cc),
+      data = template_data,
+      method = gam_method,
+      optimizer = gam_optimizer,
+      offset = log(template_data$norm_factor),
+      family = nb_family,
+      fit = FALSE
+    )
+
+    G_reduced_template <- mgcv::gam(
+      formula = stats::as.formula(f_string),
+      data = template_data,
+      method = gam_method,
+      optimizer = gam_optimizer,
+      offset = log(template_data$norm_factor),
+      family = nb_family,
+      fit = FALSE
+    )
+
     p_table =
       data_nest %>%
       dplyr::rowwise() %>%
@@ -152,33 +194,22 @@ compute_p_values <- function(cpo,
       dplyr::mutate(
         p_val_target = data_nest$data %>%
           pbmcapply::pbmclapply(function(d) {
-            p.val = try(mgcv::anova.gam(
-              mgcv::gam(
-                formula = stats::as.formula(f_string_cc),
-                data = d,
-                method = gam_method,
-                optimizer = gam_optimizer,
-                offset = log(d$norm_factor),
-                family = mgcv::nb(theta = if (regularize)
-                  as.numeric(1 / d$disp[1])
-                  else
-                    NULL)
-              ),
-              mgcv::gam(
-                formula = stats::as.formula(f_string),
-                data = d,
-                method = gam_method,
-                optimizer = gam_optimizer,
-                offset = log(d$norm_factor),
-                family = mgcv::nb(theta = if (regularize)
-                  as.numeric(1 / d$disp[1])
-                  else
-                    NULL)
-              ),
-              test = "F"
-            )$`Pr(>Chi)`[2]
-            ,
-            silent = silent)
+            G_full <- G_full_template
+            G_full$y <- d$counts
+            G_reduced <- G_reduced_template
+            G_reduced$y <- d$counts
+            if (regularize) {
+              theta <- as.numeric(1/d$disp[1])
+              G_full$family <- mgcv::nb(theta = theta)
+              G_reduced$family <- mgcv::nb(theta = theta)
+            }
+            p.val = try(
+              mgcv::anova.gam(
+                mgcv::gam(G = G_full, method = gam_method, optimizer = gam_optimizer),
+                mgcv::gam(G = G_reduced, method = gam_method, optimizer = gam_optimizer),
+                test = "F"
+              )$`Pr(>Chi)`[2],
+              silent = silent)
             if ("try-error" %in% class(p.val)) {
               return(NA)
             }
