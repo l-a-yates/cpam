@@ -126,11 +126,6 @@ estimate_changepoint <- function(cpo,
   regularize <- cpo$regularize
   model_type <- cpo$model_type
 
-  # Pre-build G templates for fast path (bs="tp", case-only, nb, regularize).
-  # For a given CP, all targets share the same design matrix since
-  # td = pmax(time, cp) depends only on the shared time vector.
-  # IMPORTANT: use negbin() (fixed theta) to match cpgam(); nb()$getTheta()
-  # returns log(theta), which breaks aic_negbin score computation.
   use_G_templates <- (model_type == "case-only" && identical(bss, "tp") &&
                       family == "nb" && regularize && is.null(sp))
 
@@ -140,7 +135,7 @@ estimate_changepoint <- function(cpo,
 
     G_templates <- lapply(cps, function(cp_val) {
       k <- sum(unique(template_data$time) >= cp_val)
-      if (k <= 2) return(NULL)  # null/linear — cpgam handles these
+      if (k <= 2) return(NULL)
       d_tmpl <- template_data
       d_tmpl$td <- pmax(d_tmpl$time, cp_val)
       f <- paste0("counts ~ s(td, bs = 'tp', k = ", k, ")")
@@ -151,7 +146,6 @@ estimate_changepoint <- function(cpo,
                     fit = FALSE), silent = TRUE)
     })
     names(G_templates) <- as.character(cps)
-    # If any template construction failed, disable the fast path
     if (any(vapply(G_templates, inherits, logical(1), "try-error"))) {
       use_G_templates <- FALSE
     }
@@ -329,7 +323,6 @@ calc_score_table <- function(data,
     purrr::map(function(cp_val) {
       G_tmpl <- G_templates[[as.character(cp_val)]]
 
-      # Fast path: reuse pre-built G template
       if (!is.null(G_tmpl) && !inherits(G_tmpl, "try-error")) {
         d <- data
         d$td <- pmax(d$time, cp_val)
@@ -341,10 +334,8 @@ calc_score_table <- function(data,
         m <- try(mgcv::gam(G = G, method = "REML", optimizer = "efs") %>%
                    suppressWarnings(), silent = TRUE)
         if (!inherits(m, "try-error")) return(m)
-        # If fast path failed, fall through to cpgam
       }
 
-      # Full cpgam path (default, or fallback from fast path)
       cpgam(data = data, family = family, model_type = model_type,
             cp = cp_val, regularize = regularize, sp = sp, bs = bs)
     })

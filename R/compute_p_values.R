@@ -100,8 +100,6 @@ compute_p_values <- function(cpo,
 
   if(cpo$model_type == "case-only"){
 
-  # Pre-compute GAM setup (design matrix, penalties) once — shared across all targets
-  # Use dummy response for template; actual y is swapped per-target
   template_data <- data_nest$data[[1]]
   template_data$counts <- rep(1, nrow(template_data))
   G_template <- mgcv::gam(
