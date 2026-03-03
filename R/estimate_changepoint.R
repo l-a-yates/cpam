@@ -129,6 +129,8 @@ estimate_changepoint <- function(cpo,
   # Pre-build G templates for fast path (bs="tp", case-only, nb, regularize).
   # For a given CP, all targets share the same design matrix since
   # td = pmax(time, cp) depends only on the shared time vector.
+  # IMPORTANT: use negbin() (fixed theta) to match cpgam(); nb()$getTheta()
+  # returns log(theta), which breaks aic_negbin score computation.
   use_G_templates <- (model_type == "case-only" && identical(bss, "tp") &&
                       family == "nb" && regularize && is.null(sp))
 
