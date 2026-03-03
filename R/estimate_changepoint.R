@@ -126,6 +126,35 @@ estimate_changepoint <- function(cpo,
   regularize <- cpo$regularize
   model_type <- cpo$model_type
 
+  # Pre-build G templates for fast path (bs="tp", case-only, nb, regularize).
+  # For a given CP, all targets share the same design matrix since
+  # td = pmax(time, cp) depends only on the shared time vector.
+  use_G_templates <- (model_type == "case-only" && identical(bss, "tp") &&
+                      family == "nb" && regularize && is.null(sp))
+
+  if (use_G_templates) {
+    template_data <- data_nest$data[[1]]
+    template_data$counts <- rep(1, nrow(template_data))
+
+    G_templates <- lapply(cps, function(cp_val) {
+      k <- sum(unique(template_data$time) >= cp_val)
+      if (k <= 2) return(NULL)  # null/linear — cpgam handles these
+      d_tmpl <- template_data
+      d_tmpl$td <- pmax(d_tmpl$time, cp_val)
+      f <- paste0("counts ~ s(td, bs = 'tp', k = ", k, ")")
+      try(mgcv::gam(stats::as.formula(f), data = d_tmpl,
+                    method = "REML", optimizer = "efs",
+                    offset = log(d_tmpl$norm_factor),
+                    family = mgcv::negbin(theta = as.numeric(1/d_tmpl$disp[1])),
+                    fit = FALSE), silent = TRUE)
+    })
+    names(G_templates) <- as.character(cps)
+    # If any template construction failed, disable the fast path
+    if (any(vapply(G_templates, inherits, logical(1), "try-error"))) {
+      use_G_templates <- FALSE
+    }
+  }
+
   cpo$changepoints <-
     data_nest %>%
     dplyr::select("target_id") %>%
@@ -142,7 +171,8 @@ estimate_changepoint <- function(cpo,
                           family = family,
                           score = score,
                           model_type = model_type,
-                          regularize = regularize
+                          regularize = regularize,
+                          G_templates = if (use_G_templates && .x == "tp") G_templates else NULL
                         ))
 
                       if(all(is.na(score_tables))){
@@ -282,7 +312,8 @@ calc_score_table <- function(data,
                              family = c("nb","gaussian"),
                              score = "aic",
                              model_type,
-                             regularize){
+                             regularize,
+                             G_templates = NULL){
 
   family <- match.arg(family)
 
@@ -291,30 +322,40 @@ calc_score_table <- function(data,
     score <- "aic_negbin"
   }
 
-  cps %>%
+  fits <- cps %>%
     purrr::set_names() %>%
-    purrr::map(~ cpgam(data = data,
-                       family = family,
-                       model_type = model_type,
-                       cp = .x,
-                       regularize = regularize,
-                       sp = sp,
-                       bs = bs)) %>%
-    {.[!is.na(.)]} %>%
-    {
-      if (length(.) == 0)
-        NA
-      else
-        purrr::map(., ~ do.call(score, args = list(fit = .x))) %>%
-        dplyr::bind_cols() %>%
-        dplyr::select(dplyr::where(~ !any(is.na(.x)))) %>%
-        {
-          if (nrow(.) == 0)
-            NA
-          else
-            .
+    purrr::map(function(cp_val) {
+      G_tmpl <- G_templates[[as.character(cp_val)]]
+
+      # Fast path: reuse pre-built G template
+      if (!is.null(G_tmpl) && !inherits(G_tmpl, "try-error")) {
+        d <- data
+        d$td <- pmax(d$time, cp_val)
+        G <- G_tmpl
+        G$y <- d$counts
+        if (regularize) {
+          G$family <- mgcv::negbin(theta = as.numeric(1/d$disp[1]))
         }
-    }
+        m <- try(mgcv::gam(G = G, method = "REML", optimizer = "efs") %>%
+                   suppressWarnings(), silent = TRUE)
+        if (!inherits(m, "try-error")) return(m)
+        # If fast path failed, fall through to cpgam
+      }
+
+      # Full cpgam path (default, or fallback from fast path)
+      cpgam(data = data, family = family, model_type = model_type,
+            cp = cp_val, regularize = regularize, sp = sp, bs = bs)
+    })
+
+  fits <- fits[!is.na(fits)]
+  if (length(fits) == 0) return(NA)
+
+  score_table <- purrr::map(fits, ~ do.call(score, args = list(fit = .x))) %>%
+    dplyr::bind_cols() %>%
+    dplyr::select(dplyr::where(~ !any(is.na(.x))))
+
+  if (nrow(score_table) == 0) return(NA)
+  score_table
 
 }
 
