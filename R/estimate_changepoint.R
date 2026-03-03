@@ -79,7 +79,7 @@ estimate_changepoint <- function(cpo,
                         bss = "tp",
                         family = c("nb","gaussian"),
                         score = "aic",
-                        compute_mvn = TRUE) {
+                        compute_mvn = FALSE) {
 
   family <- match.arg(family)
 
