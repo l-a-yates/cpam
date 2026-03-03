@@ -83,7 +83,7 @@ results <- function(cpo,
       dplyr::select(dplyr::any_of(c("target_id","gene_id")), p = {{p}})
   }
 
-  keep_p_filtered <- p_table %>% dplyr::pull(.data$target_id)
+  keep_p_filtered <- p_table %>% dplyr::pull("target_id")
 
   if(min_count >0 | add_counts){
     if(is.null(cpo$pred)) stop("Shapes must be selected before results can be filtered by min count or counts added")

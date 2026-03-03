@@ -461,7 +461,7 @@ app <- function(cpo) {
             dplyr::filter(.data$target_id %in% cpo$target_to_keep) %>%
             dplyr::filter(.data$gene_id == input$gene_id) %>%
             dplyr::arrange(.data$target_id) %>%
-            dplyr::pull(.data$target_id)
+            dplyr::pull("target_id")
         }
 
         shiny::updateSelectInput(session, 'tx_id',

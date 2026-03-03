@@ -68,7 +68,7 @@ select_shape <- function(cpo,
   data_nest <-
     cpo$data_long %>%
     dplyr::right_join(cpo$changepoints %>%
-                       dplyr::select(.data$target_id, cp = dplyr::all_of(cp_type)),
+                       dplyr::select("target_id", cp = dplyr::all_of(cp_type)),
                      by = "target_id") %>%
     dplyr::mutate(cp = as.numeric(.data$cp)) %>%
     tidyr::nest(.by = "target_id", .key = "data") %>%
@@ -168,7 +168,7 @@ select_shape <- function(cpo,
       } else
         .
     } %>%
-    tidyr::pivot_wider(id_cols = "target_id", names_from = pivot_names, values_from = "lfc")
+    tidyr::pivot_wider(id_cols = "target_id", names_from = dplyr::all_of(pivot_names), values_from = "lfc")
 
   cpo$pred <-
     data_nest %>%
@@ -182,7 +182,7 @@ select_shape <- function(cpo,
       } else
         .
     } %>%
-    tidyr::pivot_wider(id_cols = "target_id", names_from = pivot_names, values_from = "pred")
+    tidyr::pivot_wider(id_cols = "target_id", names_from = dplyr::all_of(pivot_names), values_from = "pred")
 
   cpo
 }
@@ -214,7 +214,7 @@ shape_selector <- function(fits, score){
     shape1 <- shape2 <- shape_ose(score_table,edf)
 
     if(shape1 == "tp"){
-      shape2 <- shape_ose(score_table %>% dplyr::select(-.data$tp),edf)
+      shape2 <- shape_ose(score_table %>% dplyr::select(-"tp"),edf)
     }
   }
 
@@ -246,13 +246,13 @@ shape_ose <- function(score_table, edf, tol = 0.01){
 
   # remove shapes that are effectively of linear complexity if lin is present
   if("lin" %in% st$model){
-    edf_lin <- st %>% dplyr::filter(.data$model == "lin") %>% dplyr::pull(.data$edf)
+    edf_lin <- st %>% dplyr::filter(.data$model == "lin") %>% dplyr::pull("edf")
     st <- st %>% dplyr::filter(!(.data$model %in% c("mdcx","micv","cv","cx") &
                                    .data$edf - edf_lin[1] <= tol))
   }
   # remove shapes that are effectively of null complexity if null is present
   if("null" %in% st$model){
-    edf_null <- st %>% dplyr::filter(.data$model == "null") %>% dplyr::pull(.data$edf)
+    edf_null <- st %>% dplyr::filter(.data$model == "null") %>% dplyr::pull("edf")
     st <- st %>% dplyr::filter(!(.data$model %in% c("mdcx","micv","cv","cx") &
                                    .data$edf - edf_null[1] <= tol))
   }
@@ -261,7 +261,7 @@ shape_ose <- function(score_table, edf, tol = 0.01){
     dplyr::filter(.data$edf == min(.data$edf)) %>%
     dplyr::arrange(.data$score_diff) %>%
     dplyr::slice(1) %>%
-    dplyr::pull(.data$model)
+    dplyr::pull("model")
 }
 
 keep_converged <- function(fits){
@@ -278,7 +278,7 @@ extract_lfc <- function(fit) {
   newdata = fit$data %>% dplyr::select(dplyr::all_of(svars)) %>% dplyr::distinct()
 
   newdata %>%
-    dplyr::select(-.data$td) %>%
+    dplyr::select(-"td") %>%
     dplyr::mutate(lfc = fit %>%
                     stats::predict(newdata = newdata) %>%
                     {. - .[1]} %>%
@@ -297,7 +297,7 @@ extract_pred <- function(fit, scaled = FALSE) {
   }
 
   newdata %>%
-    dplyr::select(-.data$td) %>%
+    dplyr::select(-"td") %>%
     dplyr::mutate(pred = fit %>%
                   stats::predict(newdata = newdata, type = "response") %>%
                   as.numeric) %>%

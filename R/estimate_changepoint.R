@@ -88,11 +88,11 @@ estimate_changepoint <- function(cpo,
       if(cpo$gene_level){
         subset <- cpo$p_table %>%
           dplyr::filter(.data$q_val_target <= deg_threshold | is.na(.data$q_val_target)) %>%
-          dplyr::pull(.data$target_id)
+          dplyr::pull("target_id")
       } else {
         subset <- cpo$p_table %>%
           dplyr::filter(.data$q_val_gene <= deg_threshold | is.na(.data$q_val_target)) %>%
-          dplyr::pull(.data$target_id)
+          dplyr::pull("target_id")
       }
     }
   }
@@ -259,7 +259,7 @@ ose_rule <- function(tab, nse=1){
     dplyr::filter(.data$score_diff <= nse*.data$se_diff) %>%
     dplyr::filter(.data$dim == max(.data$dim)) %>%
     dplyr::filter(.data$score_diff == min(.data$score_diff)) %>%
-    dplyr::pull(.data$model)
+    dplyr::pull("model")
 
 }
 
