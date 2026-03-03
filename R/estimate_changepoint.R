@@ -14,8 +14,8 @@
 #' @param family character; negative binomial ("nb", default) or Gaussian ("gaussian", not currently supported)
 #' @param score character; model selection score, either Generalised Cross Validation ("gcv") or
 #'  Akaike Information Criterion ("aic")
-#' @param compute_mvn Use simulation to compute p-value under multivariate normal model of the
-#'  model scores
+#' @param compute_mvn logical; use simulation to compute p-value under multivariate normal model of the
+#'  model scores (default `FALSE`)
 #'
 #' @details
 #' This function estimates changepoints for each target_id. The assumed
@@ -35,10 +35,10 @@
 #' least complex model within one standard error of the best scoring model.
 #'
 #' Both the minimum and the one-standard-error (default) models are stored in the returned
-#' slot "changepoints" so that either can be used. In addition to these, this function also computes the
-#' probability (denoted `p_mvn`) that the null model is the best scoring model, using a simulation
-#' based approach based on the multivariate normal model of the pointwise
-#' model scores.
+#' slot "changepoints" so that either can be used. Optionally (if `compute_mvn = TRUE`), this
+#' function also computes the probability (denoted `p_mvn`) that the null model is the best
+#' scoring model, using a simulation-based approach based on the multivariate normal model of the
+#' pointwise model scores.
 #'
 #' Given the computational cost of fitting a separate model for each candidate
 #' changepoint, cpam only estimates changepoints for targets associated with
