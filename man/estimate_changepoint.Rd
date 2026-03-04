@@ -14,7 +14,7 @@ estimate_changepoint(
   bss = "tp",
   family = c("nb", "gaussian"),
   score = "aic",
-  compute_mvn = TRUE
+  compute_mvn = FALSE
 )
 }
 \arguments{
@@ -41,8 +41,8 @@ Default is thin plate ("tp") splines.}
 \item{score}{character; model selection score, either Generalised Cross Validation ("gcv") or
 Akaike Information Criterion ("aic")}
 
-\item{compute_mvn}{Use simulation to compute p-value under multivariate normal model of the
-model scores}
+\item{compute_mvn}{logical; use simulation to compute p-value under multivariate normal model of the
+model scores (default \code{FALSE})}
 }
 \value{
 a cpam object with the estimated changepoint table added to the slot "changepoints"
@@ -68,10 +68,10 @@ is dealt with by computing the one-standard-error rule, which identifies the
 least complex model within one standard error of the best scoring model.
 
 Both the minimum and the one-standard-error (default) models are stored in the returned
-slot "changepoints" so that either can be used. In addition to these, this function also computes the
-probability (denoted \code{p_mvn}) that the null model is the best scoring model, using a simulation
-based approach based on the multivariate normal model of the pointwise
-model scores.
+slot "changepoints" so that either can be used. Optionally (if \code{compute_mvn = TRUE}), this
+function also computes the probability (denoted \code{p_mvn}) that the null model is the best
+scoring model, using a simulation-based approach based on the multivariate normal model of the
+pointwise model scores.
 
 Given the computational cost of fitting a separate model for each candidate
 changepoint, cpam only estimates changepoints for targets associated with
