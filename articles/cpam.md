@@ -334,7 +334,7 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] ggplot2_4.0.2   stringr_1.6.0   tidyr_1.3.2     dplyr_1.2.0     cpam_0.1.3.9000
+#> [1] ggplot2_4.0.2 stringr_1.6.0 tidyr_1.3.2   dplyr_1.2.0   cpam_0.2.0   
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] sass_0.4.10        utf8_1.2.6         generics_0.1.4     stringi_1.8.7      lattice_0.22-7     digest_0.6.39     
@@ -344,10 +344,9 @@ sessionInfo()
 #> [25] scam_1.2-21        withr_3.0.2        cachem_1.1.0       yaml_2.3.12        otel_0.2.0         tools_4.5.2       
 #> [31] parallel_4.5.2     locfit_1.5-9.12    vctrs_0.7.1        R6_2.6.1           matrixStats_1.5.0  lifecycle_1.0.5   
 #> [37] edgeR_4.8.2        fs_1.6.6           ragg_1.5.0         pkgconfig_2.0.3    desc_1.4.3         pkgdown_2.2.0     
-#> [43] pillar_1.11.1      bslib_0.10.0       gtable_0.3.6       Rcpp_1.1.1         glue_1.8.0         statmod_1.5.1     
-#> [49] systemfonts_1.3.1  xfun_0.56          tibble_3.3.1       tidyselect_1.2.1   knitr_1.51         farver_2.1.2      
-#> [55] nlme_3.1-168       htmltools_0.5.9    labeling_0.4.3     rmarkdown_2.30     compiler_4.5.2     S7_0.2.1          
-#> [61] mvnfast_0.2.8
+#> [43] pillar_1.11.1      bslib_0.10.0       gtable_0.3.6       glue_1.8.0         statmod_1.5.1      systemfonts_1.3.1 
+#> [49] xfun_0.56          tibble_3.3.1       tidyselect_1.2.1   knitr_1.51         farver_2.1.2       nlme_3.1-168      
+#> [55] htmltools_0.5.9    labeling_0.4.3     rmarkdown_2.30     compiler_4.5.2     S7_0.2.1
 ```
 
   

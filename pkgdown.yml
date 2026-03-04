@@ -3,7 +3,7 @@ pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
   cpam: cpam.html
-last_built: 2026-03-02T23:24Z
+last_built: 2026-03-04T01:07Z
 urls:
   reference: https://l-a-yates.github.io/cpam/reference
   article: https://l-a-yates.github.io/cpam/articles

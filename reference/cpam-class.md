@@ -121,14 +121,14 @@ cpo <- prepare_cpam(exp_design = exp_design_example,
                     count_matrix = count_matrix_example,
                     gene_level = TRUE)
 #> ℹ Processing count matrix
-#> ✔ Processing count matrix [31ms]
+#> ✔ Processing count matrix [30ms]
 #> 
 #> ℹ Filtering low count genes
 #> ℹ Estimating dispersions using edgeR
-#> ✔ Estimating dispersions using edgeR [472ms]
+#> ✔ Estimating dispersions using edgeR [481ms]
 #> 
 #> ℹ Filtering low count genes
-#> ✔ Filtering low count genes [672ms]
+#> ✔ Filtering low count genes [682ms]
 #> 
 
 # Print the object structure

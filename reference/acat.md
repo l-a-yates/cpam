@@ -35,7 +35,7 @@ The p-value(s) of acat
 Liu, Y., & Xie, J. (2019). Cauchy combination test: a powerful test with
 analytic p-value calculation under arbitrary dependency structures.
 *Journal of American Statistical Association*,115(529), 393-402.
-([pub](https://amstat.tandfonline.com/doi/abs/10.1080/01621459.2018.1554485))
+[doi:10.1080/01621459.2018.1554485](https://doi.org/10.1080/01621459.2018.1554485)
 
 ## Author
 

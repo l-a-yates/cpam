@@ -15,7 +15,7 @@ estimate_changepoint(
   bss = "tp",
   family = c("nb", "gaussian"),
   score = "aic",
-  compute_mvn = TRUE
+  compute_mvn = FALSE
 )
 ```
 
@@ -67,8 +67,8 @@ estimate_changepoint(
 
 - compute_mvn:
 
-  Use simulation to compute p-value under multivariate normal model of
-  the model scores
+  logical; use simulation to compute p-value under multivariate normal
+  model of the model scores (default `FALSE`)
 
 ## Value
 
@@ -95,11 +95,11 @@ one-standard-error rule, which identifies the least complex model within
 one standard error of the best scoring model.
 
 Both the minimum and the one-standard-error (default) models are stored
-in the returned slot "changepoints" so that either can be used. In
-addition to these, this function also computes the probability (denoted
-`p_mvn`) that the null model is the best scoring model, using a
-simulation based approach based on the multivariate normal model of the
-pointwise model scores.
+in the returned slot "changepoints" so that either can be used.
+Optionally (if `compute_mvn = TRUE`), this function also computes the
+probability (denoted `p_mvn`) that the null model is the best scoring
+model, using a simulation-based approach based on the multivariate
+normal model of the pointwise model scores.
 
 Given the computational cost of fitting a separate model for each
 candidate changepoint, cpam only estimates changepoints for targets
@@ -139,10 +139,10 @@ cpo <- prepare_cpam(exp_design = exp_design_example,
 #> 
 #> ℹ Filtering low count genes
 #> ℹ Estimating dispersions using edgeR
-#> ✔ Estimating dispersions using edgeR [46ms]
+#> ✔ Estimating dispersions using edgeR [44ms]
 #> 
 #> ℹ Filtering low count genes
-#> ✔ Filtering low count genes [79ms]
+#> ✔ Filtering low count genes [77ms]
 #> 
 cpo <- compute_p_values(cpo)
 cpo <- estimate_changepoint(cpo)
@@ -150,9 +150,9 @@ cpo <- estimate_changepoint(cpo)
 #> Candidate changepoints are t = 1, 2, 3, 4, 5, and 6
 cpo$changepoints
 #> # A tibble: 3 × 7
-#>   target_id cp_min cp_1se  p_mvn bs    family score_table      
-#>   <chr>      <dbl>  <dbl>  <dbl> <chr> <chr>  <list>           
-#> 1 g003           1      1 0      tp    nb     <tibble [30 × 6]>
-#> 2 g013           3      3 0      tp    nb     <tibble [30 × 6]>
-#> 3 g014           1      5 0.0767 tp    nb     <tibble [30 × 6]>
+#>   target_id cp_min cp_1se p_mvn bs    family score_table      
+#>   <chr>      <dbl>  <dbl> <lgl> <chr> <chr>  <list>           
+#> 1 g003           1      1 NA    tp    nb     <tibble [30 × 6]>
+#> 2 g013           3      3 NA    tp    nb     <tibble [30 × 6]>
+#> 3 g014           1      5 NA    tp    nb     <tibble [30 × 6]>
 ```
