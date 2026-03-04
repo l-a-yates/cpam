@@ -1,7 +1,10 @@
-# cpam (development version)
+# cpam 0.2.0
 
 * Added `acat()` function for p-value aggregation
 * Added `aggregation_method` parameter to `compute_p_values()` to allow users to choose between "lancaster" (default) and "acat" methods
+* Improved performance by reusing GAM design matrices in `compute_p_values()` and `estimate_changepoint()`
+* Changed `compute_mvn` default to `FALSE` in `estimate_changepoint()` to skip costly multivariate normal simulation by default
+* Fixed tidyselect deprecation warnings
 
 # cpam 0.1.3
 

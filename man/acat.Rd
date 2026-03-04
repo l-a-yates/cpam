@@ -25,7 +25,7 @@ acat(matrix(runif(1000),ncol=10))
 }
 \references{
 Liu, Y., & Xie, J. (2019). Cauchy combination test: a powerful test with analytic p-value calculation
-under arbitrary dependency structures. \emph{Journal of American Statistical Association},115(529), 393-402. (\href{https://amstat.tandfonline.com/doi/abs/10.1080/01621459.2018.1554485}{pub})
+under arbitrary dependency structures. \emph{Journal of American Statistical Association},115(529), 393-402. \doi{10.1080/01621459.2018.1554485}
 }
 \author{
 Yaowu Liu
