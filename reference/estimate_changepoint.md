@@ -15,7 +15,8 @@ estimate_changepoint(
   bss = "tp",
   family = c("nb", "gaussian"),
   score = "aic",
-  compute_mvn = FALSE
+  compute_mvn = FALSE,
+  aggregation_method = "lancaster"
 )
 ```
 
@@ -69,6 +70,11 @@ estimate_changepoint(
 
   logical; use simulation to compute p-value under multivariate normal
   model of the model scores (default `FALSE`)
+
+- aggregation_method:
+
+  character; method for aggregating target-level p-values to gene-level;
+  either "lancaster" (default) or "acat"
 
 ## Value
 
@@ -139,7 +145,7 @@ cpo <- prepare_cpam(exp_design = exp_design_example,
 #> 
 #> ℹ Filtering low count genes
 #> ℹ Estimating dispersions using edgeR
-#> ✔ Estimating dispersions using edgeR [44ms]
+#> ✔ Estimating dispersions using edgeR [45ms]
 #> 
 #> ℹ Filtering low count genes
 #> ✔ Filtering low count genes [77ms]

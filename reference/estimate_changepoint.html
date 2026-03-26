@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">cpam</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,7 +50,8 @@
 <span>  bss <span class="op">=</span> <span class="st">"tp"</span>,</span>
 <span>  family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"nb"</span>, <span class="st">"gaussian"</span><span class="op">)</span>,</span>
 <span>  score <span class="op">=</span> <span class="st">"aic"</span>,</span>
-<span>  compute_mvn <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  compute_mvn <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  aggregation_method <span class="op">=</span> <span class="st">"lancaster"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -102,6 +103,11 @@ Akaike Information Criterion ("aic")</p></dd>
 <dt id="arg-compute-mvn">compute_mvn<a class="anchor" aria-label="anchor" href="#arg-compute-mvn"></a></dt>
 <dd><p>logical; use simulation to compute p-value under multivariate normal model of the
 model scores (default <code>FALSE</code>)</p></dd>
+
+
+<dt id="arg-aggregation-method">aggregation_method<a class="anchor" aria-label="anchor" href="#arg-aggregation-method"></a></dt>
+<dd><p>character; method for aggregating target-level p-values to gene-level;
+either "lancaster" (default) or "acat"</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -166,7 +172,7 @@ Ecology 102(10):e03475. 10.1002/ecy.3475</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Filtering low count genes</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Estimating dispersions using <span style="color: #0000BB;">edgeR</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Estimating dispersions using <span style="color: #0000BB;">edgeR</span> <span style="color: #B2B2B2;">[44ms]</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Estimating dispersions using <span style="color: #0000BB;">edgeR</span> <span style="color: #B2B2B2;">[45ms]</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Filtering low count genes</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Filtering low count genes <span style="color: #B2B2B2;">[77ms]</span></span>

@@ -102,7 +102,7 @@ cpo <- prepare_cpam(exp_design = exp_design_example,
 #> ✔ Estimating dispersions using edgeR [45ms]
 #> 
 #> ℹ Filtering low count genes
-#> ✔ Filtering low count genes [78ms]
+#> ✔ Filtering low count genes [77ms]
 #> 
 cpo <- compute_p_values(cpo)
 cpo <- estimate_changepoint(cpo)

@@ -1,6 +1,27 @@
 # Changelog
 
+## cpam 0.2.1
+
+- Fixed bug where
+  [`lancaster()`](https://l-a-yates.github.io/cpam/reference/lancaster.md)
+  was not exported, causing `match.fun("lancaster")` to fail for
+  installed package users
+- Replaced fragile
+  [`match.fun()`](https://rdrr.io/r/base/match.fun.html) lookup with
+  internal resolution in
+  [`compute_p_values()`](https://l-a-yates.github.io/cpam/reference/compute_p_values.md)
+- Added `aggregation_method` parameter to
+  [`estimate_changepoint()`](https://l-a-yates.github.io/cpam/reference/estimate_changepoint.md)
+  for consistency with
+  [`compute_p_values()`](https://l-a-yates.github.io/cpam/reference/compute_p_values.md)
+- Exported
+  [`lancaster()`](https://l-a-yates.github.io/cpam/reference/lancaster.md)
+  with documentation
+- Added tests for p-value aggregation methods
+
 ## cpam 0.2.0
+
+CRAN release: 2026-03-04
 
 - Added [`acat()`](https://l-a-yates.github.io/cpam/reference/acat.md)
   function for p-value aggregation

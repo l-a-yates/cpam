@@ -11,6 +11,8 @@
   The cpam class
 - [`estimate_changepoint()`](https://l-a-yates.github.io/cpam/reference/estimate_changepoint.md)
   : Use model selection to estimate changepoints
+- [`lancaster()`](https://l-a-yates.github.io/cpam/reference/lancaster.md)
+  : Lancaster's method for p-value aggregation
 - [`plot_cluster()`](https://l-a-yates.github.io/cpam/reference/plot_cluster.md)
   : Plot clustered targets
 - [`plot_cpam()`](https://l-a-yates.github.io/cpam/reference/plot_cpam.md)

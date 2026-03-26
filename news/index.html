@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">cpam</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,7 +34,17 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.2.0" id="cpam-020">cpam 0.2.0<a class="anchor" aria-label="anchor" href="#cpam-020"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.2.1" id="cpam-021">cpam 0.2.1<a class="anchor" aria-label="anchor" href="#cpam-021"></a></h2>
+<ul><li>Fixed bug where <code><a href="../reference/lancaster.html">lancaster()</a></code> was not exported, causing <code>match.fun("lancaster")</code> to fail for installed package users</li>
+<li>Replaced fragile <code><a href="https://rdrr.io/r/base/match.fun.html" class="external-link">match.fun()</a></code> lookup with internal resolution in <code><a href="../reference/compute_p_values.html">compute_p_values()</a></code>
+</li>
+<li>Added <code>aggregation_method</code> parameter to <code><a href="../reference/estimate_changepoint.html">estimate_changepoint()</a></code> for consistency with <code><a href="../reference/compute_p_values.html">compute_p_values()</a></code>
+</li>
+<li>Exported <code><a href="../reference/lancaster.html">lancaster()</a></code> with documentation</li>
+<li>Added tests for p-value aggregation methods</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.2.0" id="cpam-020">cpam 0.2.0<a class="anchor" aria-label="anchor" href="#cpam-020"></a></h2><p class="text-muted">CRAN release: 2026-03-04</p>
 <ul><li>Added <code><a href="../reference/acat.html">acat()</a></code> function for p-value aggregation</li>
 <li>Added <code>aggregation_method</code> parameter to <code><a href="../reference/compute_p_values.html">compute_p_values()</a></code> to allow users to choose between “lancaster” (default) and “acat” methods</li>
 <li>Improved performance by reusing GAM design matrices in <code><a href="../reference/compute_p_values.html">compute_p_values()</a></code> and <code><a href="../reference/estimate_changepoint.html">estimate_changepoint()</a></code>
