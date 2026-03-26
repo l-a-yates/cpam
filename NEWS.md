@@ -1,3 +1,11 @@
+# cpam 0.2.1
+
+* Fixed bug where `lancaster()` was not exported, causing `match.fun("lancaster")` to fail for installed package users
+* Replaced fragile `match.fun()` lookup with internal resolution in `compute_p_values()`
+* Added `aggregation_method` parameter to `estimate_changepoint()` for consistency with `compute_p_values()`
+* Exported `lancaster()` with documentation
+* Added tests for p-value aggregation methods
+
 # cpam 0.2.0
 
 * Added `acat()` function for p-value aggregation

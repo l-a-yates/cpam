@@ -14,7 +14,8 @@ estimate_changepoint(
   bss = "tp",
   family = c("nb", "gaussian"),
   score = "aic",
-  compute_mvn = FALSE
+  compute_mvn = FALSE,
+  aggregation_method = "lancaster"
 )
 }
 \arguments{
@@ -43,6 +44,9 @@ Akaike Information Criterion ("aic")}
 
 \item{compute_mvn}{logical; use simulation to compute p-value under multivariate normal model of the
 model scores (default \code{FALSE})}
+
+\item{aggregation_method}{character; method for aggregating target-level p-values to gene-level;
+either "lancaster" (default) or "acat"}
 }
 \value{
 a cpam object with the estimated changepoint table added to the slot "changepoints"

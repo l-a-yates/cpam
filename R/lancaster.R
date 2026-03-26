@@ -7,6 +7,31 @@
 #
 # Copyright (C) 2018 Lynn Yi and Lior Pachter
 
+#' Lancaster's method for p-value aggregation
+#'
+#' Combines multiple p-values using Lancaster's weighted generalization
+#' of Fisher's method, based on the chi-squared distribution.
+#'
+#' @param pvalues A numeric vector of p-values to combine.
+#' @param weights A numeric vector of non-negative weights (same length as \code{pvalues}).
+#'
+#' @return A single aggregated p-value.
+#'
+#' @details
+#' NA p-values are removed, and entries with zero or NA weights are excluded.
+#' If a single p-value remains after filtering, it is returned as-is.
+#'
+#' @references
+#' Yi L, Pachter L (2018). aggregation: p-Value Aggregation Methods.
+#' R package version 1.0.1, \url{https://CRAN.R-project.org/package=aggregation}.
+#'
+#' Lancaster, H.O. (1961). The combination of probabilities: an application of
+#' orthonormal functions. \emph{Australian Journal of Statistics}, 3, 20-33.
+#'
+#' @examples
+#' lancaster(c(0.01, 0.05, 0.1), c(1, 1, 1))
+#'
+#' @export
 lancaster <- function (pvalues, weights)
 {
   if (length(weights) != length(pvalues)) {
@@ -32,6 +57,7 @@ lancaster <- function (pvalues, weights)
   p
 }
 
+#' @noRd
 lts <- function (pvalue, weight)
   {
     stats::qgamma(pvalue, shape = weight/2, scale = 2, lower.tail = FALSE)

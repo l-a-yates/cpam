@@ -16,6 +16,8 @@
 #'  Akaike Information Criterion ("aic")
 #' @param compute_mvn logical; use simulation to compute p-value under multivariate normal model of the
 #'  model scores (default `FALSE`)
+#' @param aggregation_method character; method for aggregating target-level p-values to gene-level;
+#'  either "lancaster" (default) or "acat"
 #'
 #' @details
 #' This function estimates changepoints for each target_id. The assumed
@@ -79,9 +81,11 @@ estimate_changepoint <- function(cpo,
                         bss = "tp",
                         family = c("nb","gaussian"),
                         score = "aic",
-                        compute_mvn = FALSE) {
+                        compute_mvn = FALSE,
+                        aggregation_method = "lancaster") {
 
   family <- match.arg(family)
+  aggregation_method <- match.arg(aggregation_method, choices = c("lancaster", "acat"))
 
   if(is.null(subset)){
     if(degs_only){
@@ -222,10 +226,14 @@ estimate_changepoint <- function(cpo,
       dplyr::mutate(q_mvn_target = stats::p.adjust(.data$p_mvn_target, method = p_adj_method))
 
     if(cpo$aggregate_to_gene){
+      aggregation_fn <- switch(aggregation_method,
+        lancaster = function(p, w) lancaster(p, w),
+        acat = function(p, w) acat(Pvals = p, weights = w, is.check = FALSE)
+      )
       cpo$p_mvn <-
         cpo$p_mvn %>%
         dplyr::group_by(.data$gene_id) %>%
-        dplyr::mutate(p_mvn_gene = lancaster(pmax(.data$p_mvn_target,10e-320),.data$counts_mean/sum(.data$counts_mean))) %>%
+        dplyr::mutate(p_mvn_gene = aggregation_fn(pmax(.data$p_mvn_target,10e-320),.data$counts_mean/sum(.data$counts_mean))) %>%
         dplyr::ungroup() %>%
         dplyr::mutate(q_mvn_gene = stats::p.adjust(.data$p_mvn_gene, method = p_adj_method))
     }

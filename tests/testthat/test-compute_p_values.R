@@ -142,6 +142,46 @@ test_that("compute_p_values deals gene-level aggregated counts correctly", {
                 length(unique(result$p_table$target_id)))
 })
 
+# Test gene-level aggregation with explicit lancaster method
+test_that("compute_p_values gene-level aggregation works with lancaster method", {
+  cpo <- create_mock_cpam()
+  cpo$aggregate_to_gene <- TRUE
+  result <- compute_p_values(cpo, aggregation_method = "lancaster")
+
+  expect_true(all(c("p_val_gene", "q_val_gene") %in% names(result$p_table)))
+  expect_true(all(result$p_table$p_val_gene >= 0 & result$p_table$p_val_gene <= 1, na.rm = TRUE))
+})
+
+# Test gene-level aggregation with acat method
+test_that("compute_p_values gene-level aggregation works with acat method", {
+  cpo <- create_mock_cpam()
+  cpo$aggregate_to_gene <- TRUE
+  result <- compute_p_values(cpo, aggregation_method = "acat")
+
+  expect_true(all(c("p_val_gene", "q_val_gene") %in% names(result$p_table)))
+  expect_true(all(result$p_table$p_val_gene >= 0 & result$p_table$p_val_gene <= 1, na.rm = TRUE))
+})
+
+# Test that invalid aggregation method is rejected
+test_that("compute_p_values rejects invalid aggregation_method", {
+  cpo <- create_mock_cpam()
+  expect_error(
+    compute_p_values(cpo, aggregation_method = "invalid_method"),
+    "'arg' should be one of"
+  )
+})
+
+# Test that lancaster and acat give different results
+test_that("lancaster and acat produce different aggregated p-values", {
+  cpo <- create_mock_cpam()
+  cpo$aggregate_to_gene <- TRUE
+  result_lancaster <- compute_p_values(cpo, aggregation_method = "lancaster")
+  result_acat <- compute_p_values(cpo, aggregation_method = "acat")
+
+  expect_false(identical(result_lancaster$p_table$p_val_gene,
+                         result_acat$p_table$p_val_gene))
+})
+
 # Test error handling
 test_that("compute_p_values handles errors gracefully", {
   cpo <- create_mock_cpam()

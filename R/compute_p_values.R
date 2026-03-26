@@ -221,7 +221,10 @@ compute_p_values <- function(cpo,
 
   if(cpo$aggregate_to_gene){
 
-    aggregation_fn <- match.fun(aggregation_method)
+    aggregation_fn <- switch(aggregation_method,
+      lancaster = function(p, w) lancaster(p, w),
+      acat = function(p, w) acat(Pvals = p, weights = w, is.check = FALSE)
+    )
 
     p_table <-
       p_table %>%
